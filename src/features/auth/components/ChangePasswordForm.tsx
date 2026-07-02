@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/Input"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card"
 import { ShieldCheck, Eye, EyeOff } from "lucide-react"
 import toast from "react-hot-toast"
+import { getErrorMessage } from "@/lib/utils"
 
 const changeSchema = z
   .object({
@@ -49,9 +50,9 @@ export function ChangePasswordForm() {
       await updatePassword(data.newPassword)
       toast.success("Senha alterada com sucesso!")
       reset()
-    } catch (error: any) {
+    } catch (error) {
       console.error(error)
-      toast.error(error?.message || "Erro ao alterar senha. Verifique os dados.")
+      toast.error(getErrorMessage(error, "Erro ao alterar senha. Verifique os dados."))
     } finally {
       setIsLoading(false)
     }

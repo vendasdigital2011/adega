@@ -2,10 +2,10 @@
 
 import { useState, useCallback } from "react"
 
-export function useFilters<T extends Record<string, any>>(initialFilters: T) {
+export function useFilters<T extends Record<string, unknown>>(initialFilters: T) {
   const [filters, setFilters] = useState<T>(initialFilters)
 
-  const setFilter = useCallback((key: keyof T, value: any) => {
+  const setFilter = useCallback(<K extends keyof T>(key: K, value: T[K]) => {
     setFilters((prev) => ({
       ...prev,
       [key]: value,

@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/Input"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card"
 import { KeyRound, Eye, EyeOff } from "lucide-react"
 import toast from "react-hot-toast"
+import { getErrorMessage } from "@/lib/utils"
 
 const resetSchema = z
   .object({
@@ -48,9 +49,9 @@ export function ResetPasswordForm() {
       await updatePassword(data.password)
       toast.success("Senha atualizada com sucesso!")
       router.push("/login")
-    } catch (error: any) {
+    } catch (error) {
       console.error(error)
-      toast.error(error?.message || "Não foi possível redefinir a senha.")
+      toast.error(getErrorMessage(error, "Não foi possível redefinir a senha."))
     } finally {
       setIsLoading(false)
     }

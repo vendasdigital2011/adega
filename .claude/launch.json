@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "adega-dev",
+      "runtimeExecutable": "D:\\Sistemas\\Adega\\dev-with-node.cmd",
+      "runtimeArgs": [],
+      "port": 3000
+    }
+  ]
+}

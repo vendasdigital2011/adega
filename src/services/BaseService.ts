@@ -3,11 +3,14 @@ import { supabase } from "@/lib/supabase"
 export abstract class BaseService {
   protected supabase = supabase
 
-  protected handleError(error: any): never {
-    const message = error?.message || "Ocorreu um erro inesperado."
-    const code = error?.code || "UNKNOWN_ERROR"
+  protected handleError(error: unknown): never {
+    const isErrorLike = (e: unknown): e is { message?: string; code?: string } =>
+      typeof e === "object" && e !== null
+
+    const message = (isErrorLike(error) && error.message) || "Ocorreu um erro inesperado."
+    const code = (isErrorLike(error) && error.code) || "UNKNOWN_ERROR"
     console.error(`[BaseService Error] Code: ${code}, Message: ${message}`, error)
-    
+
     throw {
       message,
       code,
@@ -22,8 +25,8 @@ export abstract class BaseService {
     action: string,
     tableName: string,
     recordId: string,
-    oldData: Record<string, any> | null = null,
-    newData: Record<string, any> | null = null
+    oldData: Record<string, unknown> | null = null,
+    newData: Record<string, unknown> | null = null
   ) {
     try {
       const { error } = await this.supabase.from("audit_logs").insert({

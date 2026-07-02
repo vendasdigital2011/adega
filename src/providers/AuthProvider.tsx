@@ -12,10 +12,10 @@ interface AuthContextType {
   role: Role | null
   permissions: Permission[]
   loading: boolean
-  login: (email: string, password: string) => Promise<any>
+  login: (email: string, password: string) => Promise<unknown>
   logout: () => Promise<void>
-  resetPassword: (email: string) => Promise<any>
-  updatePassword: (password: string) => Promise<any>
+  resetPassword: (email: string) => Promise<unknown>
+  updatePassword: (password: string) => Promise<unknown>
   refreshSession: () => Promise<void>
 }
 

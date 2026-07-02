@@ -28,3 +28,10 @@ next-env.d.ts
 
 # Misc backups (not part of source control)
 Adega.rar
+
+# Local workaround script (PATH not refreshed in this session's shell)
+dev-with-node.cmd
+
+# Local notes with credentials — never commit
+senha subase.txt
+*.senha.txt

@@ -182,8 +182,8 @@ export class AuthService extends BaseService {
           .eq("role_id", userData.role_id)
 
         if (!permError && permData) {
-          permissions = permData
-            .map((p: any) => p.permission)
+          permissions = (permData as unknown as { permission: Permission | null }[])
+            .map((p) => p.permission)
             .filter((p): p is Permission => !!p)
         }
       }

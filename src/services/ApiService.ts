@@ -33,7 +33,7 @@ export class ApiService extends BaseService {
     }
   }
 
-  public async post<T>(url: string, body: any, headers?: Record<string, string>): Promise<T> {
+  public async post<T>(url: string, body: unknown, headers?: Record<string, string>): Promise<T> {
     try {
       const response = await fetch(url, {
         method: "POST",
