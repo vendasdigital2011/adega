@@ -1,0 +1,437 @@
+# SPRINT-03 — Usuários e Permissões
+
+## Projeto
+
+**Nome:** Adega Cloud
+
+**Sprint:** 03
+
+**Nome da Sprint:** Usuários e Permissões
+
+**Versão:** 1.0
+
+**Duração Estimada:** 1 Sprint
+
+---
+
+# Objetivo
+
+Desenvolver o módulo de gerenciamento de usuários, perfis e permissões do Adega Cloud, permitindo controlar quem pode acessar cada funcionalidade do sistema.
+
+Ao final desta Sprint o sistema deverá possuir um controle de acesso baseado em perfis e permissões.
+
+---
+
+# Objetivos da Sprint
+
+- Cadastro de usuários.
+- Edição de usuários.
+- Inativação de usuários.
+- Cadastro de perfis.
+- Cadastro de permissões.
+- Controle de acesso.
+- Auditoria.
+- Integração com autenticação.
+
+---
+
+# Dependências
+
+Antes de iniciar esta Sprint confirmar:
+
+- Sprint 01 concluída.
+- Sprint 02 concluída.
+- Login funcionando.
+- Sessão funcionando.
+- Middleware funcionando.
+
+---
+
+# Funcionalidades
+
+## Usuários
+
+Permitir:
+
+- Cadastrar usuário.
+- Editar usuário.
+- Inativar usuário.
+- Reativar usuário.
+- Alterar senha.
+- Alterar perfil.
+- Pesquisar usuários.
+
+---
+
+# Campos do Usuário
+
+## Dados Básicos
+
+- Nome
+- E-mail
+- Telefone
+- Cargo
+- Empresa
+- Perfil
+- Status
+
+---
+
+# Status
+
+- Ativo
+- Inativo
+- Bloqueado
+
+---
+
+# Perfis
+
+Permitir criar perfis personalizados.
+
+Perfis padrão:
+
+- Administrador
+- Gerente
+- Financeiro
+- Caixa
+- Estoquista
+- Vendedor
+
+---
+
+# Permissões
+
+Cada perfil poderá possuir permissões individuais.
+
+Permissões disponíveis:
+
+Visualizar
+
+Criar
+
+Editar
+
+Excluir
+
+Exportar
+
+Importar
+
+Cancelar
+
+Aprovar
+
+---
+
+# Controle por Módulo
+
+As permissões deverão ser configuráveis para:
+
+- Dashboard
+- Produtos
+- Categorias
+- Estoque
+- Compras
+- Vendas
+- Clientes
+- Fornecedores
+- Financeiro
+- Caixa
+- Relatórios
+- Configurações
+- Usuários
+
+---
+
+# Tela Principal
+
+Exibir:
+
+- Nome
+- E-mail
+- Perfil
+- Status
+- Último acesso
+- Data de cadastro
+- Ações
+
+---
+
+# Pesquisa
+
+Pesquisar por:
+
+- Nome
+- E-mail
+- Perfil
+- Cargo
+
+Pesquisa em tempo real.
+
+---
+
+# Filtros
+
+Permitir filtros por:
+
+- Perfil
+- Status
+- Empresa
+- Último acesso
+
+---
+
+# Ordenação
+
+Ordenar por:
+
+- Nome
+- Perfil
+- Data de cadastro
+- Último acesso
+
+---
+
+# Componentes
+
+UserForm
+
+UserTable
+
+UserCard
+
+RoleForm
+
+PermissionMatrix
+
+UserFilters
+
+UserSearch
+
+UserStatusBadge
+
+UserDetails
+
+RoleSelector
+
+---
+
+# Serviços
+
+UserService
+
+Responsável por:
+
+- CRUD de usuários
+- Gestão de perfis
+- Gestão de permissões
+- Pesquisa
+- Filtros
+
+RoleService
+
+Responsável por:
+
+- CRUD de perfis
+- Associação de permissões
+
+PermissionService
+
+Responsável por:
+
+- Consulta de permissões
+- Atualização de permissões
+
+---
+
+# Integrações
+
+O módulo deverá integrar-se com:
+
+- Auth
+- Dashboard
+- Auditoria
+- Configurações
+
+Todos os módulos deverão consultar este sistema para validar permissões.
+
+---
+
+# Regras de Negócio
+
+- Todo usuário pertence a uma empresa.
+- Todo usuário deve possuir um perfil.
+- Apenas administradores podem criar usuários.
+- Apenas administradores podem alterar permissões.
+- Usuários inativos não poderão realizar login.
+- Usuários bloqueados não poderão acessar o sistema.
+- Um usuário não poderá remover sua própria permissão de administrador.
+- Exclusão física de usuários não será permitida.
+
+---
+
+# Validações
+
+Obrigatórias:
+
+- Nome
+- E-mail
+- Perfil
+
+Validações:
+
+- E-mail único.
+- Perfil obrigatório.
+- Empresa obrigatória.
+- Usuário autenticado para alterações.
+
+---
+
+# Matriz de Permissões
+
+Cada permissão deverá possuir:
+
+- Visualizar
+- Criar
+- Editar
+- Excluir
+- Exportar
+- Importar
+- Aprovar
+- Cancelar
+
+Cada módulo poderá possuir combinações diferentes.
+
+---
+
+# Middleware
+
+Atualizar middleware para:
+
+- Validar autenticação.
+- Validar perfil.
+- Validar permissões.
+- Redirecionar usuário sem acesso.
+- Exibir página "Acesso Negado" quando necessário.
+
+---
+
+# Auditoria
+
+Registrar:
+
+- Cadastro de usuário
+- Alteração
+- Inativação
+- Reativação
+- Alteração de perfil
+- Alteração de permissões
+- Bloqueio
+- Desbloqueio
+
+Registrar:
+
+- Usuário responsável
+- Data
+- Hora
+- IP
+- Valores anteriores
+- Valores atuais
+
+---
+
+# Segurança
+
+Implementar:
+
+- Controle de acesso por perfil.
+- Controle de acesso por permissão.
+- Proteção das rotas.
+- Proteção das APIs.
+- Validação Backend.
+- Validação Frontend.
+
+---
+
+# Responsividade
+
+Desktop
+
+Tabela completa.
+
+Tablet
+
+Tabela adaptada.
+
+Mobile
+
+Cards responsivos.
+
+---
+
+# Performance
+
+Objetivos:
+
+- Consulta em até 1 segundo.
+- Alteração de permissões em tempo real.
+- Cache das permissões durante a sessão.
+- Atualização automática após alteração.
+
+---
+
+# Testes
+
+Executar:
+
+- Cadastro de usuário.
+- Edição.
+- Inativação.
+- Alteração de perfil.
+- Alteração de permissões.
+- Login de usuário inativo.
+- Login de usuário bloqueado.
+- Proteção de rotas.
+- Validação de permissões.
+- Auditoria.
+
+---
+
+# Entregáveis
+
+Ao final da Sprint deverão existir:
+
+- CRUD de usuários.
+- CRUD de perfis.
+- Sistema de permissões.
+- Matriz de permissões.
+- Controle de acesso por módulo.
+- Middleware atualizado.
+- Auditoria completa.
+- Integração com autenticação.
+
+---
+
+# Critérios de Aceite
+
+A Sprint será considerada concluída quando:
+
+- Usuários puderem ser cadastrados.
+- Perfis puderem ser gerenciados.
+- Permissões funcionarem corretamente.
+- Rotas respeitarem as permissões.
+- APIs validarem permissões.
+- Usuários sem acesso forem bloqueados.
+- Auditoria registrar todas as alterações.
+- O sistema permanecer seguro e estável.
+
+---
+
+# Próxima Sprint
+
+**Sprint-04 — Dashboard**
+
+Objetivo:
+
+Implementar o Dashboard principal com KPIs, gráficos, indicadores, alertas e atividades recentes utilizando dados reais do sistema.

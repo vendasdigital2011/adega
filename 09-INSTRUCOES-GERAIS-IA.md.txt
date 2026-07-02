@@ -1,0 +1,466 @@
+# PDR-010 — Instruções Gerais para IA
+
+## Projeto
+
+**Nome:** Adega Cloud
+
+**Documento:** 09-INSTRUCOES-GERAIS-IA.md
+
+**Versão:** 1.0
+
+---
+
+# Objetivo
+
+Este documento define as regras obrigatórias que qualquer Inteligência Artificial deverá seguir durante o desenvolvimento do Adega Cloud.
+
+Este documento possui prioridade máxima durante todo o desenvolvimento.
+
+Toda implementação deverá seguir estas instruções.
+
+---
+
+# Regra Principal
+
+Antes de escrever qualquer linha de código:
+
+1. Ler toda a documentação.
+2. Compreender a arquitetura.
+3. Identificar dependências.
+4. Ler a Sprint atual.
+5. Ler o módulo correspondente.
+
+Nunca começar implementando código sem entender o projeto.
+
+---
+
+# Ordem de Prioridade
+
+Sempre seguir esta ordem.
+
+1. PDR Mestre
+2. Arquitetura
+3. Banco de Dados
+4. Regras de Negócio
+5. Design System
+6. Roadmap
+7. Sprint Atual
+8. Documento do Módulo
+
+Caso exista conflito entre documentos:
+
+O PDR Mestre possui prioridade.
+
+---
+
+# Desenvolvimento
+
+Nunca desenvolver funcionalidades fora da Sprint atual.
+
+Nunca antecipar funcionalidades.
+
+Nunca criar recursos não documentados.
+
+Nunca remover funcionalidades existentes.
+
+---
+
+# Arquitetura
+
+Seguir obrigatoriamente:
+
+- Arquitetura Modular
+- Clean Architecture
+- SOLID
+- DRY
+- KISS
+- Componentização
+
+---
+
+# Organização
+
+Cada módulo deverá possuir:
+
+components/
+
+hooks/
+
+services/
+
+schemas/
+
+types/
+
+pages/
+
+Nunca misturar arquivos entre módulos.
+
+---
+
+# Banco de Dados
+
+Nunca alterar tabelas diretamente.
+
+Sempre utilizar:
+
+- Migrações
+- Constraints
+- Índices
+- Foreign Keys
+- RLS
+
+---
+
+# Componentes
+
+Todos os componentes deverão ser:
+
+- Pequenos
+- Reutilizáveis
+- Tipados
+- Independentes
+- Testáveis
+
+Nunca criar componentes gigantes.
+
+---
+
+# Services
+
+Nenhum componente React poderá acessar o banco diretamente.
+
+Todo acesso deverá passar pelos Services.
+
+---
+
+# Hooks
+
+Toda lógica reutilizável deverá ficar em Hooks.
+
+Evitar repetição de código.
+
+---
+
+# Tipagem
+
+Utilizar TypeScript Strict.
+
+Nunca utilizar:
+
+any
+
+Sempre criar tipos específicos.
+
+---
+
+# Estado
+
+Utilizar:
+
+TanStack Query
+
+para dados remotos.
+
+React Context
+
+apenas para:
+
+- autenticação
+- tema
+- permissões
+- configurações globais
+
+Evitar estados globais desnecessários.
+
+---
+
+# Validação
+
+Todos os formulários deverão utilizar:
+
+React Hook Form
+
++
+
+Zod
+
+Nunca confiar apenas na validação do frontend.
+
+---
+
+# Segurança
+
+Implementar obrigatoriamente:
+
+- Middleware
+- RLS
+- Validação Backend
+- Validação Frontend
+- Sanitização
+- Controle de Permissões
+
+---
+
+# Performance
+
+Priorizar:
+
+- Lazy Loading
+- Dynamic Imports
+- Code Splitting
+- Cache
+- Paginação
+- Consultas otimizadas
+
+Nunca realizar consultas desnecessárias.
+
+---
+
+# Código
+
+Escrever código:
+
+- Limpo
+- Organizado
+- Pequeno
+- Legível
+- Reutilizável
+
+Funções deverão possuir apenas uma responsabilidade.
+
+---
+
+# Nomeação
+
+Arquivos
+
+kebab-case
+
+Componentes
+
+PascalCase
+
+Hooks
+
+camelCase
+
+Services
+
+PascalCase
+
+Variáveis
+
+camelCase
+
+Constantes
+
+UPPER_CASE
+
+---
+
+# Comentários
+
+Evitar comentários desnecessários.
+
+O código deverá ser autoexplicativo.
+
+Comentar apenas regras de negócio complexas.
+
+---
+
+# Responsividade
+
+Toda tela deverá funcionar em:
+
+- Desktop
+- Tablet
+- Mobile
+
+Prioridade:
+
+Desktop.
+
+---
+
+# Design
+
+Seguir obrigatoriamente o Design System.
+
+Nunca criar componentes fora do padrão.
+
+---
+
+# Auditoria
+
+Sempre que houver:
+
+- alteração
+- exclusão lógica
+- cancelamento
+- movimentação financeira
+- movimentação de estoque
+
+Registrar auditoria.
+
+---
+
+# Logs
+
+Registrar erros críticos.
+
+Nunca ocultar exceções importantes.
+
+---
+
+# Testes
+
+Antes de finalizar qualquer Sprint:
+
+Executar:
+
+- Lint
+- Build
+- Type Check
+- Testes Unitários
+- Testes de Integração
+
+---
+
+# Critérios para Finalizar uma Sprint
+
+Somente considerar concluída quando:
+
+- Código funcionando.
+- Sem erros.
+- Build aprovado.
+- Testes aprovados.
+- Documentação atualizada.
+
+---
+
+# Relatório Obrigatório
+
+Ao finalizar qualquer Sprint apresentar:
+
+## Arquivos Criados
+
+Lista completa.
+
+---
+
+## Arquivos Alterados
+
+Lista completa.
+
+---
+
+## Banco de Dados
+
+- Migrações
+- Tabelas
+- Índices
+- Policies
+
+---
+
+## Dependências Instaladas
+
+Lista completa.
+
+---
+
+## Testes
+
+Executados
+
+Aprovados
+
+Pendentes
+
+---
+
+## Problemas Encontrados
+
+Caso existam.
+
+---
+
+## Próximos Passos
+
+Informar apenas a próxima Sprint.
+
+Nunca iniciar automaticamente.
+
+---
+
+# Restrições
+
+Nunca:
+
+- remover código funcional
+- quebrar funcionalidades existentes
+- alterar módulos finalizados
+- criar código duplicado
+- utilizar any
+- acessar banco diretamente nos componentes
+- ignorar regras de negócio
+- ignorar permissões
+- ignorar auditoria
+
+---
+
+# Processo Obrigatório
+
+Sempre seguir exatamente esta sequência:
+
+1. Ler documentação.
+2. Planejar implementação.
+3. Validar dependências.
+4. Criar banco (quando necessário).
+5. Criar Services.
+6. Criar Hooks.
+7. Criar Componentes.
+8. Criar Páginas.
+9. Integrar Backend.
+10. Testar.
+11. Corrigir erros.
+12. Atualizar documentação.
+13. Gerar relatório.
+
+Nunca alterar esta ordem.
+
+---
+
+# Critérios de Qualidade
+
+Todo código entregue deverá:
+
+- Compilar sem erros.
+- Passar no Lint.
+- Passar no Type Check.
+- Seguir o Design System.
+- Seguir a Arquitetura.
+- Ser reutilizável.
+- Ser escalável.
+- Ser seguro.
+- Ser documentado quando necessário.
+- Estar pronto para produção.
+
+---
+
+# Regra Final
+
+A Inteligência Artificial deverá atuar como um Arquiteto de Software Sênior.
+
+Sempre priorizar:
+
+1. Segurança.
+2. Organização.
+3. Escalabilidade.
+4. Performance.
+5. Legibilidade.
+6. Reutilização.
+7. Manutenção.
+
+Nenhuma decisão poderá contrariar a documentação oficial do projeto Adega Cloud.

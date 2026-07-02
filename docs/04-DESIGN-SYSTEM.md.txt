@@ -1,0 +1,722 @@
+# PDR-005 — Design System
+
+## Projeto
+
+**Nome:** Adega Cloud
+
+**Documento:** PDR-005 — Design System
+
+**Versão:** 1.0
+
+---
+
+# Objetivo
+
+Definir o padrão visual e de experiência do usuário do Adega Cloud.
+
+Todo o sistema deverá seguir este documento para manter consistência, facilidade de uso, acessibilidade e escalabilidade.
+
+---
+
+# Conceito Visual
+
+O Adega Cloud deverá transmitir:
+
+- Modernidade
+- Organização
+- Rapidez
+- Segurança
+- Profissionalismo
+- Facilidade de uso
+
+O design deve ser limpo, priorizando produtividade.
+
+---
+
+# Estilo
+
+- Interface minimalista
+- Poucos elementos visuais
+- Muito espaço em branco
+- Componentes padronizados
+- Informações organizadas
+- Navegação simples
+- Foco na velocidade de uso
+
+---
+
+# Tema
+
+O sistema deverá possuir:
+
+- Tema Claro
+- Tema Escuro
+
+O usuário poderá alternar entre eles.
+
+O tema utilizado ficará salvo nas configurações do usuário.
+
+---
+
+# Paleta de Cores
+
+## Primária
+
+Azul
+
+Utilizada em:
+
+- Botões principais
+- Links
+- Indicadores
+- Ações positivas
+
+---
+
+## Secundária
+
+Cinza
+
+Utilizada em:
+
+- Bordas
+- Fundos
+- Componentes
+- Cards
+
+---
+
+## Sucesso
+
+Verde
+
+Utilizado para:
+
+- Confirmações
+- Recebimentos
+- Produtos disponíveis
+- Operações concluídas
+
+---
+
+## Aviso
+
+Amarelo
+
+Utilizado para:
+
+- Alertas
+- Avisos
+- Estoque baixo
+
+---
+
+## Erro
+
+Vermelho
+
+Utilizado para:
+
+- Exclusões
+- Cancelamentos
+- Erros
+- Contas vencidas
+
+---
+
+## Informação
+
+Azul Claro
+
+Utilizado para:
+
+- Mensagens informativas
+- Dicas
+- Tutoriais
+
+---
+
+# Tipografia
+
+Fonte principal:
+
+Inter
+
+Pesos:
+
+- Regular
+- Medium
+- Semibold
+- Bold
+
+Não utilizar múltiplas famílias tipográficas.
+
+---
+
+# Tamanhos
+
+Título Principal
+
+32px
+
+Título Secundário
+
+24px
+
+Subtítulo
+
+20px
+
+Texto
+
+16px
+
+Texto Pequeno
+
+14px
+
+Legenda
+
+12px
+
+---
+
+# Espaçamentos
+
+Utilizar escala de 8 pontos.
+
+Valores:
+
+4px
+
+8px
+
+12px
+
+16px
+
+24px
+
+32px
+
+40px
+
+48px
+
+64px
+
+Nunca utilizar valores aleatórios.
+
+---
+
+# Bordas
+
+Radius padrão:
+
+8px
+
+Cards grandes:
+
+12px
+
+Modais:
+
+16px
+
+Botões:
+
+8px
+
+---
+
+# Sombras
+
+Sombras discretas.
+
+Evitar sombras pesadas.
+
+---
+
+# Grid
+
+Desktop
+
+12 colunas
+
+Tablet
+
+8 colunas
+
+Mobile
+
+4 colunas
+
+---
+
+# Layout
+
+Estrutura principal
+
+Sidebar
+
+↓
+
+Header
+
+↓
+
+Breadcrumb
+
+↓
+
+Conteúdo
+
+↓
+
+Footer
+
+---
+
+# Sidebar
+
+Deverá possuir:
+
+Logo
+
+Menu
+
+Usuário
+
+Botão recolher
+
+Indicador da página ativa
+
+---
+
+# Header
+
+Itens obrigatórios:
+
+Título
+
+Pesquisa
+
+Notificações
+
+Tema
+
+Perfil
+
+---
+
+# Cards
+
+Todos os cards deverão possuir:
+
+Título
+
+Conteúdo
+
+Espaçamento interno
+
+Borda
+
+Radius
+
+Sombra leve
+
+---
+
+# Botões
+
+Tipos
+
+Primário
+
+Secundário
+
+Outline
+
+Ghost
+
+Danger
+
+Success
+
+Loading
+
+Disabled
+
+---
+
+# Campos
+
+Tipos
+
+Input
+
+Textarea
+
+Select
+
+Autocomplete
+
+DatePicker
+
+Checkbox
+
+Radio
+
+Switch
+
+Upload
+
+Currency
+
+Percentual
+
+Telefone
+
+CPF
+
+CNPJ
+
+CEP
+
+Código de barras
+
+---
+
+# Tabelas
+
+Toda tabela deverá possuir:
+
+Pesquisa
+
+Ordenação
+
+Paginação
+
+Quantidade por página
+
+Filtro
+
+Exportação
+
+Ações
+
+---
+
+# Formulários
+
+Todo formulário deverá possuir:
+
+Título
+
+Descrição
+
+Validação
+
+Mensagens de erro
+
+Botões
+
+Cancelar
+
+Salvar
+
+---
+
+# Modais
+
+Todos os modais deverão possuir:
+
+Título
+
+Descrição
+
+Botão cancelar
+
+Botão confirmar
+
+Fechamento pelo ESC
+
+Fechamento pelo X
+
+---
+
+# Feedback Visual
+
+Utilizar:
+
+Toast
+
+Alert
+
+Dialog
+
+Loading
+
+Skeleton
+
+Progress
+
+Empty State
+
+---
+
+# Ícones
+
+Biblioteca
+
+Lucide Icons
+
+Utilizar somente uma biblioteca.
+
+---
+
+# Dashboard
+
+Todos os dashboards deverão possuir:
+
+KPIs
+
+Cards
+
+Gráficos
+
+Filtros
+
+Atualização automática
+
+Responsividade
+
+---
+
+# Gráficos
+
+Biblioteca
+
+Recharts
+
+Gráficos permitidos
+
+Linha
+
+Barra
+
+Pizza
+
+Área
+
+Rosca
+
+Indicadores
+
+---
+
+# Status
+
+Utilizar Badges.
+
+Exemplo
+
+Ativo
+
+Inativo
+
+Pendente
+
+Pago
+
+Recebido
+
+Cancelado
+
+Vencido
+
+---
+
+# Cores de Status
+
+Ativo
+
+Verde
+
+Inativo
+
+Cinza
+
+Pendente
+
+Amarelo
+
+Cancelado
+
+Vermelho
+
+Pago
+
+Verde
+
+Vencido
+
+Vermelho
+
+---
+
+# Responsividade
+
+Desktop
+
+Principal plataforma.
+
+Tablet
+
+Layout adaptado.
+
+Mobile
+
+Menus recolhidos.
+
+Cards empilhados.
+
+Tabelas adaptadas.
+
+---
+
+# Acessibilidade
+
+Obrigatório:
+
+- Contraste adequado
+- Navegação por teclado
+- Labels em todos os campos
+- Focus visível
+- Textos alternativos
+- Compatibilidade com leitores de tela
+
+---
+
+# Performance
+
+Priorizar:
+
+- Componentes leves
+- Lazy Loading
+- Skeleton Loading
+- Virtualização de listas grandes
+- Otimização de imagens
+
+---
+
+# Componentes Obrigatórios
+
+Button
+
+Input
+
+Textarea
+
+Select
+
+Table
+
+Modal
+
+Drawer
+
+Dialog
+
+Tabs
+
+Accordion
+
+Tooltip
+
+Dropdown
+
+Badge
+
+Avatar
+
+Breadcrumb
+
+Pagination
+
+Toast
+
+Loading
+
+Skeleton
+
+Chart
+
+DatePicker
+
+Command
+
+Popover
+
+ConfirmDialog
+
+Search
+
+Filter
+
+FileUpload
+
+---
+
+# Padrão de Nomenclatura
+
+Componentes
+
+PascalCase
+
+Exemplo
+
+ProductCard
+
+CustomerForm
+
+SaleTable
+
+DashboardCard
+
+Hooks
+
+camelCase
+
+Exemplo
+
+useProducts
+
+useCustomers
+
+useInventory
+
+Services
+
+PascalCase
+
+Exemplo
+
+ProductService
+
+InventoryService
+
+FinancialService
+
+---
+
+# Critérios de Aceite
+
+O Design System será considerado aprovado quando:
+
+- Todos os componentes estiverem padronizados.
+- Toda a identidade visual estiver definida.
+- O sistema possuir consistência visual.
+- Os componentes forem reutilizáveis.
+- O design suportar crescimento sem necessidade de mudanças estruturais.
+- Toda nova tela seguir obrigatoriamente este documento.

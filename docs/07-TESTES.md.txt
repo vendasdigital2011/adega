@@ -1,0 +1,426 @@
+# PDR-008 — Plano de Testes
+
+## Projeto
+
+**Nome:** Adega Cloud
+
+**Documento:** PDR-008 — Plano de Testes
+
+**Versão:** 1.0
+
+---
+
+# Objetivo
+
+Definir a estratégia oficial de testes do Adega Cloud para garantir qualidade, estabilidade, segurança e desempenho.
+
+Nenhuma funcionalidade poderá ser considerada concluída sem aprovação em todos os testes obrigatórios.
+
+---
+
+# Objetivos dos Testes
+
+- Garantir estabilidade.
+- Evitar regressões.
+- Validar regras de negócio.
+- Validar integrações.
+- Validar segurança.
+- Garantir boa experiência ao usuário.
+
+---
+
+# Tipos de Testes
+
+## Testes Unitários
+
+Objetivo:
+
+Validar funções isoladas.
+
+Exemplos:
+
+- Cálculo de desconto
+- Cálculo de lucro
+- Atualização de estoque
+- Validação de CPF
+- Validação de CNPJ
+- Cálculo financeiro
+
+---
+
+## Testes de Integração
+
+Objetivo:
+
+Validar comunicação entre módulos.
+
+Exemplos:
+
+Compra
+
+↓
+
+Atualiza Estoque
+
+↓
+
+Atualiza Financeiro
+
+Venda
+
+↓
+
+Baixa Estoque
+
+↓
+
+Gera Conta a Receber
+
+↓
+
+Atualiza Caixa
+
+---
+
+## Testes End-to-End (E2E)
+
+Simular o comportamento do usuário.
+
+Exemplos:
+
+- Login
+- Cadastro de produto
+- Compra
+- Venda
+- Fechamento de caixa
+- Relatórios
+
+---
+
+## Testes de Regressão
+
+Executar após qualquer alteração importante.
+
+Objetivo:
+
+Garantir que funcionalidades antigas continuem funcionando.
+
+---
+
+## Testes de Performance
+
+Validar:
+
+- Tempo de carregamento
+- Consultas SQL
+- Dashboard
+- Tabelas grandes
+- Relatórios
+
+Tempo esperado:
+
+- Tela inicial: até 2 segundos
+- Dashboard: até 3 segundos
+- Pesquisa: até 1 segundo
+
+---
+
+## Testes de Segurança
+
+Validar:
+
+- Autenticação
+- Autorização
+- RLS
+- SQL Injection
+- XSS
+- CSRF
+- Sessões
+- Tokens
+- Permissões
+
+---
+
+# Ferramentas
+
+Frontend
+
+- Vitest
+- Testing Library
+
+E2E
+
+- Playwright
+
+Qualidade
+
+- ESLint
+- Prettier
+
+---
+
+# Testes por Módulo
+
+## Autenticação
+
+Testar:
+
+- Login válido
+- Login inválido
+- Logout
+- Recuperação de senha
+- Sessão expirada
+- Middleware
+- Proteção de rotas
+
+---
+
+## Usuários
+
+Testar:
+
+- Cadastro
+- Alteração
+- Exclusão lógica
+- Permissões
+- Perfis
+
+---
+
+## Produtos
+
+Testar:
+
+- Cadastro
+- Alteração
+- Exclusão
+- Pesquisa
+- Código de barras
+- SKU duplicado
+- Estoque mínimo
+
+---
+
+## Estoque
+
+Testar:
+
+- Entrada
+- Saída
+- Ajuste
+- Inventário
+- Estoque negativo
+- Histórico
+
+---
+
+## Compras
+
+Testar:
+
+- Nova compra
+- Alteração
+- Cancelamento
+- Entrada automática no estoque
+
+---
+
+## Vendas
+
+Testar:
+
+- Venda simples
+- Venda múltipla
+- Cancelamento
+- Descontos
+- Pagamentos
+- Impressão
+
+---
+
+## Caixa
+
+Testar:
+
+- Abertura
+- Fechamento
+- Sangria
+- Suprimento
+- Diferença de caixa
+
+---
+
+## Financeiro
+
+Testar:
+
+- Contas a pagar
+- Contas a receber
+- Fluxo de caixa
+- Receitas
+- Despesas
+
+---
+
+## Relatórios
+
+Testar:
+
+- Filtros
+- Exportação PDF
+- Exportação Excel
+- Datas
+- Permissões
+
+---
+
+# Testes Obrigatórios Antes do Merge
+
+Executar:
+
+- ESLint
+- Build
+- Testes Unitários
+- Testes Integração
+- Testes E2E
+
+Nenhum código poderá ser enviado para produção caso algum teste falhe.
+
+---
+
+# Cobertura
+
+Cobertura mínima obrigatória
+
+80%
+
+Objetivo ideal
+
+90%
+
+---
+
+# Casos de Teste
+
+Cada funcionalidade deverá possuir:
+
+- Cenário
+- Pré-condição
+- Passos
+- Resultado esperado
+- Resultado obtido
+- Status
+
+Status possíveis:
+
+- Aprovado
+- Reprovado
+- Bloqueado
+
+---
+
+# Checklist de Qualidade
+
+Antes de aprovar qualquer Sprint verificar:
+
+- Build executa sem erros.
+- Sem erros de TypeScript.
+- Sem erros de ESLint.
+- Componentes reutilizáveis.
+- Código documentado.
+- Responsividade validada.
+- Segurança validada.
+- Performance validada.
+
+---
+
+# Testes de Responsividade
+
+Validar:
+
+Desktop
+
+Notebook
+
+Tablet
+
+Mobile
+
+Verificar:
+
+- Sidebar
+- Tabelas
+- Formulários
+- Modais
+- Dashboard
+
+---
+
+# Testes de Banco de Dados
+
+Validar:
+
+- Integridade
+- Relacionamentos
+- Foreign Keys
+- Índices
+- Constraints
+- Triggers
+- Policies
+- RLS
+
+---
+
+# Testes de Auditoria
+
+Validar registro de:
+
+- Login
+- Logout
+- Cadastro
+- Alteração
+- Exclusão lógica
+- Venda
+- Compra
+- Movimentação de estoque
+- Movimentação financeira
+
+---
+
+# Testes de Segurança
+
+Confirmar:
+
+- Usuário não acessa dados de outra empresa.
+- Usuário sem permissão não acessa telas restritas.
+- APIs exigem autenticação.
+- Dados sensíveis não são expostos.
+- Sessões expiram corretamente.
+- Tokens inválidos são rejeitados.
+
+---
+
+# Critérios de Aprovação
+
+Uma funcionalidade somente será aprovada quando:
+
+- Todos os testes unitários passarem.
+- Todos os testes de integração passarem.
+- Todos os testes E2E passarem.
+- Build concluir sem erros.
+- Não houver erros críticos.
+- A cobertura mínima de testes for atingida.
+- A documentação estiver atualizada.
+
+---
+
+# Critérios para Publicação
+
+Uma nova versão do Adega Cloud somente poderá ser publicada quando:
+
+- Todas as Sprints previstas estiverem concluídas.
+- Todos os testes obrigatórios forem aprovados.
+- Não existirem bugs críticos ou bloqueadores.
+- O desempenho estiver dentro dos limites definidos.
+- A segurança estiver validada.
+- O sistema estiver homologado para produção.

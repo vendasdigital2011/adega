@@ -1,0 +1,380 @@
+# PRD — Módulo Compras
+
+## Projeto
+
+**Nome:** Adega Cloud
+
+**Módulo:** Compras
+
+**Versão:** 1.0
+
+---
+
+# Objetivo
+
+Desenvolver o módulo de Compras responsável pelo gerenciamento do processo de aquisição de mercadorias, desde o pedido ao fornecedor até a entrada dos produtos no estoque e atualização do financeiro.
+
+Todo o processo deverá manter rastreabilidade completa e integração automática com Estoque e Financeiro.
+
+---
+
+# Objetivos
+
+- Registrar compras.
+- Controlar pedidos de compra.
+- Atualizar estoque automaticamente.
+- Gerar contas a pagar.
+- Manter histórico completo.
+- Controlar status das compras.
+
+---
+
+# Funcionalidades
+
+- Nova compra
+- Editar compra
+- Cancelar compra
+- Consultar compra
+- Recebimento de mercadorias
+- Entrada automática no estoque
+- Geração automática de contas a pagar
+- Impressão do pedido
+- Exportação PDF
+- Exportação Excel
+
+---
+
+# Fluxo da Compra
+
+Fornecedor
+
+↓
+
+Novo Pedido
+
+↓
+
+Adicionar Produtos
+
+↓
+
+Salvar Pedido
+
+↓
+
+Receber Mercadorias
+
+↓
+
+Atualizar Estoque
+
+↓
+
+Gerar Contas a Pagar
+
+↓
+
+Finalizar Compra
+
+---
+
+# Status da Compra
+
+- Rascunho
+- Pendente
+- Parcialmente Recebida
+- Recebida
+- Cancelada
+
+O status deverá ser atualizado automaticamente conforme a operação.
+
+---
+
+# Tela Principal
+
+Exibir:
+
+- Número da compra
+- Data
+- Fornecedor
+- Quantidade de itens
+- Valor total
+- Status
+- Forma de pagamento
+- Usuário responsável
+
+---
+
+# Cadastro da Compra
+
+## Dados Gerais
+
+- Número da compra
+- Data
+- Fornecedor *
+- Condição de pagamento
+- Forma de pagamento
+- Observações
+
+---
+
+## Produtos
+
+Cada item deverá possuir:
+
+- Produto
+- Quantidade
+- Valor unitário
+- Desconto
+- Valor total
+
+O sistema calculará automaticamente:
+
+- Subtotal
+- Desconto
+- Frete
+- Impostos (quando utilizados)
+- Valor final
+
+---
+
+# Recebimento
+
+Ao confirmar o recebimento:
+
+- Atualizar estoque automaticamente.
+- Registrar movimentação de estoque.
+- Atualizar custo do produto (conforme configuração).
+- Gerar contas a pagar.
+- Registrar auditoria.
+
+---
+
+# Cancelamento
+
+Somente usuários autorizados poderão cancelar.
+
+Ao cancelar:
+
+- Estornar entrada no estoque.
+- Cancelar contas a pagar vinculadas.
+- Registrar auditoria.
+- Alterar status para Cancelada.
+
+A compra permanecerá registrada para histórico.
+
+---
+
+# Pesquisa
+
+Pesquisar por:
+
+- Número
+- Fornecedor
+- Produto
+- Data
+- Status
+- Usuário
+
+Pesquisa em tempo real.
+
+---
+
+# Filtros
+
+Permitir filtros por:
+
+- Período
+- Fornecedor
+- Status
+- Forma de pagamento
+- Usuário responsável
+
+---
+
+# Ordenação
+
+Ordenar por:
+
+- Data
+- Número
+- Fornecedor
+- Valor
+- Status
+
+---
+
+# Componentes
+
+PurchaseForm
+
+PurchaseTable
+
+PurchaseItems
+
+PurchaseSummary
+
+PurchaseFilters
+
+PurchaseSearch
+
+PurchaseStatusBadge
+
+SupplierSelector
+
+PurchaseDetails
+
+ReceivePurchaseDialog
+
+---
+
+# Serviços
+
+PurchaseService
+
+Responsável por:
+
+- CRUD
+- Recebimento
+- Cancelamento
+- Atualização do estoque
+- Geração de contas a pagar
+- Pesquisa
+- Exportação
+
+---
+
+# Integrações
+
+O módulo deverá integrar-se com:
+
+- Produtos
+- Estoque
+- Fornecedores
+- Financeiro
+- Contas a Pagar
+- Dashboard
+- Relatórios
+- Auditoria
+
+---
+
+# Regras de Negócio
+
+- Toda compra deve possuir um fornecedor.
+- Toda compra deve possuir ao menos um produto.
+- Produtos devem estar ativos.
+- Quantidade deve ser maior que zero.
+- Valor unitário deve ser maior que zero.
+- O estoque somente será atualizado após o recebimento.
+- O financeiro será atualizado automaticamente.
+- Compras canceladas deverão estornar o estoque.
+- Compras canceladas não poderão ser editadas.
+
+---
+
+# Validações
+
+Obrigatórias:
+
+- Fornecedor
+- Produto
+- Quantidade
+- Valor unitário
+
+Validações:
+
+- Produto existente.
+- Fornecedor ativo.
+- Quantidade positiva.
+- Valores monetários positivos.
+
+---
+
+# Auditoria
+
+Registrar:
+
+- Nova compra
+- Alteração
+- Recebimento
+- Cancelamento
+- Alteração de itens
+- Alteração de valores
+
+Registrar:
+
+- Usuário
+- Data
+- Hora
+- IP
+- Valores anteriores
+- Valores atuais
+
+---
+
+# Permissões
+
+Administrador
+
+Acesso total.
+
+Gerente
+
+CRUD completo.
+
+Estoquista
+
+Cadastrar, editar e receber compras.
+
+Financeiro
+
+Visualizar e gerenciar pagamentos.
+
+Vendedor
+
+Somente consulta.
+
+---
+
+# Performance
+
+Objetivos:
+
+- Cadastro em até 2 segundos.
+- Consulta em até 1 segundo.
+- Atualização automática do estoque.
+- Paginação automática.
+- Cache para consultas frequentes.
+
+---
+
+# Responsividade
+
+Desktop
+
+Tabela completa.
+
+Tablet
+
+Tabela adaptada.
+
+Mobile
+
+Cards responsivos.
+
+---
+
+# Critérios de Aceite
+
+O módulo será considerado concluído quando:
+
+- Cadastro de compras funcionar corretamente.
+- Recebimento atualizar o estoque automaticamente.
+- Contas a pagar forem geradas automaticamente.
+- Cancelamento estornar estoque e financeiro.
+- Pesquisa e filtros funcionarem.
+- Histórico permanecer íntegro.
+- Auditoria registrar todas as operações.
+- Layout for responsivo.
+- Código seguir os padrões definidos no projeto.

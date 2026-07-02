@@ -1,0 +1,396 @@
+# PRD — Módulo Caixa
+
+## Projeto
+
+**Nome:** Adega Cloud
+
+**Módulo:** Caixa
+
+**Versão:** 1.0
+
+---
+
+# Objetivo
+
+Desenvolver o módulo Caixa responsável pelo controle diário das operações financeiras realizadas no ponto de venda (PDV), garantindo o registro de abertura, fechamento, sangrias, suprimentos e conferência do saldo.
+
+Todo movimento realizado no caixa deverá possuir rastreabilidade e integração automática com os módulos de Vendas e Financeiro.
+
+---
+
+# Objetivos
+
+- Controlar abertura e fechamento de caixa.
+- Registrar todas as movimentações.
+- Integrar automaticamente com vendas.
+- Facilitar conferência de valores.
+- Garantir rastreabilidade das operações.
+
+---
+
+# Funcionalidades
+
+- Abrir Caixa
+- Fechar Caixa
+- Sangria
+- Suprimento
+- Consulta de caixas
+- Histórico de movimentações
+- Resumo diário
+- Fechamento com conferência
+- Exportação PDF
+- Exportação Excel
+
+---
+
+# Fluxo do Caixa
+
+Abrir Caixa
+
+↓
+
+Registrar Vendas
+
+↓
+
+Registrar Sangrias
+
+↓
+
+Registrar Suprimentos
+
+↓
+
+Conferir Valores
+
+↓
+
+Fechar Caixa
+
+↓
+
+Gerar Resumo Diário
+
+---
+
+# Status do Caixa
+
+- Fechado
+- Aberto
+- Em Conferência
+- Encerrado
+
+---
+
+# Abertura de Caixa
+
+Campos obrigatórios:
+
+- Operador
+- Data
+- Hora
+- Valor inicial
+- Observações
+
+Ao abrir o caixa:
+
+- Registrar horário.
+- Registrar usuário.
+- Definir status como Aberto.
+- Registrar auditoria.
+
+---
+
+# Fechamento de Caixa
+
+Ao fechar o caixa o sistema deverá apresentar:
+
+- Valor inicial
+- Total em dinheiro
+- Total em PIX
+- Total em cartão de débito
+- Total em cartão de crédito
+- Total em boleto
+- Total em outras formas de pagamento
+- Entradas manuais
+- Saídas manuais
+- Sangrias
+- Suprimentos
+- Saldo esperado
+- Saldo informado
+- Diferença
+
+Após confirmação:
+
+- Alterar status para Encerrado.
+- Registrar auditoria.
+- Gerar resumo do caixa.
+
+---
+
+# Sangria
+
+Campos:
+
+- Valor
+- Motivo
+- Observações
+
+Ao confirmar:
+
+- Reduzir saldo disponível.
+- Registrar movimentação.
+- Atualizar fluxo financeiro.
+- Registrar auditoria.
+
+---
+
+# Suprimento
+
+Campos:
+
+- Valor
+- Motivo
+- Observações
+
+Ao confirmar:
+
+- Acrescentar saldo disponível.
+- Registrar movimentação.
+- Atualizar financeiro.
+- Registrar auditoria.
+
+---
+
+# Consulta de Caixas
+
+Exibir:
+
+- Número
+- Operador
+- Data
+- Horário de abertura
+- Horário de fechamento
+- Valor inicial
+- Valor final
+- Diferença
+- Status
+
+---
+
+# Resumo Diário
+
+Apresentar:
+
+- Total de vendas
+- Quantidade de vendas
+- Valor recebido em dinheiro
+- PIX
+- Cartão de débito
+- Cartão de crédito
+- Boleto
+- Outras formas
+- Sangrias
+- Suprimentos
+- Diferença de caixa
+- Saldo final
+
+---
+
+# Pesquisa
+
+Pesquisar por:
+
+- Operador
+- Número do caixa
+- Data
+- Status
+
+---
+
+# Filtros
+
+Permitir filtros por:
+
+- Período
+- Operador
+- Status
+- Caixa aberto
+- Caixa encerrado
+
+---
+
+# Componentes
+
+CashOpeningForm
+
+CashClosingForm
+
+CashMovementForm
+
+CashSummary
+
+CashTable
+
+CashFilters
+
+CashSearch
+
+CashStatusBadge
+
+CashHistory
+
+CashDifferenceCard
+
+---
+
+# Serviços
+
+CashService
+
+Responsável por:
+
+- Abrir caixa
+- Fechar caixa
+- Sangria
+- Suprimento
+- Consulta
+- Resumo diário
+- Exportação
+
+---
+
+# Integrações
+
+O módulo deverá integrar-se com:
+
+- Vendas
+- Financeiro
+- Dashboard
+- Usuários
+- Auditoria
+- Relatórios
+
+---
+
+# Regras de Negócio
+
+- Apenas um caixa poderá permanecer aberto por operador.
+- Não permitir vendas sem caixa aberto.
+- Todo recebimento deverá atualizar o caixa automaticamente.
+- Sangrias e suprimentos exigem justificativa.
+- Fechamento deverá registrar diferenças.
+- Caixas encerrados não poderão ser alterados.
+- Nenhuma movimentação poderá ser excluída.
+
+---
+
+# Validações
+
+Obrigatórias:
+
+- Operador
+- Valor inicial
+- Valor da movimentação
+- Motivo para sangria e suprimento
+
+Validações:
+
+- Valores maiores que zero.
+- Operador autenticado.
+- Caixa aberto para registrar movimentações.
+- Não permitir fechar caixa já encerrado.
+
+---
+
+# Auditoria
+
+Registrar:
+
+- Abertura
+- Fechamento
+- Sangria
+- Suprimento
+- Alterações
+- Diferença de caixa
+
+Registrar:
+
+- Usuário
+- Data
+- Hora
+- IP
+- Valores anteriores
+- Valores atuais
+
+---
+
+# Permissões
+
+Administrador
+
+Acesso total.
+
+Gerente
+
+CRUD completo.
+
+Caixa
+
+Abrir, operar e fechar caixa.
+
+Financeiro
+
+Consulta e conferência.
+
+Vendedor
+
+Sem acesso direto ao módulo.
+
+Estoquista
+
+Sem acesso.
+
+---
+
+# Performance
+
+Objetivos:
+
+- Abertura em até 2 segundos.
+- Fechamento em até 3 segundos.
+- Atualização automática das vendas.
+- Consulta em até 1 segundo.
+- Cache para consultas frequentes.
+
+---
+
+# Responsividade
+
+Desktop
+
+Interface completa.
+
+Tablet
+
+Layout adaptado.
+
+Mobile
+
+Consulta e operações básicas.
+
+---
+
+# Critérios de Aceite
+
+O módulo será considerado concluído quando:
+
+- Abertura de caixa funcionar corretamente.
+- Fechamento calcular automaticamente todos os valores.
+- Sangrias e suprimentos atualizarem o saldo.
+- Integração com vendas funcionar em tempo real.
+- Diferenças de caixa forem identificadas corretamente.
+- Resumo diário apresentar dados consistentes.
+- Auditoria registrar todas as operações.
+- Layout for responsivo.
+- Código seguir os padrões definidos no projeto.

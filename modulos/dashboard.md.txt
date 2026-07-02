@@ -1,0 +1,427 @@
+# PRD — Módulo Dashboard
+
+## Projeto
+
+**Nome:** Adega Cloud
+
+**Módulo:** Dashboard
+
+**Versão:** 1.0
+
+---
+
+# Objetivo
+
+Desenvolver o Dashboard principal do Adega Cloud, fornecendo uma visão geral do negócio em tempo real, com indicadores financeiros, estoque, vendas e alertas operacionais.
+
+O Dashboard será a primeira tela exibida após o login.
+
+---
+
+# Objetivos
+
+- Exibir indicadores em tempo real.
+- Facilitar a tomada de decisão.
+- Mostrar alertas importantes.
+- Centralizar informações do negócio.
+- Permitir acesso rápido aos principais módulos.
+
+---
+
+# Layout
+
+Estrutura
+
+Header
+
+↓
+
+Breadcrumb
+
+↓
+
+Filtros
+
+↓
+
+KPIs
+
+↓
+
+Gráficos
+
+↓
+
+Alertas
+
+↓
+
+Atividades Recentes
+
+↓
+
+Atalhos
+
+---
+
+# Filtros
+
+Permitir filtros por:
+
+- Hoje
+- Ontem
+- Últimos 7 dias
+- Últimos 30 dias
+- Este mês
+- Mês anterior
+- Período personalizado
+
+Todos os indicadores deverão respeitar o filtro selecionado.
+
+---
+
+# KPIs Principais
+
+Exibir em Cards:
+
+## Financeiro
+
+- Faturamento
+- Lucro
+- Receitas
+- Despesas
+- Fluxo de Caixa
+- Ticket Médio
+
+---
+
+## Vendas
+
+- Total de vendas
+- Quantidade de pedidos
+- Produtos vendidos
+- Venda média
+- Cancelamentos
+
+---
+
+## Estoque
+
+- Produtos cadastrados
+- Produtos em estoque
+- Produtos abaixo do estoque mínimo
+- Produtos sem estoque
+- Produtos com maior giro
+
+---
+
+## Clientes
+
+- Clientes cadastrados
+- Novos clientes
+- Clientes ativos
+- Clientes inativos
+
+---
+
+## Fornecedores
+
+- Fornecedores cadastrados
+- Compras do período
+
+---
+
+# Gráficos
+
+## Vendas por Período
+
+Tipo:
+
+Linha
+
+---
+
+## Faturamento Mensal
+
+Tipo:
+
+Barra
+
+---
+
+## Receitas x Despesas
+
+Tipo:
+
+Área
+
+---
+
+## Formas de Pagamento
+
+Tipo:
+
+Pizza
+
+---
+
+## Produtos Mais Vendidos
+
+Tipo:
+
+Barra Horizontal
+
+Limite:
+
+Top 10
+
+---
+
+## Categorias Mais Vendidas
+
+Tipo:
+
+Rosca
+
+---
+
+# Alertas
+
+Exibir automaticamente:
+
+- Produtos com estoque baixo
+- Produtos sem estoque
+- Contas a pagar vencidas
+- Contas a receber vencidas
+- Caixa aberto
+- Compras pendentes
+- Produtos próximos do vencimento (futuro)
+
+Cada alerta deverá possuir prioridade:
+
+- Alta
+- Média
+- Baixa
+
+---
+
+# Atividades Recentes
+
+Mostrar as últimas movimentações:
+
+- Venda realizada
+- Compra registrada
+- Produto cadastrado
+- Cliente cadastrado
+- Pagamento recebido
+- Conta paga
+- Ajuste de estoque
+- Login de usuário
+
+Limite:
+
+Últimos 20 registros
+
+---
+
+# Atalhos
+
+Botões rápidos:
+
+- Nova Venda
+- Nova Compra
+- Novo Produto
+- Novo Cliente
+- Novo Fornecedor
+- Abrir Caixa
+- Fechar Caixa
+- Fluxo de Caixa
+
+---
+
+# Indicadores Financeiros
+
+Calcular automaticamente:
+
+- Receita Total
+- Despesa Total
+- Lucro Bruto
+- Lucro Líquido
+- Margem de Lucro
+- Ticket Médio
+
+---
+
+# Indicadores de Estoque
+
+Calcular:
+
+- Total de produtos
+- Valor total do estoque
+- Produtos abaixo do mínimo
+- Produtos sem movimentação
+- Produtos mais vendidos
+- Produtos menos vendidos
+
+---
+
+# Indicadores de Clientes
+
+Mostrar:
+
+- Clientes cadastrados
+- Clientes ativos
+- Clientes inativos
+- Clientes com maior faturamento
+- Clientes sem compras recentes
+
+---
+
+# Indicadores de Compras
+
+Mostrar:
+
+- Compras do período
+- Valor total das compras
+- Fornecedor com maior volume
+- Produtos mais comprados
+
+---
+
+# Componentes
+
+DashboardCard
+
+DashboardChart
+
+DashboardTable
+
+DashboardAlert
+
+DashboardFilter
+
+KpiCard
+
+RecentActivity
+
+QuickActions
+
+SummaryCard
+
+ChartContainer
+
+---
+
+# Serviços
+
+DashboardService
+
+Responsável por:
+
+- Buscar indicadores
+- Buscar gráficos
+- Buscar alertas
+- Buscar atividades
+- Atualizar informações
+
+---
+
+# Atualização
+
+Atualizar automaticamente:
+
+- A cada 60 segundos
+
+Também permitir atualização manual através de botão.
+
+---
+
+# Performance
+
+O Dashboard deverá:
+
+- Carregar em até 3 segundos
+- Utilizar cache quando possível
+- Carregar gráficos sob demanda
+- Exibir Skeleton Loading durante consultas
+
+---
+
+# Responsividade
+
+Desktop
+
+Exibir todos os indicadores.
+
+Tablet
+
+Reorganizar cards.
+
+Mobile
+
+Empilhar componentes verticalmente.
+
+---
+
+# Permissões
+
+Administrador
+
+Acesso completo.
+
+Gerente
+
+Acesso completo.
+
+Financeiro
+
+Visualiza apenas indicadores financeiros.
+
+Caixa
+
+Visualiza indicadores de vendas e caixa.
+
+Estoquista
+
+Visualiza apenas indicadores de estoque.
+
+Vendedor
+
+Visualiza vendas e clientes.
+
+---
+
+# Auditoria
+
+Registrar:
+
+- Acesso ao Dashboard
+- Alteração de filtros
+- Exportação de informações (quando disponível)
+
+---
+
+# Regras de Negócio
+
+- Todos os dados devem respeitar o company_id.
+- Indicadores devem considerar apenas registros ativos.
+- Valores financeiros devem ser calculados em tempo real.
+- Alertas devem ser atualizados automaticamente.
+- Usuários só poderão visualizar informações compatíveis com suas permissões.
+
+---
+
+# Critérios de Aceite
+
+O módulo será considerado concluído quando:
+
+- Dashboard carregar corretamente após o login.
+- Todos os KPIs apresentarem dados consistentes.
+- Todos os gráficos funcionarem.
+- Alertas forem exibidos corretamente.
+- Atividades recentes forem atualizadas.
+- Filtros alterarem todos os indicadores.
+- Atualização automática funcionar.
+- Layout for responsivo.
+- Tempo de carregamento permanecer abaixo de 3 segundos.
+- Código seguir os padrões definidos no projeto.

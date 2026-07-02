@@ -1,0 +1,745 @@
+# PDR-003 — Banco de Dados
+
+## Projeto
+
+**Nome:** Adega Cloud
+
+**Documento:** PDR-003 — Banco de Dados
+
+**Versão:** 1.0
+
+---
+
+# Objetivo
+
+Definir toda a estrutura do banco de dados do Adega Cloud, garantindo organização, integridade, desempenho e escalabilidade.
+
+O banco deverá ser preparado para crescimento futuro, incluindo suporte a múltiplas empresas (multi-tenant), auditoria e integrações.
+
+---
+
+# Banco de Dados
+
+Tecnologia:
+
+- PostgreSQL (Supabase)
+
+Características obrigatórias:
+
+- UUID como chave primária
+- Foreign Keys
+- Índices
+- Constraints
+- Soft Delete quando necessário
+- Auditoria
+- Row Level Security (RLS)
+
+---
+
+# Convenções
+
+## Nome das tabelas
+
+Sempre no plural.
+
+Exemplo:
+
+products
+
+customers
+
+suppliers
+
+sales
+
+sale_items
+
+purchases
+
+purchase_items
+
+inventory
+
+cash_registers
+
+users
+
+roles
+
+permissions
+
+---
+
+## Colunas
+
+Sempre em snake_case.
+
+Exemplo:
+
+created_at
+
+updated_at
+
+deleted_at
+
+company_id
+
+product_id
+
+customer_id
+
+supplier_id
+
+sale_id
+
+purchase_id
+
+---
+
+# Campos Padrão
+
+Todas as tabelas deverão possuir:
+
+id
+
+created_at
+
+updated_at
+
+created_by
+
+updated_by
+
+deleted_at (quando aplicável)
+
+company_id (preparação para SaaS)
+
+---
+
+# Relacionamentos
+
+Empresa
+
+↓
+
+Usuários
+
+↓
+
+Produtos
+
+↓
+
+Categorias
+
+↓
+
+Compras
+
+↓
+
+Estoque
+
+↓
+
+Vendas
+
+↓
+
+Financeiro
+
+↓
+
+Relatórios
+
+---
+
+# Tabelas
+
+## companies
+
+Responsável pelas empresas cadastradas.
+
+Campos
+
+- id
+- name
+- document
+- email
+- phone
+- address
+- city
+- state
+- zip_code
+- active
+- created_at
+- updated_at
+
+---
+
+## users
+
+Campos
+
+- id
+- company_id
+- role_id
+- name
+- email
+- password (Auth Supabase)
+- phone
+- active
+- last_login
+- created_at
+- updated_at
+
+---
+
+## roles
+
+Campos
+
+- id
+- name
+- description
+
+---
+
+## permissions
+
+Campos
+
+- id
+- name
+- description
+
+---
+
+## role_permissions
+
+Relaciona perfis e permissões.
+
+Campos
+
+- role_id
+- permission_id
+
+---
+
+## categories
+
+Campos
+
+- id
+- company_id
+- name
+- description
+- active
+- created_at
+- updated_at
+
+---
+
+## brands
+
+Campos
+
+- id
+- company_id
+- name
+- active
+
+---
+
+## suppliers
+
+Campos
+
+- id
+- company_id
+- name
+- document
+- email
+- phone
+- address
+- city
+- state
+- notes
+- active
+- created_at
+- updated_at
+
+---
+
+## customers
+
+Campos
+
+- id
+- company_id
+- name
+- document
+- email
+- phone
+- birthday
+- address
+- city
+- state
+- notes
+- active
+- created_at
+- updated_at
+
+---
+
+## products
+
+Campos
+
+- id
+- company_id
+- category_id
+- brand_id
+- supplier_id
+- barcode
+- sku
+- name
+- description
+- unit
+- purchase_price
+- sale_price
+- wholesale_price
+- promotion_price
+- minimum_stock
+- current_stock
+- image_url
+- active
+- created_at
+- updated_at
+
+---
+
+## inventory
+
+Representa o estoque atual.
+
+Campos
+
+- id
+- company_id
+- product_id
+- quantity
+- location
+- updated_at
+
+---
+
+## inventory_movements
+
+Campos
+
+- id
+- company_id
+- product_id
+- movement_type
+- quantity
+- previous_quantity
+- current_quantity
+- reference
+- observation
+- user_id
+- created_at
+
+Tipos
+
+- Entrada
+- Saída
+- Ajuste
+- Inventário
+- Venda
+- Compra
+- Perda
+- Quebra
+
+---
+
+## purchases
+
+Campos
+
+- id
+- company_id
+- supplier_id
+- purchase_date
+- total
+- freight
+- discount
+- status
+- notes
+- created_at
+
+---
+
+## purchase_items
+
+Campos
+
+- id
+- purchase_id
+- product_id
+- quantity
+- unit_price
+- total
+
+---
+
+## sales
+
+Campos
+
+- id
+- company_id
+- customer_id
+- sale_date
+- subtotal
+- discount
+- total
+- payment_method
+- status
+- created_by
+- created_at
+
+---
+
+## sale_items
+
+Campos
+
+- id
+- sale_id
+- product_id
+- quantity
+- unit_price
+- total
+
+---
+
+## cash_registers
+
+Representa cada abertura de caixa.
+
+Campos
+
+- id
+- company_id
+- opened_by
+- opened_at
+- initial_value
+- closed_by
+- closed_at
+- final_value
+- difference
+- status
+
+---
+
+## cash_movements
+
+Campos
+
+- id
+- cash_register_id
+- movement_type
+- value
+- description
+- user_id
+- created_at
+
+Tipos
+
+- Entrada
+- Saída
+- Sangria
+- Suprimento
+
+---
+
+## accounts_receivable
+
+Campos
+
+- id
+- company_id
+- customer_id
+- sale_id
+- description
+- due_date
+- payment_date
+- value
+- received_value
+- status
+
+---
+
+## accounts_payable
+
+Campos
+
+- id
+- company_id
+- supplier_id
+- purchase_id
+- description
+- due_date
+- payment_date
+- value
+- paid_value
+- status
+
+---
+
+## expenses
+
+Campos
+
+- id
+- company_id
+- category
+- description
+- value
+- expense_date
+- created_at
+
+---
+
+## revenues
+
+Campos
+
+- id
+- company_id
+- description
+- value
+- revenue_date
+- created_at
+
+---
+
+## settings
+
+Campos
+
+- id
+- company_id
+- company_name
+- logo
+- theme
+- currency
+- timezone
+- language
+
+---
+
+## audit_logs
+
+Campos
+
+- id
+- company_id
+- user_id
+- table_name
+- record_id
+- action
+- old_data
+- new_data
+- ip
+- created_at
+
+---
+
+## notifications
+
+Campos
+
+- id
+- company_id
+- title
+- message
+- type
+- read
+- created_at
+
+---
+
+# Relacionamentos Principais
+
+companies
+
+↓
+
+users
+
+↓
+
+roles
+
+↓
+
+permissions
+
+companies
+
+↓
+
+products
+
+↓
+
+categories
+
+↓
+
+brands
+
+↓
+
+inventory
+
+↓
+
+inventory_movements
+
+companies
+
+↓
+
+customers
+
+↓
+
+sales
+
+↓
+
+sale_items
+
+↓
+
+accounts_receivable
+
+companies
+
+↓
+
+suppliers
+
+↓
+
+purchases
+
+↓
+
+purchase_items
+
+↓
+
+accounts_payable
+
+companies
+
+↓
+
+cash_registers
+
+↓
+
+cash_movements
+
+---
+
+# Índices Obrigatórios
+
+Criar índices para:
+
+- barcode
+- sku
+- product_id
+- customer_id
+- supplier_id
+- sale_date
+- purchase_date
+- due_date
+- created_at
+- company_id
+
+---
+
+# Integridade
+
+Obrigatório utilizar:
+
+- Foreign Keys
+- Cascade quando apropriado
+- Restrict quando necessário
+- Unique para SKU
+- Unique para Barcode
+- Check Constraints para valores monetários
+- Valores padrão para status
+
+---
+
+# Segurança
+
+Todas as tabelas deverão utilizar:
+
+- Row Level Security (RLS)
+- Policies por empresa
+- Policies por usuário
+- Policies por perfil
+
+Nenhum usuário poderá acessar dados de outra empresa.
+
+---
+
+# Auditoria
+
+Registrar automaticamente:
+
+- Inclusões
+- Alterações
+- Exclusões
+- Login
+- Logout
+- Cancelamentos
+- Alterações financeiras
+- Movimentações de estoque
+
+---
+
+# Escalabilidade
+
+O banco deverá suportar futuramente:
+
+- Multiempresa
+- Multiunidade
+- Múltiplos caixas
+- Múltiplos depósitos
+- API pública
+- Aplicativo móvel
+- Integrações fiscais
+- Inteligência Artificial
+
+Sem necessidade de remodelagem estrutural.
+
+---
+
+# Critérios de Aceite
+
+O banco será considerado aprovado quando:
+
+- Todas as tabelas estiverem modeladas.
+- Relacionamentos definidos.
+- Índices documentados.
+- Constraints especificadas.
+- Estratégia de segurança definida.
+- Estrutura preparada para evolução do sistema.

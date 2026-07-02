@@ -1,0 +1,367 @@
+# PRD — Módulo Clientes
+
+## Projeto
+
+**Nome:** Adega Cloud
+
+**Módulo:** Clientes
+
+**Versão:** 1.0
+
+---
+
+# Objetivo
+
+Desenvolver o módulo de Clientes responsável pelo cadastro, gerenciamento e acompanhamento de todas as informações dos clientes da empresa, permitindo integração com vendas, financeiro e programas de fidelização futuros.
+
+Todo cliente deverá possuir um histórico completo de relacionamento com a empresa.
+
+---
+
+# Objetivos
+
+- Centralizar o cadastro de clientes.
+- Facilitar o atendimento.
+- Manter histórico de compras.
+- Integrar com vendas e financeiro.
+- Permitir futuras ações de marketing e fidelização.
+
+---
+
+# Funcionalidades
+
+- Cadastrar cliente
+- Editar cliente
+- Inativar cliente
+- Consultar cliente
+- Histórico de compras
+- Histórico financeiro
+- Pesquisa rápida
+- Filtros
+- Exportação PDF
+- Exportação Excel
+- Importação CSV
+
+---
+
+# Cadastro do Cliente
+
+## Dados Básicos
+
+- Nome *
+- Nome Fantasia (opcional)
+- CPF/CNPJ
+- Data de nascimento
+- Sexo (opcional)
+
+---
+
+## Contato
+
+- Telefone
+- WhatsApp
+- E-mail
+
+---
+
+## Endereço
+
+- CEP
+- Rua
+- Número
+- Complemento
+- Bairro
+- Cidade
+- Estado
+
+---
+
+## Informações Comerciais
+
+- Limite de crédito
+- Observações
+- Cliente ativo
+
+---
+
+# Tela Principal
+
+Exibir:
+
+- Nome
+- CPF/CNPJ
+- Telefone
+- Cidade
+- Total de compras
+- Última compra
+- Situação
+- Ações
+
+---
+
+# Pesquisa
+
+Pesquisar por:
+
+- Nome
+- CPF
+- CNPJ
+- Telefone
+- WhatsApp
+- E-mail
+
+Pesquisa em tempo real.
+
+---
+
+# Filtros
+
+Permitir filtros por:
+
+- Cidade
+- Estado
+- Cliente ativo
+- Cliente inativo
+- Clientes com compras
+- Clientes sem compras
+- Clientes inadimplentes
+- Clientes aniversariantes
+
+---
+
+# Ordenação
+
+Ordenar por:
+
+- Nome
+- Última compra
+- Valor total comprado
+- Data de cadastro
+
+---
+
+# Histórico do Cliente
+
+Exibir:
+
+- Compras realizadas
+- Produtos adquiridos
+- Total gasto
+- Formas de pagamento
+- Contas em aberto
+- Contas pagas
+- Cancelamentos
+- Observações
+
+---
+
+# Resumo do Cliente
+
+Apresentar:
+
+- Total de compras
+- Ticket médio
+- Última compra
+- Valor total gasto
+- Saldo em aberto
+- Limite disponível
+
+---
+
+# Cadastro Rápido
+
+Permitir cadastro simplificado durante a venda.
+
+Campos mínimos:
+
+- Nome
+- Telefone
+
+Os demais dados poderão ser preenchidos posteriormente.
+
+---
+
+# Componentes
+
+CustomerForm
+
+CustomerTable
+
+CustomerCard
+
+CustomerDetails
+
+CustomerHistory
+
+CustomerSummary
+
+CustomerFilters
+
+CustomerSearch
+
+CustomerStatusBadge
+
+CustomerCreditCard
+
+---
+
+# Serviços
+
+CustomerService
+
+Responsável por:
+
+- CRUD
+- Pesquisa
+- Histórico
+- Consulta
+- Exportação
+- Importação
+
+---
+
+# Integrações
+
+O módulo deverá integrar-se com:
+
+- Vendas
+- Financeiro
+- Contas a Receber
+- Dashboard
+- Relatórios
+- Auditoria
+
+---
+
+# Regras de Negócio
+
+- Todo cliente pertence a uma empresa.
+- Nome é obrigatório.
+- CPF/CNPJ será único quando informado.
+- Cliente inativo não poderá realizar novas compras.
+- Clientes com histórico não poderão ser excluídos.
+- Utilizar exclusão lógica (Ativo/Inativo).
+- Cadastro rápido deverá ser permitido durante a venda.
+
+---
+
+# Validações
+
+Obrigatórias:
+
+- Nome
+
+Validações:
+
+- CPF válido.
+- CNPJ válido.
+- E-mail válido.
+- Telefone válido.
+- Limite de crédito maior ou igual a zero.
+
+---
+
+# Auditoria
+
+Registrar:
+
+- Cadastro
+- Alteração
+- Inativação
+- Reativação
+- Alteração de limite de crédito
+
+Registrar:
+
+- Usuário
+- Data
+- Hora
+- IP
+- Valores anteriores
+- Valores atuais
+
+---
+
+# Permissões
+
+Administrador
+
+Acesso total.
+
+Gerente
+
+CRUD completo.
+
+Vendedor
+
+Cadastrar, editar e consultar.
+
+Financeiro
+
+Consultar e alterar limite de crédito.
+
+Caixa
+
+Consultar e cadastrar durante a venda.
+
+Estoquista
+
+Somente consulta.
+
+---
+
+# Performance
+
+Objetivos:
+
+- Pesquisa em até 1 segundo.
+- Cadastro em até 2 segundos.
+- Histórico carregado em até 2 segundos.
+- Paginação automática.
+- Cache para consultas frequentes.
+
+---
+
+# Responsividade
+
+Desktop
+
+Tabela completa.
+
+Tablet
+
+Tabela adaptada.
+
+Mobile
+
+Cards responsivos.
+
+---
+
+# Funcionalidades Futuras
+
+- Programa de fidelidade
+- Cashback
+- Pontuação por compras
+- Lista de favoritos
+- Preferências de consumo
+- Integração com WhatsApp
+- Integração com campanhas de marketing
+- Cadastro de múltiplos endereços
+- Histórico de atendimento
+
+---
+
+# Critérios de Aceite
+
+O módulo será considerado concluído quando:
+
+- Cadastro de clientes funcionar corretamente.
+- Edição e inativação estiverem disponíveis.
+- Pesquisa e filtros funcionarem.
+- Histórico de compras e financeiro forem exibidos.
+- Cadastro rápido durante a venda estiver operacional.
+- Integração com vendas e financeiro funcionar corretamente.
+- Auditoria registrar todas as alterações.
+- Layout for responsivo.
+- Código seguir os padrões definidos no projeto.

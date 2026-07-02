@@ -1,0 +1,397 @@
+# PRD — Módulo Estoque
+
+## Projeto
+
+**Nome:** Adega Cloud
+
+**Módulo:** Estoque
+
+**Versão:** 1.0
+
+---
+
+# Objetivo
+
+Desenvolver o módulo de Estoque responsável pelo controle de entrada, saída, movimentações, inventários e saldo dos produtos.
+
+Todo o estoque do sistema será atualizado automaticamente pelas operações de compras, vendas e ajustes manuais.
+
+---
+
+# Objetivos
+
+- Controlar saldo dos produtos.
+- Registrar todas as movimentações.
+- Evitar divergências de estoque.
+- Permitir inventários.
+- Gerar alertas automáticos.
+- Manter histórico completo.
+
+---
+
+# Funcionalidades
+
+- Consulta de estoque
+- Entrada manual
+- Saída manual
+- Ajuste de estoque
+- Inventário
+- Transferência (futuro)
+- Histórico de movimentações
+- Alertas de estoque mínimo
+- Exportação de relatórios
+
+---
+
+# Tela Principal
+
+Exibir:
+
+- Produto
+- SKU
+- Código de barras
+- Categoria
+- Estoque atual
+- Estoque mínimo
+- Estoque máximo
+- Localização
+- Status
+- Última movimentação
+
+---
+
+# Pesquisa
+
+Pesquisar por:
+
+- Nome
+- SKU
+- Código de barras
+- Categoria
+- Marca
+- Fornecedor
+
+Pesquisa em tempo real.
+
+---
+
+# Filtros
+
+Permitir filtros por:
+
+- Categoria
+- Marca
+- Fornecedor
+- Estoque baixo
+- Sem estoque
+- Com estoque
+- Produto ativo
+- Produto inativo
+
+---
+
+# Movimentações
+
+Tipos permitidos:
+
+- Entrada
+- Saída
+- Compra
+- Venda
+- Ajuste
+- Inventário
+- Perda
+- Quebra
+- Devolução de cliente
+- Devolução ao fornecedor
+
+Cada movimentação deverá gerar um registro permanente.
+
+---
+
+# Entrada Manual
+
+Campos:
+
+- Produto
+- Quantidade
+- Data
+- Motivo
+- Observação
+
+Após confirmação:
+
+- Atualizar estoque.
+- Registrar auditoria.
+- Registrar movimentação.
+
+---
+
+# Saída Manual
+
+Campos:
+
+- Produto
+- Quantidade
+- Motivo
+- Observação
+
+Após confirmação:
+
+- Atualizar estoque.
+- Registrar movimentação.
+- Registrar auditoria.
+
+---
+
+# Ajuste de Estoque
+
+Utilizado para:
+
+- Correções
+- Diferenças encontradas
+- Erros operacionais
+
+Obrigatório informar:
+
+- Motivo
+- Quantidade
+- Observação
+
+---
+
+# Inventário
+
+Permitir:
+
+- Contagem física
+- Comparação automática
+- Diferenças
+- Ajuste automático após confirmação
+
+Exibir:
+
+- Estoque do sistema
+- Estoque contado
+- Diferença
+
+---
+
+# Histórico
+
+Registrar:
+
+- Data
+- Hora
+- Produto
+- Tipo
+- Quantidade
+- Saldo anterior
+- Saldo atual
+- Usuário
+- Origem da operação
+
+Nenhum histórico poderá ser apagado.
+
+---
+
+# Alertas
+
+Gerar automaticamente:
+
+- Estoque abaixo do mínimo
+- Produto sem estoque
+- Produto parado (sem movimentação)
+- Divergência de inventário
+
+---
+
+# Estoque Negativo
+
+Padrão:
+
+Não permitir.
+
+Caso habilitado nas configurações:
+
+Permitir apenas para usuários autorizados.
+
+Toda operação deverá ser registrada em auditoria.
+
+---
+
+# Integrações
+
+O módulo deverá integrar-se com:
+
+- Produtos
+- Compras
+- Vendas
+- Caixa
+- Financeiro
+- Relatórios
+- Dashboard
+
+---
+
+# Componentes
+
+InventoryTable
+
+InventoryCard
+
+InventoryFilters
+
+InventoryMovementForm
+
+InventoryHistory
+
+InventoryAdjustment
+
+InventoryAlert
+
+InventorySummary
+
+InventorySearch
+
+InventoryStatusBadge
+
+---
+
+# Serviços
+
+InventoryService
+
+Responsável por:
+
+- Consultar estoque
+- Registrar movimentações
+- Atualizar saldo
+- Inventário
+- Ajustes
+- Alertas
+
+---
+
+# Regras de Negócio
+
+- Toda movimentação deve atualizar o estoque.
+- Nenhuma movimentação poderá ser excluída.
+- Compras aumentam o estoque automaticamente.
+- Vendas reduzem o estoque automaticamente.
+- Cancelamento de venda devolve o estoque.
+- Cancelamento de compra remove a entrada correspondente.
+- Produtos inativos não poderão receber novas movimentações.
+- Todo ajuste exige justificativa.
+- Inventários geram histórico permanente.
+
+---
+
+# Validações
+
+Obrigatórias:
+
+- Produto
+- Tipo de movimentação
+- Quantidade
+- Usuário
+
+Validações:
+
+- Quantidade maior que zero.
+- Produto existente.
+- Estoque suficiente para saída (quando estoque negativo estiver desabilitado).
+- Motivo obrigatório para ajustes.
+
+---
+
+# Auditoria
+
+Registrar:
+
+- Entrada
+- Saída
+- Ajuste
+- Inventário
+- Perda
+- Quebra
+- Cancelamentos
+- Alterações
+
+Registrar:
+
+- Usuário
+- Data
+- Hora
+- Quantidade anterior
+- Quantidade atual
+- Motivo
+
+---
+
+# Permissões
+
+Administrador
+
+Acesso total.
+
+Gerente
+
+CRUD completo.
+
+Estoquista
+
+Movimentações e inventário.
+
+Vendedor
+
+Somente consulta.
+
+Financeiro
+
+Somente consulta.
+
+---
+
+# Performance
+
+Objetivos:
+
+- Consulta em até 1 segundo.
+- Atualização imediata do saldo.
+- Paginação automática.
+- Cache para consultas frequentes.
+- Histórico otimizado para grandes volumes.
+
+---
+
+# Responsividade
+
+Desktop
+
+Tabela completa.
+
+Tablet
+
+Tabela adaptada.
+
+Mobile
+
+Cards responsivos.
+
+---
+
+# Critérios de Aceite
+
+O módulo será considerado concluído quando:
+
+- Consulta de estoque funcionar corretamente.
+- Entradas e saídas atualizarem o saldo automaticamente.
+- Ajustes forem registrados com justificativa.
+- Inventário comparar estoque físico e sistema.
+- Histórico registrar todas as movimentações.
+- Alertas de estoque funcionarem.
+- Integração com compras e vendas estiver operacional.
+- Auditoria registrar todas as operações.
+- Layout for responsivo.
+- Código seguir os padrões definidos no projeto.

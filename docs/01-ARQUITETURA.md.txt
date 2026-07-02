@@ -1,0 +1,609 @@
+# PDR-002 — Arquitetura do Sistema
+
+## Projeto
+
+**Nome:** Adega Cloud
+
+**Documento:** PDR-002 — Arquitetura do Sistema
+
+**Versão:** 1.0
+
+---
+
+# Objetivo
+
+Definir a arquitetura completa do sistema Adega Cloud para garantir organização, escalabilidade, manutenção e facilidade de evolução do projeto.
+
+A arquitetura deve permitir que novos módulos sejam adicionados sem alterar a estrutura principal do sistema.
+
+---
+
+# Arquitetura Geral
+
+O sistema será desenvolvido seguindo uma arquitetura modular.
+
+Cada módulo será independente, compartilhando apenas componentes, serviços e recursos comuns.
+
+Fluxo da aplicação:
+
+Frontend (Next.js)
+
+↓
+
+App Router
+
+↓
+
+Layouts
+
+↓
+
+Pages
+
+↓
+
+Components
+
+↓
+
+Hooks
+
+↓
+
+Services
+
+↓
+
+Supabase
+
+↓
+
+PostgreSQL
+
+---
+
+# Stack Tecnológica
+
+## Frontend
+
+- Next.js 15
+- React 19
+- TypeScript
+- Tailwind CSS
+- Shadcn UI
+- React Hook Form
+- Zod
+- TanStack Query
+- Lucide Icons
+
+## Backend
+
+- Supabase
+- PostgreSQL
+- Supabase Auth
+- Supabase Storage
+- Edge Functions (quando necessário)
+
+## Deploy
+
+- Vercel
+- GitHub
+
+---
+
+# Estrutura de Pastas
+
+src/
+
+app/
+
+components/
+
+features/
+
+hooks/
+
+services/
+
+lib/
+
+types/
+
+utils/
+
+contexts/
+
+providers/
+
+styles/
+
+---
+
+# Organização dos Módulos
+
+Cada módulo ficará dentro da pasta **features**.
+
+Exemplo:
+
+features/
+
+auth/
+
+dashboard/
+
+products/
+
+categories/
+
+inventory/
+
+purchases/
+
+sales/
+
+financial/
+
+cash/
+
+customers/
+
+suppliers/
+
+reports/
+
+settings/
+
+users/
+
+---
+
+# Estrutura Interna dos Módulos
+
+Cada módulo seguirá exatamente a mesma estrutura.
+
+Exemplo:
+
+features/products/
+
+components/
+
+hooks/
+
+services/
+
+schemas/
+
+types/
+
+pages/
+
+---
+
+# Componentes Compartilhados
+
+Todos os componentes reutilizáveis ficarão em:
+
+components/ui/
+
+Exemplo:
+
+Button
+
+Input
+
+Textarea
+
+Select
+
+Checkbox
+
+Radio
+
+Switch
+
+DatePicker
+
+Table
+
+Card
+
+Badge
+
+Avatar
+
+Dialog
+
+Drawer
+
+Modal
+
+Popover
+
+Tabs
+
+Toast
+
+Tooltip
+
+Loading
+
+EmptyState
+
+ConfirmDialog
+
+---
+
+# Layout Principal
+
+Sidebar
+
+↓
+
+Navbar
+
+↓
+
+Breadcrumb
+
+↓
+
+Conteúdo
+
+↓
+
+Footer
+
+---
+
+# Sidebar
+
+Menus principais
+
+Dashboard
+
+Produtos
+
+Categorias
+
+Estoque
+
+Compras
+
+Vendas
+
+Clientes
+
+Fornecedores
+
+Financeiro
+
+Caixa
+
+Relatórios
+
+Usuários
+
+Configurações
+
+---
+
+# Fluxo de Dados
+
+Usuário
+
+↓
+
+Tela
+
+↓
+
+Formulário
+
+↓
+
+Validação (Zod)
+
+↓
+
+Service
+
+↓
+
+Supabase
+
+↓
+
+Banco
+
+↓
+
+Resposta
+
+↓
+
+Atualização da Interface
+
+---
+
+# Organização dos Services
+
+Cada módulo possuirá seu próprio Service.
+
+Exemplo:
+
+ProductService
+
+CustomerService
+
+SupplierService
+
+InventoryService
+
+PurchaseService
+
+SalesService
+
+FinancialService
+
+CashService
+
+ReportService
+
+UserService
+
+Nenhum componente React poderá acessar o banco diretamente.
+
+Toda comunicação deverá passar pelo Service correspondente.
+
+---
+
+# Banco de Dados
+
+Cada módulo possuirá suas tabelas específicas.
+
+Exemplo:
+
+Produtos
+
+products
+
+stock
+
+stock_movements
+
+Categorias
+
+categories
+
+Vendas
+
+sales
+
+sale_items
+
+Compras
+
+purchases
+
+purchase_items
+
+Clientes
+
+customers
+
+Fornecedores
+
+suppliers
+
+Financeiro
+
+accounts_payable
+
+accounts_receivable
+
+cash_movements
+
+expenses
+
+revenues
+
+---
+
+# Convenções
+
+Toda a estrutura do código será escrita em inglês.
+
+Exemplos:
+
+products
+
+customers
+
+suppliers
+
+sales
+
+purchases
+
+inventory
+
+settings
+
+reports
+
+users
+
+roles
+
+permissions
+
+As informações apresentadas ao usuário permanecerão em português.
+
+---
+
+# Padrão dos Componentes
+
+Todos os componentes devem:
+
+- Ser reutilizáveis
+- Utilizar TypeScript
+- Possuir apenas uma responsabilidade
+- Não acessar diretamente o banco
+- Receber apenas propriedades necessárias
+- Ser desacoplados
+
+---
+
+# Gerenciamento de Estado
+
+Utilizar:
+
+TanStack Query
+
+- Dados remotos
+- Cache
+- Requisições
+
+React Context
+
+- Autenticação
+- Tema
+- Permissões
+
+Evitar estados globais desnecessários.
+
+---
+
+# Validação
+
+Todos os formulários utilizarão:
+
+React Hook Form
+
++
+
+Zod
+
+A validação ocorrerá tanto no frontend quanto no backend.
+
+---
+
+# Segurança
+
+O sistema deverá possuir:
+
+- Login obrigatório
+- Controle de permissões
+- Row Level Security (RLS)
+- Tokens seguros
+- Auditoria
+- Proteção de rotas
+- Validação de entrada
+- Sanitização dos dados
+
+---
+
+# Responsividade
+
+O sistema deverá funcionar corretamente em:
+
+Desktop
+
+Notebook
+
+Tablet
+
+Smartphone
+
+O foco principal será Desktop.
+
+---
+
+# Logs
+
+Todas as operações importantes deverão gerar registros.
+
+Exemplos:
+
+Login
+
+Logout
+
+Cadastro
+
+Edição
+
+Exclusão
+
+Movimentação financeira
+
+Movimentação de estoque
+
+Cancelamento de venda
+
+Alteração de permissões
+
+---
+
+# Padrões de Código
+
+Utilizar:
+
+- TypeScript Strict
+- ESLint
+- Prettier
+- Clean Code
+- SOLID
+- Componentização
+- Funções pequenas
+- Código reutilizável
+- Tipagem forte
+
+---
+
+# Performance
+
+Priorizar:
+
+- Lazy Loading
+- Code Splitting
+- Server Components quando possível
+- Cache inteligente
+- Paginação
+- Consultas otimizadas
+- Índices no banco
+
+---
+
+# Escalabilidade
+
+A arquitetura deverá permitir futuramente:
+
+- Multiempresa
+- Multiunidade
+- Aplicativo Mobile
+- API Pública
+- Integração com ERPs
+- Integração com gateways de pagamento
+- Integração com emissão fiscal
+- Inteligência Artificial
+- Automações
+- Dashboards avançados
+
+Sem necessidade de reestruturar a aplicação.
+
+---
+
+# Critérios de Aceite
+
+A arquitetura será considerada concluída quando:
+
+- Estrutura de pastas definida.
+- Organização modular implementada.
+- Convenções documentadas.
+- Fluxo de dados definido.
+- Padrão de componentes definido.
+- Padrão de Services definido.
+- Estratégia de segurança documentada.
+- Estratégia de escalabilidade documentada.
+- Base preparada para desenvolvimento dos próximos módulos.

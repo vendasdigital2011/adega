@@ -1,0 +1,480 @@
+# SPRINT-01 — Fundação do Projeto
+
+## Projeto
+
+**Nome:** Adega Cloud
+
+**Sprint:** 01
+
+**Nome da Sprint:** Fundação do Projeto
+
+**Versão:** 1.0
+
+**Duração Estimada:** 1 Sprint
+
+---
+
+# Objetivo
+
+Construir toda a base estrutural do Adega Cloud para que os próximos módulos possam ser desenvolvidos sobre uma arquitetura sólida, organizada, escalável e padronizada.
+
+Ao final desta Sprint o sistema deverá possuir toda a infraestrutura necessária para iniciar o desenvolvimento dos módulos de negócio.
+
+---
+
+# Objetivos da Sprint
+
+- Criar o projeto.
+- Configurar ambiente.
+- Configurar banco.
+- Criar estrutura de pastas.
+- Criar layout administrativo.
+- Criar Design System.
+- Preparar autenticação.
+- Configurar infraestrutura.
+
+---
+
+# Stack Tecnológica
+
+Frontend
+
+- Next.js 15
+- React 19
+- TypeScript
+- Tailwind CSS
+- Shadcn UI
+- React Hook Form
+- Zod
+- TanStack Query
+
+Backend
+
+- Supabase
+- PostgreSQL
+
+Deploy
+
+- Vercel
+
+---
+
+# Estrutura Inicial
+
+Criar a seguinte estrutura:
+
+```text
+src/
+
+app/
+
+components/
+
+features/
+
+hooks/
+
+services/
+
+lib/
+
+types/
+
+utils/
+
+contexts/
+
+providers/
+
+styles/
+```
+
+---
+
+# Configuração do Projeto
+
+Configurar:
+
+- Next.js
+- TypeScript
+- ESLint
+- Prettier
+- Tailwind CSS
+- Shadcn UI
+- Path Alias (@/)
+- Variáveis de ambiente
+
+---
+
+# Dependências
+
+Instalar:
+
+- Supabase
+- React Hook Form
+- Zod
+- TanStack Query
+- Lucide React
+- React Hot Toast
+- Date-fns
+- Recharts
+- React Day Picker
+- Sonner
+
+---
+
+# Layout Base
+
+Criar:
+
+- Sidebar
+- Header
+- Breadcrumb
+- Área de Conteúdo
+- Footer
+
+---
+
+# Sidebar
+
+Menus:
+
+Dashboard
+
+Produtos
+
+Categorias
+
+Estoque
+
+Compras
+
+Vendas
+
+Clientes
+
+Fornecedores
+
+Financeiro
+
+Caixa
+
+Relatórios
+
+Configurações
+
+---
+
+# Header
+
+Criar:
+
+- Logo
+- Breadcrumb
+- Pesquisa
+- Notificações
+- Alternador de Tema
+- Perfil do Usuário
+
+---
+
+# Tema
+
+Implementar:
+
+- Tema Claro
+- Tema Escuro
+- Persistência da preferência
+
+---
+
+# Providers
+
+Criar:
+
+ThemeProvider
+
+QueryProvider
+
+SupabaseProvider
+
+AuthProvider
+
+SettingsProvider
+
+---
+
+# Configuração do Supabase
+
+Configurar:
+
+- Cliente
+- Autenticação
+- Variáveis de ambiente
+- Estrutura inicial
+
+---
+
+# Estrutura de Features
+
+Criar:
+
+auth
+
+dashboard
+
+products
+
+inventory
+
+purchases
+
+sales
+
+customers
+
+suppliers
+
+financial
+
+cash
+
+reports
+
+settings
+
+---
+
+# Componentes Base
+
+Criar:
+
+Button
+
+Input
+
+Textarea
+
+Select
+
+Table
+
+Card
+
+Modal
+
+Drawer
+
+Badge
+
+Avatar
+
+Loading
+
+Skeleton
+
+EmptyState
+
+ConfirmDialog
+
+Pagination
+
+SearchInput
+
+FilterPanel
+
+---
+
+# Hooks
+
+Criar:
+
+useAuth
+
+useTheme
+
+usePagination
+
+useDebounce
+
+useFilters
+
+---
+
+# Services
+
+Criar:
+
+ApiService
+
+AuthService
+
+BaseService
+
+---
+
+# Types
+
+Criar:
+
+User
+
+Company
+
+Permission
+
+ApiResponse
+
+Pagination
+
+---
+
+# Utils
+
+Criar:
+
+formatCurrency()
+
+formatDate()
+
+formatPhone()
+
+formatDocument()
+
+calculateMargin()
+
+---
+
+# Middleware
+
+Preparar:
+
+- Proteção de rotas
+- Redirecionamento
+- Sessão
+
+(A implementação completa será realizada na Sprint 02.)
+
+---
+
+# Responsividade
+
+Garantir funcionamento em:
+
+- Desktop
+- Tablet
+- Mobile
+
+---
+
+# Performance
+
+Implementar:
+
+- Lazy Loading
+- Dynamic Imports
+- Code Splitting
+- Otimização de imagens
+
+---
+
+# Qualidade
+
+Configurar:
+
+- ESLint
+- Prettier
+- Strict TypeScript
+
+---
+
+# Git
+
+Criar branches:
+
+main
+
+develop
+
+feature/*
+
+hotfix/*
+
+release/*
+
+---
+
+# Variáveis de Ambiente
+
+Preparar:
+
+NEXT_PUBLIC_SUPABASE_URL
+
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+SUPABASE_SERVICE_ROLE_KEY
+
+APP_NAME
+
+APP_URL
+
+---
+
+# Testes
+
+Validar:
+
+- Projeto inicia corretamente.
+- Build sem erros.
+- Lint sem erros.
+- Estrutura criada.
+- Navegação funcionando.
+- Tema funcionando.
+- Layout responsivo.
+
+---
+
+# Entregáveis
+
+Ao final da Sprint deverão existir:
+
+- Projeto configurado.
+- Estrutura de pastas criada.
+- Layout administrativo.
+- Sidebar.
+- Header.
+- Footer.
+- Providers.
+- Configuração do Supabase.
+- Componentes base.
+- Hooks base.
+- Services base.
+- Tema claro/escuro.
+- Navegação funcional.
+
+---
+
+# Critérios de Aceite
+
+A Sprint será considerada concluída quando:
+
+- O projeto iniciar sem erros.
+- O build for concluído com sucesso.
+- O lint não apresentar erros.
+- Toda a estrutura de pastas estiver criada.
+- O layout administrativo estiver funcional.
+- A navegação entre páginas estiver operacional.
+- O tema claro/escuro funcionar corretamente.
+- O Supabase estiver configurado.
+- Todos os componentes base estiverem disponíveis.
+- A arquitetura seguir os documentos do projeto.
+
+---
+
+# Próxima Sprint
+
+**Sprint-02 — Autenticação**
+
+Objetivo:
+
+Implementar login, logout, recuperação de senha, middleware de autenticação, proteção de rotas e controle inicial de permissões.

@@ -1,0 +1,419 @@
+# PRD — Módulo Produtos
+
+## Projeto
+
+**Nome:** Adega Cloud
+
+**Módulo:** Produtos
+
+**Versão:** 1.0
+
+---
+
+# Objetivo
+
+Desenvolver o módulo de Produtos responsável pelo cadastro, organização e gerenciamento de todos os itens comercializados pela empresa.
+
+Este módulo será a base para Estoque, Compras, Vendas e Relatórios.
+
+---
+
+# Objetivos
+
+- Centralizar o cadastro de produtos.
+- Controlar preços e custos.
+- Organizar produtos por categorias e marcas.
+- Permitir pesquisa rápida.
+- Facilitar integração com estoque e vendas.
+
+---
+
+# Funcionalidades
+
+- Cadastrar produto
+- Editar produto
+- Visualizar produto
+- Inativar produto
+- Duplicar produto
+- Pesquisar produto
+- Filtrar produtos
+- Importar produtos (CSV)
+- Exportar produtos (Excel/PDF)
+- Upload de imagens
+- Impressão de etiquetas (futuro)
+
+---
+
+# Campos do Cadastro
+
+## Identificação
+
+- Código interno (SKU) *
+- Código de barras (EAN/UPC)
+- Nome *
+- Nome curto
+- Descrição
+
+---
+
+## Classificação
+
+- Categoria *
+- Marca
+- Fornecedor principal
+- Unidade de medida
+- Tipo de produto
+
+Exemplos:
+
+- Bebida
+- Gelo
+- Carvão
+- Petisco
+- Acessório
+- Outro
+
+---
+
+## Precificação
+
+- Preço de custo *
+- Preço de venda *
+- Preço promocional
+- Preço atacado
+- Margem de lucro (%)
+
+A margem poderá ser calculada automaticamente.
+
+---
+
+## Controle de Estoque
+
+- Estoque atual
+- Estoque mínimo
+- Estoque máximo
+- Localização
+- Permitir estoque negativo (Sim/Não)
+
+---
+
+## Informações Adicionais
+
+- Imagem principal
+- Galeria de imagens (futuro)
+- Observações
+- Produto ativo
+
+---
+
+# Tela de Listagem
+
+Exibir:
+
+- Foto
+- SKU
+- Código de barras
+- Nome
+- Categoria
+- Marca
+- Estoque
+- Estoque mínimo
+- Preço de venda
+- Status
+- Ações
+
+---
+
+# Pesquisa
+
+Pesquisar por:
+
+- Nome
+- SKU
+- Código de barras
+- Categoria
+- Marca
+- Fornecedor
+
+Pesquisa em tempo real.
+
+---
+
+# Filtros
+
+Permitir filtros por:
+
+- Categoria
+- Marca
+- Fornecedor
+- Produto ativo/inativo
+- Estoque baixo
+- Sem estoque
+- Faixa de preço
+- Tipo de produto
+
+---
+
+# Ordenação
+
+Ordenar por:
+
+- Nome
+- Data de cadastro
+- Estoque
+- Preço
+- Categoria
+- Marca
+
+---
+
+# Paginação
+
+Configurações:
+
+- 10 registros
+- 25 registros
+- 50 registros
+- 100 registros
+
+---
+
+# Upload de Imagem
+
+Permitir:
+
+- JPG
+- PNG
+- WEBP
+
+Tamanho máximo:
+
+5 MB
+
+As imagens serão armazenadas no Supabase Storage.
+
+---
+
+# Código de Barras
+
+Permitir:
+
+- Leitura por scanner
+- Digitação manual
+
+Não permitir códigos duplicados.
+
+---
+
+# SKU
+
+O SKU deverá ser único dentro da empresa.
+
+Não permitir duplicidade.
+
+---
+
+# Produtos Ativos
+
+Somente produtos ativos poderão:
+
+- Ser vendidos
+- Entrar em compras
+- Aparecer em pesquisas padrão
+
+Produtos inativos permanecerão no histórico.
+
+---
+
+# Exclusão
+
+Produtos nunca serão excluídos fisicamente.
+
+Utilizar:
+
+Ativo
+
+↓
+
+Inativo
+
+Caso possuam movimentações.
+
+---
+
+# Integrações
+
+O módulo deverá integrar-se com:
+
+- Categorias
+- Marcas
+- Fornecedores
+- Estoque
+- Compras
+- Vendas
+- Financeiro
+- Relatórios
+
+---
+
+# Componentes
+
+ProductForm
+
+ProductTable
+
+ProductCard
+
+ProductImage
+
+ProductFilters
+
+ProductSearch
+
+ProductDetails
+
+ProductStatusBadge
+
+ProductPriceCard
+
+BarcodeInput
+
+---
+
+# Serviços
+
+ProductService
+
+Responsável por:
+
+- CRUD
+- Pesquisa
+- Filtros
+- Upload
+- Busca por código de barras
+- Exportação
+- Importação
+
+---
+
+# Validações
+
+Obrigatórias
+
+- Nome
+- SKU
+- Categoria
+- Preço de venda
+- Preço de custo
+
+Validações
+
+- SKU único
+- Código de barras único
+- Valores monetários positivos
+- Estoque mínimo ≥ 0
+- Estoque máximo ≥ estoque mínimo
+
+---
+
+# Regras de Negócio
+
+- Todo produto pertence a uma empresa.
+- Todo produto deve possuir categoria.
+- Todo produto deve possuir preço de venda.
+- Produto inativo não poderá ser vendido.
+- Alterações de preço devem ser registradas em auditoria.
+- Alterações de custo devem ser registradas em auditoria.
+- Não permitir duplicidade de SKU.
+- Não permitir duplicidade de código de barras.
+- Produtos com movimentação não poderão ser excluídos.
+
+---
+
+# Auditoria
+
+Registrar:
+
+- Cadastro
+- Alteração
+- Alteração de preço
+- Alteração de custo
+- Alteração de estoque mínimo
+- Inativação
+- Reativação
+
+Registrar:
+
+- Usuário
+- Data
+- Hora
+- Valores anteriores
+- Valores atuais
+
+---
+
+# Permissões
+
+Administrador
+
+Acesso total.
+
+Gerente
+
+CRUD completo.
+
+Estoquista
+
+Cadastrar e editar.
+
+Vendedor
+
+Somente visualizar.
+
+Financeiro
+
+Somente visualizar.
+
+---
+
+# Performance
+
+Objetivos:
+
+- Pesquisa em até 1 segundo.
+- Cadastro em até 2 segundos.
+- Upload otimizado.
+- Paginação automática.
+- Cache para consultas frequentes.
+
+---
+
+# Responsividade
+
+Desktop
+
+Tabela completa.
+
+Tablet
+
+Tabela adaptada.
+
+Mobile
+
+Cards responsivos.
+
+---
+
+# Critérios de Aceite
+
+O módulo será considerado concluído quando:
+
+- Cadastro de produtos funcionar corretamente.
+- Edição e inativação estiverem disponíveis.
+- Pesquisa e filtros forem rápidos e precisos.
+- Upload de imagem funcionar.
+- Código de barras e SKU forem validados.
+- Integração com estoque estiver preparada.
+- Auditoria registrar todas as alterações.
+- Layout for responsivo.
+- Código seguir os padrões definidos no projeto.

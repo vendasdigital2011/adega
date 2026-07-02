@@ -1,0 +1,426 @@
+# PRD — Módulo de Autenticação
+
+## Projeto
+
+**Nome:** Adega Cloud
+
+**Módulo:** Autenticação (AUTH)
+
+**Versão:** 1.0
+
+---
+
+# Objetivo
+
+Desenvolver um sistema de autenticação seguro, escalável e integrado ao Supabase Auth, garantindo controle de acesso, proteção de rotas e gerenciamento de sessões.
+
+Todo acesso ao sistema dependerá da autenticação do usuário.
+
+---
+
+# Tecnologias
+
+- Supabase Auth
+- Next.js 15
+- TypeScript
+- React Hook Form
+- Zod
+- Middleware do Next.js
+- Server Components quando aplicável
+
+---
+
+# Funcionalidades
+
+## Login
+
+Permitir login utilizando:
+
+- E-mail
+- Senha
+
+Após autenticação:
+
+- Criar sessão
+- Redirecionar para Dashboard
+- Registrar Login na Auditoria
+
+---
+
+## Logout
+
+Ao realizar logout:
+
+- Encerrar sessão
+- Limpar cache
+- Redirecionar para Login
+- Registrar Logout na Auditoria
+
+---
+
+## Recuperação de Senha
+
+Fluxo:
+
+Esqueci minha senha
+
+↓
+
+Informar e-mail
+
+↓
+
+Receber link
+
+↓
+
+Criar nova senha
+
+↓
+
+Login novamente
+
+---
+
+## Alteração de Senha
+
+Usuário autenticado poderá:
+
+- Informar senha atual
+- Nova senha
+- Confirmar nova senha
+
+Registrar alteração em auditoria.
+
+---
+
+## Sessão
+
+A sessão deverá:
+
+- Permanecer ativa enquanto válida.
+- Ser renovada automaticamente.
+- Expirar por inatividade conforme configuração.
+- Encerrar em caso de logout.
+
+---
+
+# Proteção de Rotas
+
+Rotas Públicas
+
+- /login
+- /forgot-password
+- /reset-password
+
+Rotas Protegidas
+
+- Dashboard
+- Produtos
+- Estoque
+- Compras
+- Vendas
+- Financeiro
+- Caixa
+- Relatórios
+- Configurações
+
+Usuários não autenticados deverão ser redirecionados para:
+
+/login
+
+---
+
+# Middleware
+
+O Middleware deverá:
+
+- Validar sessão.
+- Renovar sessão quando necessário.
+- Bloquear acesso não autorizado.
+- Redirecionar usuários sem autenticação.
+
+---
+
+# Permissões
+
+Após autenticação carregar:
+
+- Empresa
+- Usuário
+- Perfil
+- Permissões
+
+Essas informações deverão permanecer disponíveis durante toda a sessão.
+
+---
+
+# Perfis
+
+Administrador
+
+Acesso total.
+
+Gerente
+
+Acesso operacional.
+
+Financeiro
+
+Somente financeiro.
+
+Caixa
+
+Somente vendas e caixa.
+
+Estoquista
+
+Produtos e estoque.
+
+Vendedor
+
+Vendas e clientes.
+
+---
+
+# Estrutura de Pastas
+
+features/auth/
+
+components/
+
+hooks/
+
+services/
+
+schemas/
+
+types/
+
+pages/
+
+---
+
+# Componentes
+
+LoginForm
+
+ForgotPasswordForm
+
+ResetPasswordForm
+
+ChangePasswordForm
+
+UserMenu
+
+SessionProvider
+
+ProtectedRoute
+
+---
+
+# Hooks
+
+useAuth()
+
+Retorna:
+
+- user
+- company
+- role
+- permissions
+- loading
+
+Métodos:
+
+- login()
+- logout()
+- resetPassword()
+- updatePassword()
+- refreshSession()
+
+---
+
+# Services
+
+AuthService
+
+Responsável por:
+
+- Login
+- Logout
+- Recuperação
+- Sessão
+- Atualização de senha
+
+Nenhum componente poderá acessar o Supabase diretamente.
+
+---
+
+# Validações
+
+E-mail
+
+- Obrigatório
+- Formato válido
+
+Senha
+
+- Obrigatória
+- Mínimo 8 caracteres
+
+Nova senha
+
+- Mínimo 8 caracteres
+- Confirmar senha
+
+---
+
+# Mensagens
+
+Login realizado com sucesso.
+
+E-mail ou senha inválidos.
+
+Sessão expirada.
+
+Senha alterada com sucesso.
+
+Link inválido.
+
+Usuário não encontrado.
+
+---
+
+# Auditoria
+
+Registrar
+
+- Login
+- Logout
+- Alteração de senha
+- Recuperação de senha
+- Falhas de login
+
+Campos
+
+- Usuário
+- Data
+- Hora
+- IP
+- Navegador
+
+---
+
+# Segurança
+
+Obrigatório
+
+- HTTPS
+- Tokens seguros
+- Middleware
+- Sessão protegida
+- RLS
+- Rate Limit
+- Bloqueio de rotas
+- Sanitização de entradas
+- Validação Frontend
+- Validação Backend
+
+---
+
+# Fluxo de Login
+
+Usuário
+
+↓
+
+Tela Login
+
+↓
+
+Validação
+
+↓
+
+Supabase Auth
+
+↓
+
+Sessão
+
+↓
+
+Carregar Empresa
+
+↓
+
+Carregar Perfil
+
+↓
+
+Carregar Permissões
+
+↓
+
+Dashboard
+
+---
+
+# Fluxo de Logout
+
+Usuário
+
+↓
+
+Logout
+
+↓
+
+Encerrar Sessão
+
+↓
+
+Limpar Cache
+
+↓
+
+Registrar Auditoria
+
+↓
+
+Redirecionar Login
+
+---
+
+# Casos de Erro
+
+E-mail inexistente.
+
+Senha incorreta.
+
+Conta inativa.
+
+Conta bloqueada.
+
+Sessão expirada.
+
+Token inválido.
+
+Falha de conexão.
+
+---
+
+# Critérios de Aceite
+
+O módulo será considerado concluído quando:
+
+- Login funcionando.
+- Logout funcionando.
+- Recuperação de senha funcionando.
+- Alteração de senha funcionando.
+- Middleware protegendo rotas.
+- Sessão persistente.
+- Auditoria registrando eventos.
+- Controle de permissões carregado após login.
+- Código seguindo os padrões definidos no projeto.

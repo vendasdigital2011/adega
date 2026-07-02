@@ -1,0 +1,499 @@
+# PRD — Módulo Relatórios
+
+## Projeto
+
+**Nome:** Adega Cloud
+
+**Módulo:** Relatórios
+
+**Versão:** 1.0
+
+---
+
+# Objetivo
+
+Desenvolver o módulo de Relatórios responsável pela geração de informações gerenciais, operacionais e financeiras do sistema, permitindo análises detalhadas e apoio à tomada de decisões.
+
+Todos os relatórios deverão utilizar dados em tempo real e respeitar as permissões do usuário.
+
+---
+
+# Objetivos
+
+- Gerar relatórios completos.
+- Permitir filtros avançados.
+- Exportar informações.
+- Facilitar análises gerenciais.
+- Auxiliar na tomada de decisão.
+
+---
+
+# Funcionalidades
+
+- Relatórios em tela
+- Exportação PDF
+- Exportação Excel
+- Impressão
+- Filtros avançados
+- Agendamento de relatórios (futuro)
+- Compartilhamento (futuro)
+
+---
+
+# Estrutura
+
+Relatórios
+
+↓
+
+Vendas
+
+↓
+
+Compras
+
+↓
+
+Estoque
+
+↓
+
+Financeiro
+
+↓
+
+Clientes
+
+↓
+
+Fornecedores
+
+↓
+
+Caixa
+
+↓
+
+Produtos
+
+↓
+
+Auditoria
+
+---
+
+# Relatório de Vendas
+
+Exibir:
+
+- Quantidade de vendas
+- Valor total vendido
+- Ticket médio
+- Produtos vendidos
+- Descontos concedidos
+- Cancelamentos
+- Formas de pagamento
+- Vendedor
+- Cliente
+- Lucro estimado
+
+Filtros:
+
+- Período
+- Cliente
+- Vendedor
+- Forma de pagamento
+- Produto
+- Categoria
+
+---
+
+# Relatório de Compras
+
+Exibir:
+
+- Compras realizadas
+- Valor total
+- Fornecedor
+- Produtos comprados
+- Quantidades
+- Custos
+- Status
+
+Filtros:
+
+- Período
+- Fornecedor
+- Produto
+- Categoria
+- Status
+
+---
+
+# Relatório de Estoque
+
+Exibir:
+
+- Estoque atual
+- Estoque mínimo
+- Estoque máximo
+- Produtos sem estoque
+- Produtos abaixo do mínimo
+- Produtos parados
+- Valor total em estoque
+
+Filtros:
+
+- Categoria
+- Marca
+- Fornecedor
+- Produto
+
+---
+
+# Relatório Financeiro
+
+Exibir:
+
+- Receitas
+- Despesas
+- Contas a pagar
+- Contas a receber
+- Fluxo de caixa
+- Lucro
+- Saldo
+
+Filtros:
+
+- Período
+- Categoria
+- Centro de custo
+- Forma de pagamento
+- Status
+
+---
+
+# Relatório de Clientes
+
+Exibir:
+
+- Clientes cadastrados
+- Total de compras
+- Ticket médio
+- Última compra
+- Saldo em aberto
+- Clientes inadimplentes
+
+Filtros:
+
+- Cidade
+- Estado
+- Cliente
+- Período
+
+---
+
+# Relatório de Fornecedores
+
+Exibir:
+
+- Compras
+- Valor total
+- Produtos fornecidos
+- Última compra
+- Saldo em aberto
+
+Filtros:
+
+- Fornecedor
+- Cidade
+- Estado
+- Período
+
+---
+
+# Relatório de Caixa
+
+Exibir:
+
+- Aberturas
+- Fechamentos
+- Sangrias
+- Suprimentos
+- Diferenças
+- Total recebido
+- Total movimentado
+
+Filtros:
+
+- Operador
+- Período
+- Status
+
+---
+
+# Relatório de Produtos
+
+Exibir:
+
+- Produtos cadastrados
+- Produtos ativos
+- Produtos inativos
+- Produtos mais vendidos
+- Produtos menos vendidos
+- Margem de lucro
+- Giro de estoque
+
+Filtros:
+
+- Categoria
+- Marca
+- Produto
+- Fornecedor
+
+---
+
+# Relatório de Auditoria
+
+Exibir:
+
+- Usuário
+- Operação
+- Data
+- Hora
+- IP
+- Registro alterado
+
+Filtros:
+
+- Usuário
+- Período
+- Operação
+
+---
+
+# Dashboard Analítico
+
+Exibir gráficos para:
+
+- Vendas
+- Compras
+- Financeiro
+- Estoque
+- Caixa
+- Clientes
+- Produtos
+
+Biblioteca:
+
+Recharts
+
+---
+
+# Exportação
+
+Permitir exportar:
+
+- PDF
+- Excel
+- CSV
+
+Toda exportação deverá respeitar os filtros aplicados.
+
+---
+
+# Pesquisa
+
+Pesquisar por:
+
+- Cliente
+- Fornecedor
+- Produto
+- Documento
+- Usuário
+- Categoria
+
+---
+
+# Componentes
+
+ReportFilters
+
+ReportTable
+
+ReportChart
+
+ReportSummary
+
+ExportButton
+
+PrintButton
+
+DateFilter
+
+ChartCard
+
+ReportViewer
+
+ReportEmptyState
+
+---
+
+# Serviços
+
+ReportService
+
+Responsável por:
+
+- Gerar relatórios
+- Aplicar filtros
+- Exportar arquivos
+- Gerar gráficos
+- Consultar indicadores
+
+---
+
+# Integrações
+
+O módulo deverá integrar-se com:
+
+- Dashboard
+- Produtos
+- Estoque
+- Compras
+- Vendas
+- Financeiro
+- Caixa
+- Clientes
+- Fornecedores
+- Auditoria
+
+---
+
+# Regras de Negócio
+
+- Todos os relatórios devem respeitar o company_id.
+- Apenas usuários autorizados poderão exportar dados.
+- Relatórios deverão considerar apenas dados ativos quando aplicável.
+- Filtros deverão ser combináveis.
+- Exportações deverão refletir exatamente os dados exibidos na tela.
+- Nenhum relatório poderá exibir dados de outra empresa.
+
+---
+
+# Validações
+
+Obrigatórias:
+
+- Período
+- Permissão do usuário
+
+Validações:
+
+- Datas válidas.
+- Intervalo de datas consistente.
+- Filtros compatíveis.
+
+---
+
+# Auditoria
+
+Registrar:
+
+- Visualização de relatório
+- Exportação PDF
+- Exportação Excel
+- Impressão
+
+Registrar:
+
+- Usuário
+- Data
+- Hora
+- IP
+- Relatório acessado
+
+---
+
+# Permissões
+
+Administrador
+
+Acesso total.
+
+Gerente
+
+Todos os relatórios.
+
+Financeiro
+
+Relatórios financeiros e caixa.
+
+Caixa
+
+Relatórios de caixa e vendas.
+
+Estoquista
+
+Relatórios de estoque e produtos.
+
+Vendedor
+
+Relatórios de vendas e clientes.
+
+---
+
+# Performance
+
+Objetivos:
+
+- Relatórios em até 3 segundos.
+- Exportação otimizada.
+- Paginação automática.
+- Cache para consultas frequentes.
+- Consultas SQL otimizadas.
+
+---
+
+# Responsividade
+
+Desktop
+
+Interface completa.
+
+Tablet
+
+Layout adaptado.
+
+Mobile
+
+Consulta simplificada.
+
+---
+
+# Funcionalidades Futuras
+
+- Relatórios agendados
+- Envio automático por e-mail
+- Dashboard executivo
+- Business Intelligence (BI)
+- Comparativos por período
+- Indicadores personalizados
+- Relatórios com IA
+- Exportação para Google Sheets
+- API de relatórios
+
+---
+
+# Critérios de Aceite
+
+O módulo será considerado concluído quando:
+
+- Todos os relatórios previstos estiverem disponíveis.
+- Os filtros funcionarem corretamente.
+- Exportações em PDF, Excel e CSV funcionarem.
+- Gráficos apresentarem dados consistentes.
+- Permissões forem respeitadas.
+- Auditoria registrar acessos e exportações.
+- Layout for responsivo.
+- Código seguir os padrões definidos no projeto.

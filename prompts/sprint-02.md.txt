@@ -1,0 +1,429 @@
+# SPRINT-02 — Autenticação
+
+## Projeto
+
+**Nome:** Adega Cloud
+
+**Sprint:** 02
+
+**Nome da Sprint:** Sistema de Autenticação
+
+**Versão:** 1.0
+
+**Duração Estimada:** 1 Sprint
+
+---
+
+# Objetivo
+
+Implementar o sistema completo de autenticação utilizando Supabase Auth, garantindo segurança, persistência de sessão, proteção de rotas e carregamento das informações do usuário.
+
+Ao final desta Sprint, apenas usuários autenticados poderão acessar o sistema.
+
+---
+
+# Objetivos da Sprint
+
+- Implementar autenticação.
+- Implementar login.
+- Implementar logout.
+- Recuperação de senha.
+- Alteração de senha.
+- Middleware.
+- Sessão persistente.
+- Proteção de rotas.
+- Controle inicial de permissões.
+
+---
+
+# Dependências
+
+Antes de iniciar esta Sprint, confirmar:
+
+- Sprint 01 concluída.
+- Supabase configurado.
+- Layout funcionando.
+- Providers criados.
+- Variáveis de ambiente configuradas.
+
+---
+
+# Funcionalidades
+
+## Login
+
+Criar tela de login contendo:
+
+- E-mail
+- Senha
+- Botão Entrar
+- Link Esqueci minha senha
+
+Ao autenticar:
+
+- Criar sessão.
+- Redirecionar para Dashboard.
+- Registrar login na auditoria.
+
+---
+
+## Logout
+
+Implementar:
+
+- Encerramento da sessão.
+- Limpeza de cache.
+- Redirecionamento para Login.
+- Registro de logout.
+
+---
+
+## Recuperação de Senha
+
+Fluxo:
+
+Usuário informa e-mail
+
+↓
+
+Recebe link
+
+↓
+
+Define nova senha
+
+↓
+
+Retorna para Login
+
+---
+
+## Alteração de Senha
+
+Tela protegida.
+
+Campos:
+
+- Senha atual
+- Nova senha
+- Confirmar senha
+
+Registrar auditoria.
+
+---
+
+# Middleware
+
+Implementar middleware para:
+
+- Verificar sessão.
+- Renovar sessão automaticamente.
+- Bloquear usuários não autenticados.
+- Redirecionar para Login.
+
+---
+
+# Sessão
+
+Implementar:
+
+- Persistência
+- Renovação automática
+- Expiração
+- Logout automático quando necessário
+
+---
+
+# Rotas Públicas
+
+/login
+
+/forgot-password
+
+/reset-password
+
+---
+
+# Rotas Protegidas
+
+/dashboard
+
+/products
+
+/inventory
+
+/purchases
+
+/sales
+
+/customers
+
+/suppliers
+
+/financial
+
+/cash
+
+/reports
+
+/settings
+
+---
+
+# AuthProvider
+
+Implementar:
+
+- Contexto de autenticação.
+- Estado do usuário.
+- Estado da empresa.
+- Estado das permissões.
+- Loading da sessão.
+
+---
+
+# Hook
+
+Criar:
+
+useAuth()
+
+Retornar:
+
+- user
+- company
+- role
+- permissions
+- loading
+
+Métodos:
+
+- login()
+- logout()
+- resetPassword()
+- updatePassword()
+- refreshSession()
+
+---
+
+# Services
+
+Implementar:
+
+AuthService
+
+Métodos:
+
+- signIn()
+- signOut()
+- forgotPassword()
+- updatePassword()
+- getCurrentUser()
+- refreshSession()
+
+---
+
+# Componentes
+
+Criar:
+
+LoginForm
+
+ForgotPasswordForm
+
+ResetPasswordForm
+
+ChangePasswordForm
+
+ProtectedRoute
+
+SessionExpiredDialog
+
+UserMenu
+
+---
+
+# Layout
+
+Adicionar ao Header:
+
+- Nome do usuário.
+- Cargo.
+- Menu do perfil.
+- Botão Sair.
+
+---
+
+# Banco de Dados
+
+Criar integração com:
+
+users
+
+roles
+
+permissions
+
+company
+
+Após login carregar:
+
+- Empresa
+- Perfil
+- Permissões
+
+---
+
+# Permissões
+
+Implementar carregamento inicial.
+
+Ainda não bloquear funcionalidades internas.
+
+Somente preparar estrutura.
+
+---
+
+# Segurança
+
+Implementar:
+
+- Tokens seguros.
+- Sessão protegida.
+- Sanitização.
+- Middleware.
+- Proteção contra acesso direto às rotas.
+
+---
+
+# Auditoria
+
+Registrar:
+
+- Login
+- Logout
+- Recuperação de senha
+- Alteração de senha
+- Tentativas inválidas
+
+Registrar:
+
+- Usuário
+- Data
+- Hora
+- IP
+- Navegador
+
+---
+
+# Validações
+
+Login:
+
+- E-mail obrigatório.
+- Senha obrigatória.
+
+Senha:
+
+- Mínimo 8 caracteres.
+
+E-mail:
+
+- Formato válido.
+
+---
+
+# Mensagens
+
+Login realizado com sucesso.
+
+Usuário ou senha inválidos.
+
+Sessão expirada.
+
+Senha alterada com sucesso.
+
+Link expirado.
+
+Usuário não encontrado.
+
+---
+
+# Responsividade
+
+Desktop
+
+Tablet
+
+Mobile
+
+---
+
+# Performance
+
+Objetivos:
+
+- Login em até 2 segundos.
+- Renovação da sessão automática.
+- Carregamento do usuário em até 1 segundo.
+
+---
+
+# Testes
+
+Executar:
+
+- Login válido.
+- Login inválido.
+- Logout.
+- Recuperação de senha.
+- Alteração de senha.
+- Middleware.
+- Sessão persistente.
+- Proteção de rotas.
+- Refresh da sessão.
+
+---
+
+# Entregáveis
+
+Ao final da Sprint deverão existir:
+
+- Login funcional.
+- Logout funcional.
+- Recuperação de senha.
+- Alteração de senha.
+- Middleware.
+- Sessão persistente.
+- AuthProvider.
+- Hook useAuth().
+- AuthService.
+- Rotas protegidas.
+- Auditoria de autenticação.
+
+---
+
+# Critérios de Aceite
+
+A Sprint será considerada concluída quando:
+
+- Apenas usuários autenticados acessarem o sistema.
+- Login funcionar corretamente.
+- Logout funcionar corretamente.
+- Recuperação de senha estiver operacional.
+- Alteração de senha funcionar.
+- Middleware proteger todas as rotas.
+- Sessão permanecer ativa corretamente.
+- Informações do usuário forem carregadas após login.
+- Auditoria registrar todos os eventos.
+- Não existirem erros de autenticação.
+
+---
+
+# Próxima Sprint
+
+**Sprint-03 — Usuários e Permissões**
+
+Objetivo:
+
+Implementar cadastro de usuários, perfis, permissões, gerenciamento de acessos e controle completo de autorização dentro do sistema.

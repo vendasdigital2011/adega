@@ -1,0 +1,541 @@
+# PDR-006 — Roadmap do Projeto
+
+## Projeto
+
+**Nome:** Adega Cloud
+
+**Documento:** PDR-006 — Roadmap
+
+**Versão:** 1.0
+
+---
+
+# Objetivo
+
+Definir o cronograma oficial de desenvolvimento do Adega Cloud.
+
+Todo o desenvolvimento deverá seguir esta sequência. Nenhuma etapa poderá ser iniciada antes da conclusão da etapa anterior, salvo quando houver dependências previamente definidas.
+
+---
+
+# Metodologia
+
+O projeto será desenvolvido de forma incremental.
+
+Cada fase deverá:
+
+- Possuir escopo definido
+- Possuir critérios de aceite
+- Ser completamente testada
+- Ser aprovada antes da próxima fase
+
+---
+
+# FASE 01 — Fundação do Projeto
+
+## Objetivo
+
+Criar toda a base técnica do sistema.
+
+### Entregas
+
+- Criar projeto Next.js
+- Configurar TypeScript
+- Configurar Tailwind CSS
+- Configurar Shadcn UI
+- Configurar ESLint
+- Configurar Prettier
+- Configurar Git
+- Configurar Supabase
+- Configurar autenticação
+- Criar estrutura de pastas
+- Configurar tema claro e escuro
+- Criar Layout Base
+- Criar Sidebar
+- Criar Header
+- Criar Footer
+- Criar sistema de navegação
+
+### Critério de Aceite
+
+Projeto funcionando sem erros.
+
+---
+
+# FASE 02 — Autenticação
+
+## Entregas
+
+- Login
+- Logout
+- Recuperação de senha
+- Alteração de senha
+- Sessão persistente
+- Controle de acesso
+- Proteção de rotas
+
+### Critério de Aceite
+
+Usuários autenticados e rotas protegidas.
+
+---
+
+# FASE 03 — Usuários e Permissões
+
+## Entregas
+
+- Cadastro de usuários
+- Perfis
+- Permissões
+- Controle de acesso
+- Auditoria
+
+### Critério de Aceite
+
+Permissões funcionando corretamente.
+
+---
+
+# FASE 04 — Dashboard
+
+## Entregas
+
+- KPIs
+- Cards
+- Indicadores
+- Dashboard inicial
+- Alertas
+- Gráficos
+
+### Critério de Aceite
+
+Dashboard carregando dados reais.
+
+---
+
+# FASE 05 — Categorias
+
+## Entregas
+
+- CRUD
+- Pesquisa
+- Paginação
+- Filtros
+
+### Critério de Aceite
+
+Cadastro completo funcionando.
+
+---
+
+# FASE 06 — Marcas
+
+## Entregas
+
+- CRUD
+- Pesquisa
+- Paginação
+
+### Critério de Aceite
+
+Marcas funcionando.
+
+---
+
+# FASE 07 — Fornecedores
+
+## Entregas
+
+- CRUD
+- Histórico
+- Pesquisa
+- Filtros
+
+### Critério de Aceite
+
+Cadastro completo.
+
+---
+
+# FASE 08 — Clientes
+
+## Entregas
+
+- CRUD
+- Histórico
+- Pesquisa
+- Filtros
+
+### Critério de Aceite
+
+Cadastro completo.
+
+---
+
+# FASE 09 — Produtos
+
+## Entregas
+
+- Cadastro
+- Edição
+- Exclusão lógica
+- Código de barras
+- Imagens
+- Estoque mínimo
+- Preços
+- Categorias
+- Marcas
+- Fornecedor
+
+### Critério de Aceite
+
+Produtos totalmente funcionais.
+
+---
+
+# FASE 10 — Estoque
+
+## Entregas
+
+- Entrada
+- Saída
+- Ajustes
+- Inventário
+- Histórico
+- Alertas
+
+### Critério de Aceite
+
+Movimentações corretas.
+
+---
+
+# FASE 11 — Compras
+
+## Entregas
+
+- Pedido
+- Entrada
+- Itens
+- Atualização automática do estoque
+- Atualização financeira
+
+### Critério de Aceite
+
+Compra integrada ao estoque.
+
+---
+
+# FASE 12 — Vendas
+
+## Entregas
+
+- PDV
+- Venda rápida
+- Venda completa
+- Desconto
+- Cancelamento
+- Impressão
+- Múltiplos pagamentos
+
+### Critério de Aceite
+
+Venda atualizando estoque e financeiro.
+
+---
+
+# FASE 13 — Caixa
+
+## Entregas
+
+- Abertura
+- Fechamento
+- Sangria
+- Suprimento
+- Histórico
+
+### Critério de Aceite
+
+Controle completo do caixa.
+
+---
+
+# FASE 14 — Financeiro
+
+## Entregas
+
+- Fluxo de Caixa
+- Contas a pagar
+- Contas a receber
+- Receitas
+- Despesas
+- Centro de custos
+
+### Critério de Aceite
+
+Financeiro consistente.
+
+---
+
+# FASE 15 — Relatórios
+
+## Entregas
+
+- Produtos
+- Estoque
+- Compras
+- Vendas
+- Clientes
+- Financeiro
+- Caixa
+- Exportação PDF
+- Exportação Excel
+
+### Critério de Aceite
+
+Relatórios completos.
+
+---
+
+# FASE 16 — Configurações
+
+## Entregas
+
+- Dados da empresa
+- Tema
+- Preferências
+- Backup
+- Logs
+- Integrações
+
+### Critério de Aceite
+
+Configurações persistentes.
+
+---
+
+# FASE 17 — Auditoria
+
+## Entregas
+
+- Histórico de alterações
+- Logs
+- Rastreamento de usuários
+- Registro de operações
+
+### Critério de Aceite
+
+Todas as operações críticas registradas.
+
+---
+
+# FASE 18 — Notificações
+
+## Entregas
+
+- Estoque baixo
+- Contas vencidas
+- Caixa aberto
+- Alertas financeiros
+- Alertas do sistema
+
+### Critério de Aceite
+
+Notificações automáticas funcionando.
+
+---
+
+# FASE 19 — Otimização
+
+## Entregas
+
+- Cache
+- Melhorias de desempenho
+- Otimização SQL
+- Lazy Loading
+- Code Splitting
+
+### Critério de Aceite
+
+Sistema otimizado.
+
+---
+
+# FASE 20 — Testes
+
+## Entregas
+
+- Testes Unitários
+- Testes de Integração
+- Testes E2E
+- Testes de Performance
+- Testes de Segurança
+
+### Critério de Aceite
+
+Cobertura mínima de 80%.
+
+---
+
+# FASE 21 — Deploy
+
+## Entregas
+
+- Deploy Vercel
+- Banco em produção
+- Variáveis de ambiente
+- Domínio
+- SSL
+- Monitoramento
+
+### Critério de Aceite
+
+Sistema em produção.
+
+---
+
+# FASE 22 — Inteligência Artificial
+
+## Entregas
+
+- Assistente IA
+- Sugestão de compras
+- Previsão de vendas
+- Relatórios inteligentes
+- Análise financeira
+- Alertas inteligentes
+
+### Critério de Aceite
+
+Recursos de IA operando corretamente.
+
+---
+
+# FASE 23 — Melhorias Futuras
+
+## Funcionalidades previstas
+
+- Multiempresa
+- Multiunidade
+- Aplicativo Mobile
+- API Pública
+- Integração Fiscal
+- Emissão de NFC-e
+- Leitor de Código de Barras
+- Impressoras Térmicas
+- Integração com WhatsApp
+- Integração com Marketplaces
+- Fidelidade de Clientes
+- Programa de Pontos
+- BI Avançado
+
+---
+
+# Fluxo Oficial de Desenvolvimento
+
+Planejamento
+
+↓
+
+Arquitetura
+
+↓
+
+Banco de Dados
+
+↓
+
+Autenticação
+
+↓
+
+Usuários
+
+↓
+
+Dashboard
+
+↓
+
+Cadastros
+
+↓
+
+Produtos
+
+↓
+
+Estoque
+
+↓
+
+Compras
+
+↓
+
+Vendas
+
+↓
+
+Caixa
+
+↓
+
+Financeiro
+
+↓
+
+Relatórios
+
+↓
+
+Configurações
+
+↓
+
+Auditoria
+
+↓
+
+Notificações
+
+↓
+
+Otimização
+
+↓
+
+Testes
+
+↓
+
+Deploy
+
+↓
+
+Inteligência Artificial
+
+---
+
+# Regras de Desenvolvimento
+
+- Desenvolver apenas uma fase por vez.
+- Não iniciar a próxima fase antes da aprovação da atual.
+- Todo código deve ser revisado antes do merge.
+- Toda funcionalidade deve possuir testes.
+- Toda alteração deve ser documentada.
+- Não alterar módulos já aprovados sem justificativa.
+- Registrar decisões importantes durante o desenvolvimento.
+
+---
+
+# Critérios de Conclusão do Projeto
+
+O Adega Cloud será considerado concluído quando:
+
+- Todas as fases do roadmap estiverem implementadas.
+- Todos os critérios de aceite forem atendidos.
+- O sistema estiver estável em produção.
+- A documentação estiver atualizada.
+- Os testes obrigatórios forem aprovados.
+- A arquitetura estiver preparada para evolução futura.

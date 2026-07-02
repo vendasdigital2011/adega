@@ -1,0 +1,361 @@
+# PRD — Módulo Fornecedores
+
+## Projeto
+
+**Nome:** Adega Cloud**
+
+**Módulo:** Fornecedores
+
+**Versão:** 1.0
+
+---
+
+# Objetivo
+
+Desenvolver o módulo de Fornecedores responsável pelo cadastro, gerenciamento e acompanhamento de todos os fornecedores da empresa, permitindo integração direta com Compras, Produtos, Financeiro e Relatórios.
+
+Todo fornecedor deverá possuir um histórico completo de relacionamento comercial.
+
+---
+
+# Objetivos
+
+- Centralizar o cadastro de fornecedores.
+- Facilitar o processo de compras.
+- Manter histórico de pedidos.
+- Integrar com financeiro.
+- Organizar informações comerciais.
+
+---
+
+# Funcionalidades
+
+- Cadastrar fornecedor
+- Editar fornecedor
+- Inativar fornecedor
+- Consultar fornecedor
+- Histórico de compras
+- Histórico financeiro
+- Pesquisa rápida
+- Filtros
+- Exportação PDF
+- Exportação Excel
+- Importação CSV
+
+---
+
+# Cadastro do Fornecedor
+
+## Dados Básicos
+
+- Razão Social *
+- Nome Fantasia
+- CPF/CNPJ *
+- Inscrição Estadual
+- Inscrição Municipal
+
+---
+
+## Contato
+
+- Nome do contato
+- Telefone
+- WhatsApp
+- E-mail
+- Site
+
+---
+
+## Endereço
+
+- CEP
+- Rua
+- Número
+- Complemento
+- Bairro
+- Cidade
+- Estado
+
+---
+
+## Informações Comerciais
+
+- Condição de pagamento padrão
+- Prazo de entrega
+- Observações
+- Fornecedor ativo
+
+---
+
+# Tela Principal
+
+Exibir:
+
+- Razão Social
+- Nome Fantasia
+- CPF/CNPJ
+- Telefone
+- Cidade
+- Total de compras
+- Última compra
+- Situação
+- Ações
+
+---
+
+# Pesquisa
+
+Pesquisar por:
+
+- Razão Social
+- Nome Fantasia
+- CPF
+- CNPJ
+- Telefone
+- WhatsApp
+- E-mail
+
+Pesquisa em tempo real.
+
+---
+
+# Filtros
+
+Permitir filtros por:
+
+- Cidade
+- Estado
+- Fornecedor ativo
+- Fornecedor inativo
+- Com compras
+- Sem compras
+
+---
+
+# Ordenação
+
+Ordenar por:
+
+- Razão Social
+- Nome Fantasia
+- Última compra
+- Valor total comprado
+- Data de cadastro
+
+---
+
+# Histórico do Fornecedor
+
+Exibir:
+
+- Compras realizadas
+- Produtos fornecidos
+- Valor total comprado
+- Contas a pagar
+- Pagamentos realizados
+- Cancelamentos
+- Observações
+
+---
+
+# Resumo do Fornecedor
+
+Apresentar:
+
+- Total de compras
+- Valor total comprado
+- Última compra
+- Quantidade de pedidos
+- Saldo pendente
+- Prazo médio de entrega
+
+---
+
+# Componentes
+
+SupplierForm
+
+SupplierTable
+
+SupplierCard
+
+SupplierDetails
+
+SupplierHistory
+
+SupplierSummary
+
+SupplierFilters
+
+SupplierSearch
+
+SupplierStatusBadge
+
+SupplierInfoCard
+
+---
+
+# Serviços
+
+SupplierService
+
+Responsável por:
+
+- CRUD
+- Pesquisa
+- Histórico
+- Consulta
+- Exportação
+- Importação
+
+---
+
+# Integrações
+
+O módulo deverá integrar-se com:
+
+- Compras
+- Produtos
+- Financeiro
+- Contas a Pagar
+- Dashboard
+- Relatórios
+- Auditoria
+
+---
+
+# Regras de Negócio
+
+- Todo fornecedor pertence a uma empresa.
+- Razão Social é obrigatória.
+- CPF/CNPJ é obrigatório e deve ser único.
+- Fornecedor inativo não poderá ser utilizado em novas compras.
+- Fornecedores com histórico não poderão ser excluídos.
+- Utilizar exclusão lógica (Ativo/Inativo).
+- Um fornecedor poderá fornecer diversos produtos.
+
+---
+
+# Validações
+
+Obrigatórias:
+
+- Razão Social
+- CPF/CNPJ
+
+Validações:
+
+- CPF válido.
+- CNPJ válido.
+- E-mail válido.
+- Telefone válido.
+- Documento único dentro da empresa.
+
+---
+
+# Auditoria
+
+Registrar:
+
+- Cadastro
+- Alteração
+- Inativação
+- Reativação
+- Alteração de condições comerciais
+
+Registrar:
+
+- Usuário
+- Data
+- Hora
+- IP
+- Valores anteriores
+- Valores atuais
+
+---
+
+# Permissões
+
+Administrador
+
+Acesso total.
+
+Gerente
+
+CRUD completo.
+
+Comprador
+
+Cadastrar, editar e consultar.
+
+Financeiro
+
+Consultar e gerenciar informações financeiras.
+
+Caixa
+
+Somente consulta.
+
+Vendedor
+
+Somente consulta.
+
+Estoquista
+
+Somente consulta.
+
+---
+
+# Performance
+
+Objetivos:
+
+- Pesquisa em até 1 segundo.
+- Cadastro em até 2 segundos.
+- Histórico carregado em até 2 segundos.
+- Paginação automática.
+- Cache para consultas frequentes.
+
+---
+
+# Responsividade
+
+Desktop
+
+Tabela completa.
+
+Tablet
+
+Tabela adaptada.
+
+Mobile
+
+Cards responsivos.
+
+---
+
+# Funcionalidades Futuras
+
+- Avaliação de fornecedores
+- Ranking por volume de compras
+- Histórico de preços
+- Comparativo entre fornecedores
+- Integração automática com XML de NF-e
+- Portal do fornecedor
+- Solicitação eletrônica de orçamento
+- Controle de contratos
+
+---
+
+# Critérios de Aceite
+
+O módulo será considerado concluído quando:
+
+- Cadastro de fornecedores funcionar corretamente.
+- Edição e inativação estiverem disponíveis.
+- Pesquisa e filtros funcionarem.
+- Histórico de compras e financeiro forem exibidos.
+- Integração com compras e produtos funcionar corretamente.
+- Auditoria registrar todas as alterações.
+- Layout for responsivo.
+- Código seguir os padrões definidos no projeto.

@@ -1,0 +1,102 @@
+PDR-001 — PDR Mestre
+Nome do Projeto
+
+Adega Cloud
+
+Versão
+
+1.0
+
+Objetivo
+
+Desenvolver um sistema ERP 100% em nuvem para adegas e distribuidoras de bebidas, oferecendo controle completo de estoque, vendas, compras, clientes, fornecedores, financeiro e relatórios em tempo real.
+
+O sistema será moderno, rápido, responsivo e escalável, permitindo evolução futura para um modelo SaaS multiempresa.
+
+Objetivos do Produto
+Centralizar toda a gestão da adega em um único sistema.
+Eliminar controles em papel e planilhas.
+Automatizar processos operacionais.
+Reduzir erros de estoque.
+Melhorar o controle financeiro.
+Fornecer indicadores para tomada de decisão.
+Preparar a plataforma para futuras integrações e recursos de IA.
+Público-Alvo
+Adegas
+Distribuidoras de bebidas
+Conveniências
+Depósitos de bebidas
+Pequenos e médios comerciantes do setor
+Escopo da Primeira Versão (MVP)
+
+O MVP deverá incluir:
+
+Autenticação de usuários.
+Dashboard inicial.
+Cadastro de produtos.
+Controle de estoque.
+Cadastro de clientes.
+Cadastro de fornecedores.
+Compras.
+Vendas.
+Fluxo de caixa.
+Contas a pagar.
+Contas a receber.
+Relatórios básicos.
+Configurações do sistema.
+Tecnologias
+Frontend
+Next.js 15
+TypeScript
+Tailwind CSS
+Shadcn UI
+Backend
+Supabase
+PostgreSQL
+Supabase Auth
+Supabase Storage
+Edge Functions (quando necessário)
+Infraestrutura
+Vercel
+GitHub
+Requisitos Não Funcionais
+Interface responsiva.
+Tema escuro como padrão.
+Alto desempenho.
+Segurança baseada em permissões.
+Auditoria de ações dos usuários.
+Código limpo e modular.
+Arquitetura escalável.
+Componentes reutilizáveis.
+Estrutura Inicial de Módulos
+Dashboard
+Produtos
+Categorias
+Estoque
+Compras
+Vendas
+Clientes
+Fornecedores
+Financeiro
+Caixa
+Relatórios
+Configurações
+Usuários
+Permissões
+Logs
+Critérios de Sucesso
+
+O projeto será considerado pronto quando:
+
+Todos os módulos previstos estiverem funcionais.
+O sistema operar integralmente na nuvem.
+O controle de estoque e financeiro estiver consistente.
+Os relatórios refletirem corretamente os dados cadastrados.
+A arquitetura permitir expansão para SaaS multiempresa.
+Regras Gerais de Desenvolvimento
+Desenvolver um módulo por vez.
+Não iniciar um novo módulo antes da conclusão do anterior.
+Cada módulo deve possuir critérios de aceite.
+Todo código deve ser reutilizável e documentado.
+Evitar duplicação de lógica.
+Priorizar simplicidade e manutenção.

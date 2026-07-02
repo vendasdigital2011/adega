@@ -1,0 +1,32 @@
+docs/
+│
+├── 00-PDR-MESTRE.md
+├── 01-ARQUITETURA.md
+├── 02-BANCO-DADOS.md
+├── 03-REGRAS-NEGOCIO.md
+├── 04-DESIGN-SYSTEM.md
+├── 05-ROADMAP.md
+├── 06-SPRINTS.md
+├── 07-TESTES.md
+├── 08-DEPLOY.md
+│
+├── modulos/
+│   ├── auth.md
+│   ├── dashboard.md
+│   ├── produtos.md
+│   ├── estoque.md
+│   ├── compras.md
+│   ├── vendas.md
+│   ├── financeiro.md
+│   ├── caixa.md
+│   ├── clientes.md
+│   ├── fornecedores.md
+│   ├── relatorios.md
+│   ├── configuracoes.md
+│   └── ia.md
+│
+└── prompts/
+    ├── sprint-01.md
+    ├── sprint-02.md
+    ├── sprint-03.md
+    └── ...

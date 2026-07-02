@@ -1,0 +1,439 @@
+# PRD — Módulo Vendas
+
+## Projeto
+
+**Nome:** Adega Cloud
+
+**Módulo:** Vendas (PDV)
+
+**Versão:** 1.0
+
+---
+
+# Objetivo
+
+Desenvolver o módulo de Vendas responsável pelo processo completo de comercialização de produtos, desde o atendimento ao cliente até a baixa automática do estoque, atualização do financeiro e fechamento do caixa.
+
+O módulo deverá ser rápido, intuitivo e otimizado para operação em balcão (PDV).
+
+---
+
+# Objetivos
+
+- Realizar vendas de forma rápida.
+- Baixar estoque automaticamente.
+- Atualizar o financeiro.
+- Atualizar o caixa.
+- Emitir comprovantes.
+- Registrar histórico completo.
+
+---
+
+# Funcionalidades
+
+- Nova venda
+- Venda rápida (PDV)
+- Orçamento
+- Conversão de orçamento em venda
+- Cancelamento de venda
+- Consulta de vendas
+- Reimpressão de comprovante
+- Exportação PDF
+- Exportação Excel
+
+---
+
+# Fluxo da Venda
+
+Abrir Caixa
+
+↓
+
+Selecionar Cliente
+
+↓
+
+Adicionar Produtos
+
+↓
+
+Aplicar Desconto
+
+↓
+
+Selecionar Forma de Pagamento
+
+↓
+
+Finalizar Venda
+
+↓
+
+Baixar Estoque
+
+↓
+
+Atualizar Caixa
+
+↓
+
+Atualizar Financeiro
+
+↓
+
+Emitir Comprovante
+
+---
+
+# Status da Venda
+
+- Orçamento
+- Aberta
+- Finalizada
+- Cancelada
+
+---
+
+# Tela Principal
+
+Exibir:
+
+- Número da venda
+- Data
+- Cliente
+- Valor total
+- Forma de pagamento
+- Usuário
+- Status
+
+---
+
+# Cadastro da Venda
+
+## Dados Gerais
+
+- Número da venda
+- Data
+- Cliente (opcional)
+- Vendedor
+- Caixa
+- Observações
+
+---
+
+## Produtos
+
+Cada item deverá possuir:
+
+- Produto
+- Quantidade
+- Valor unitário
+- Desconto
+- Valor total
+
+O sistema calculará automaticamente:
+
+- Subtotal
+- Desconto
+- Acréscimo
+- Total da venda
+
+---
+
+# Pesquisa de Produtos
+
+Permitir pesquisa por:
+
+- Nome
+- SKU
+- Código de barras
+
+Suportar leitura por scanner de código de barras.
+
+---
+
+# Pagamentos
+
+Permitir múltiplas formas de pagamento na mesma venda.
+
+Formas disponíveis:
+
+- Dinheiro
+- PIX
+- Cartão de Débito
+- Cartão de Crédito
+- Boleto
+- Transferência
+- Fiado
+- Vale
+
+O sistema deverá calcular automaticamente:
+
+- Valor recebido
+- Troco
+- Saldo pendente
+
+---
+
+# Descontos
+
+Permitir:
+
+- Desconto por item
+- Desconto na venda
+- Percentual
+- Valor fixo
+
+Descontos acima do limite configurado exigirão autorização.
+
+---
+
+# Cancelamento
+
+Somente usuários autorizados.
+
+Ao cancelar:
+
+- Estornar estoque.
+- Estornar movimentação financeira.
+- Estornar caixa.
+- Registrar auditoria.
+
+A venda permanecerá registrada com status Cancelada.
+
+---
+
+# Pesquisa
+
+Pesquisar por:
+
+- Número
+- Cliente
+- Produto
+- Data
+- Vendedor
+- Status
+
+---
+
+# Filtros
+
+Permitir filtros por:
+
+- Período
+- Cliente
+- Vendedor
+- Forma de pagamento
+- Status
+
+---
+
+# Ordenação
+
+Ordenar por:
+
+- Número
+- Data
+- Cliente
+- Valor
+- Status
+
+---
+
+# Componentes
+
+SaleForm
+
+PDVScreen
+
+SaleTable
+
+SaleItems
+
+PaymentModal
+
+ProductSearch
+
+CustomerSelector
+
+DiscountDialog
+
+SaleSummary
+
+SaleReceipt
+
+SaleFilters
+
+SaleStatusBadge
+
+---
+
+# Serviços
+
+SaleService
+
+Responsável por:
+
+- CRUD
+- Finalização
+- Cancelamento
+- Baixa de estoque
+- Atualização financeira
+- Atualização do caixa
+- Pesquisa
+- Exportação
+
+---
+
+# Integrações
+
+O módulo deverá integrar-se com:
+
+- Produtos
+- Estoque
+- Clientes
+- Caixa
+- Financeiro
+- Contas a Receber
+- Dashboard
+- Relatórios
+- Auditoria
+
+---
+
+# Regras de Negócio
+
+- O caixa deverá estar aberto para realizar vendas.
+- Toda venda deverá possuir ao menos um produto.
+- Produtos devem estar ativos.
+- Não permitir venda sem estoque quando a opção de estoque negativo estiver desabilitada.
+- A venda atualizará automaticamente estoque, caixa e financeiro.
+- Cancelamentos deverão estornar todas as movimentações.
+- Vendas canceladas não poderão ser editadas.
+- Descontos acima do limite exigem autorização.
+
+---
+
+# Validações
+
+Obrigatórias:
+
+- Produto
+- Quantidade
+- Forma de pagamento
+
+Validações:
+
+- Quantidade maior que zero.
+- Produto ativo.
+- Estoque disponível.
+- Valor recebido suficiente quando pagamento em dinheiro.
+- Cliente obrigatório apenas para vendas fiado.
+
+---
+
+# Comprovante
+
+Após finalizar a venda permitir:
+
+- Impressão
+- Download em PDF
+- Envio por WhatsApp (futuro)
+- Envio por E-mail (futuro)
+
+---
+
+# Auditoria
+
+Registrar:
+
+- Nova venda
+- Alteração
+- Cancelamento
+- Alteração de desconto
+- Alteração de pagamento
+- Reimpressão
+
+Registrar:
+
+- Usuário
+- Data
+- Hora
+- IP
+- Valores anteriores
+- Valores atuais
+
+---
+
+# Permissões
+
+Administrador
+
+Acesso total.
+
+Gerente
+
+CRUD completo.
+
+Caixa
+
+Realizar vendas e consultar histórico.
+
+Vendedor
+
+Realizar vendas e consultar suas próprias vendas.
+
+Financeiro
+
+Consultar vendas e pagamentos.
+
+Estoquista
+
+Somente consulta.
+
+---
+
+# Performance
+
+Objetivos:
+
+- Pesquisa de produtos em até 500 ms.
+- Finalização da venda em até 2 segundos.
+- Atualização imediata do estoque.
+- Atualização imediata do caixa.
+- Atualização imediata do financeiro.
+- Suporte a alto volume de vendas.
+
+---
+
+# Responsividade
+
+Desktop
+
+Interface completa para PDV.
+
+Tablet
+
+Layout adaptado.
+
+Mobile
+
+Consulta de vendas e operações básicas.
+
+---
+
+# Critérios de Aceite
+
+O módulo será considerado concluído quando:
+
+- Nova venda funcionar corretamente.
+- Venda rápida (PDV) estiver operacional.
+- Baixa automática do estoque funcionar.
+- Atualização do caixa e financeiro ocorrer automaticamente.
+- Múltiplas formas de pagamento funcionarem.
+- Cancelamento estornar todas as movimentações.
+- Pesquisa de produtos e código de barras funcionarem.
+- Comprovante puder ser gerado.
+- Auditoria registrar todas as operações.
+- Layout for responsivo.
+- Código seguir os padrões definidos no projeto.

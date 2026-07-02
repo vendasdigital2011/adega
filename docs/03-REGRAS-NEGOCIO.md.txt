@@ -1,0 +1,479 @@
+# PDR-004 — Regras de Negócio
+
+## Projeto
+
+**Nome:** Adega Cloud
+
+**Documento:** PDR-004 — Regras de Negócio
+
+**Versão:** 1.0
+
+---
+
+# Objetivo
+
+Definir todas as regras de funcionamento do sistema para garantir consistência, segurança, integridade dos dados e padronização dos processos.
+
+Todas as funcionalidades do sistema deverão seguir obrigatoriamente estas regras.
+
+---
+
+# Regras Gerais
+
+- Todo usuário deve estar autenticado.
+- Todo usuário pertence a uma empresa.
+- Todo registro pertence a uma empresa.
+- Nenhum usuário poderá visualizar dados de outra empresa.
+- Toda operação deverá ser registrada em auditoria.
+- Toda alteração deverá atualizar o campo updated_at.
+- Exclusões deverão utilizar Soft Delete quando aplicável.
+
+---
+
+# Empresas
+
+Uma empresa poderá possuir:
+
+- Múltiplos usuários
+- Múltiplos produtos
+- Múltiplos clientes
+- Múltiplos fornecedores
+- Múltiplos caixas
+- Múltiplos depósitos (futuro)
+
+Todos os registros deverão possuir company_id.
+
+---
+
+# Usuários
+
+Cada usuário possuirá um perfil.
+
+Exemplos:
+
+Administrador
+
+Gerente
+
+Financeiro
+
+Caixa
+
+Estoquista
+
+Vendedor
+
+O perfil definirá todas as permissões do sistema.
+
+---
+
+# Permissões
+
+Cada tela deverá validar permissões antes de permitir:
+
+- Visualizar
+- Criar
+- Editar
+- Excluir
+- Cancelar
+- Exportar
+- Aprovar
+
+Caso o usuário não possua permissão, a operação será bloqueada.
+
+---
+
+# Produtos
+
+Todo produto deverá possuir:
+
+- Categoria
+- Código interno (SKU)
+- Nome
+- Preço de venda
+- Estoque mínimo
+- Situação (Ativo/Inativo)
+
+Código de barras será opcional.
+
+Não será permitido cadastrar dois produtos com o mesmo SKU.
+
+---
+
+# Categorias
+
+Toda categoria deverá possuir:
+
+- Nome único
+- Situação ativa ou inativa
+
+Categorias inativas não poderão ser utilizadas em novos produtos.
+
+---
+
+# Fornecedores
+
+Todo fornecedor deverá possuir:
+
+- Nome
+- Documento (CPF ou CNPJ)
+- Telefone
+
+Não será permitido duplicar documento.
+
+---
+
+# Clientes
+
+Todo cliente deverá possuir:
+
+- Nome
+
+Campos opcionais:
+
+- CPF/CNPJ
+- Telefone
+- WhatsApp
+- Email
+- Endereço
+
+Caso exista documento informado, ele deverá ser único.
+
+---
+
+# Estoque
+
+Toda movimentação deverá gerar histórico.
+
+Tipos permitidos:
+
+- Entrada
+- Saída
+- Venda
+- Compra
+- Ajuste
+- Inventário
+- Perda
+- Quebra
+
+Nenhuma movimentação poderá ser excluída.
+
+Caso seja necessário corrigir, deverá ser criada uma nova movimentação.
+
+---
+
+# Controle de Estoque
+
+O estoque será atualizado automaticamente quando ocorrer:
+
+Compra
+
+↓
+
+Entrada de estoque
+
+Venda
+
+↓
+
+Saída de estoque
+
+Ajuste
+
+↓
+
+Atualização do saldo
+
+Inventário
+
+↓
+
+Correção do saldo
+
+---
+
+# Estoque Negativo
+
+Por padrão:
+
+Não permitir estoque negativo.
+
+Caso essa opção seja habilitada nas configurações, o sistema permitirá vendas negativas mediante autorização.
+
+---
+
+# Compras
+
+Uma compra poderá possuir:
+
+- Um fornecedor
+- Vários produtos
+
+Ao finalizar a compra:
+
+- Atualizar estoque
+- Atualizar custo do produto (opcional conforme configuração)
+- Registrar movimentação financeira
+
+Compras canceladas deverão estornar o estoque.
+
+---
+
+# Vendas
+
+Uma venda poderá possuir:
+
+- Um cliente
+- Vários produtos
+- Múltiplas formas de pagamento
+
+Ao finalizar uma venda:
+
+- Baixar estoque
+- Registrar movimentação financeira
+- Registrar histórico
+
+---
+
+# Cancelamento de Venda
+
+Somente usuários autorizados poderão cancelar vendas.
+
+Ao cancelar:
+
+- Estornar estoque
+- Estornar financeiro
+- Registrar auditoria
+
+A venda permanecerá registrada com status Cancelada.
+
+Nunca será excluída.
+
+---
+
+# Formas de Pagamento
+
+Permitir:
+
+- Dinheiro
+- PIX
+- Cartão de Débito
+- Cartão de Crédito
+- Boleto
+- Transferência
+- Fiado
+
+Novas formas poderão ser adicionadas futuramente.
+
+---
+
+# Caixa
+
+Todo caixa deverá possuir:
+
+- Abertura
+- Fechamento
+
+Somente um caixa poderá permanecer aberto por usuário.
+
+Enquanto o caixa estiver fechado:
+
+Não será permitido realizar vendas.
+
+---
+
+# Sangria
+
+A sangria:
+
+- Reduz saldo do caixa
+- Gera registro financeiro
+- Gera auditoria
+
+Nunca poderá ser excluída.
+
+---
+
+# Suprimento
+
+O suprimento:
+
+- Aumenta saldo do caixa
+- Gera histórico
+- Gera auditoria
+
+---
+
+# Contas a Receber
+
+Podem ser geradas por:
+
+- Venda
+- Lançamento manual
+
+Status possíveis:
+
+- Aberta
+- Parcial
+- Recebida
+- Cancelada
+- Vencida
+
+---
+
+# Contas a Pagar
+
+Podem ser geradas por:
+
+- Compra
+- Lançamento manual
+
+Status:
+
+- Aberta
+- Parcial
+- Paga
+- Cancelada
+- Vencida
+
+---
+
+# Fluxo de Caixa
+
+Toda movimentação financeira deverá gerar registro.
+
+Entradas:
+
+- Venda
+- Recebimento
+- Receita
+
+Saídas:
+
+- Compra
+- Pagamento
+- Despesa
+- Sangria
+
+---
+
+# Relatórios
+
+Todos os relatórios deverão respeitar:
+
+- Empresa
+- Período
+- Permissões
+- Situação
+
+Nenhum relatório poderá exibir dados de outra empresa.
+
+---
+
+# Auditoria
+
+Registrar obrigatoriamente:
+
+- Login
+- Logout
+- Inclusão
+- Alteração
+- Exclusão lógica
+- Cancelamento
+- Aprovação
+- Recebimento
+- Pagamento
+- Venda
+- Compra
+- Ajuste de estoque
+
+Registrar:
+
+- Usuário
+- Data
+- Hora
+- IP
+- Registro alterado
+- Valores anteriores
+- Valores atuais
+
+---
+
+# Exclusão de Dados
+
+Produtos
+
+Não poderão ser excluídos caso possuam movimentações.
+
+Clientes
+
+Não poderão ser excluídos caso possuam vendas.
+
+Fornecedores
+
+Não poderão ser excluídos caso possuam compras.
+
+Categorias
+
+Não poderão ser excluídas caso possuam produtos.
+
+Nesses casos utilizar apenas:
+
+Ativo/Inativo.
+
+---
+
+# Segurança
+
+Obrigatório:
+
+- Autenticação
+- Controle de sessão
+- Tokens seguros
+- RLS
+- Permissões
+- Auditoria
+- Validação Backend
+- Validação Frontend
+
+---
+
+# Notificações
+
+O sistema deverá gerar alertas para:
+
+- Estoque mínimo
+- Produtos sem movimentação
+- Contas vencidas
+- Caixa aberto
+- Produtos próximos do vencimento (futuro)
+- Backup com erro
+- Falhas de integração
+
+---
+
+# Inteligência Artificial (Futuro)
+
+A IA poderá:
+
+- Prever vendas
+- Sugerir compras
+- Detectar produtos parados
+- Detectar queda nas vendas
+- Gerar relatórios automáticos
+- Gerar análises financeiras
+- Sugerir promoções
+
+A IA nunca poderá alterar dados automaticamente sem confirmação do usuário.
+
+---
+
+# Critérios de Aceite
+
+As regras de negócio serão consideradas aprovadas quando:
+
+- Todas as operações críticas estiverem definidas.
+- Todas as validações estiverem documentadas.
+- Todos os fluxos principais estiverem padronizados.
+- Não existirem ambiguidades sobre o comportamento esperado do sistema.
+- Todas as futuras implementações seguirem obrigatoriamente este documento.

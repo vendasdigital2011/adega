@@ -1,0 +1,493 @@
+# PDR-009 — Deploy e Infraestrutura
+
+## Projeto
+
+**Nome:** Adega Cloud
+
+**Documento:** PDR-009 — Deploy e Infraestrutura
+
+**Versão:** 1.0
+
+---
+
+# Objetivo
+
+Definir toda a infraestrutura necessária para desenvolvimento, homologação e produção do Adega Cloud.
+
+O ambiente deverá ser seguro, escalável, monitorado e preparado para futuras expansões.
+
+---
+
+# Arquitetura da Infraestrutura
+
+Cliente
+
+↓
+
+Cloudflare (Futuro)
+
+↓
+
+Vercel
+
+↓
+
+Next.js
+
+↓
+
+Supabase
+
+↓
+
+PostgreSQL
+
+↓
+
+Storage
+
+↓
+
+Edge Functions
+
+---
+
+# Ambientes
+
+## Desenvolvimento
+
+Objetivo
+
+Utilizado pelos desenvolvedores.
+
+Características
+
+- Banco próprio
+- Dados fictícios
+- Debug habilitado
+- Logs detalhados
+
+---
+
+## Homologação
+
+Objetivo
+
+Validação antes da produção.
+
+Características
+
+- Ambiente semelhante ao de produção
+- Testes completos
+- Dados controlados
+
+---
+
+## Produção
+
+Objetivo
+
+Sistema utilizado pelos clientes.
+
+Características
+
+- Alta disponibilidade
+- Logs monitorados
+- Segurança máxima
+- Backup automático
+
+---
+
+# Plataforma
+
+Frontend
+
+- Vercel
+
+Backend
+
+- Supabase
+
+Banco
+
+- PostgreSQL
+
+Arquivos
+
+- Supabase Storage
+
+Autenticação
+
+- Supabase Auth
+
+---
+
+# Repositório
+
+GitHub
+
+Branches
+
+main
+
+Ambiente de produção.
+
+develop
+
+Ambiente de desenvolvimento.
+
+feature/*
+
+Novas funcionalidades.
+
+hotfix/*
+
+Correções urgentes.
+
+release/*
+
+Preparação para publicação.
+
+---
+
+# Fluxo de Deploy
+
+Feature
+
+↓
+
+Develop
+
+↓
+
+Testes
+
+↓
+
+Release
+
+↓
+
+Homologação
+
+↓
+
+Main
+
+↓
+
+Produção
+
+---
+
+# Variáveis de Ambiente
+
+Obrigatórias
+
+NEXT_PUBLIC_SUPABASE_URL
+
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+SUPABASE_SERVICE_ROLE_KEY
+
+APP_NAME
+
+APP_URL
+
+NODE_ENV
+
+JWT_SECRET (caso utilizado)
+
+---
+
+# Segurança
+
+Obrigatório
+
+HTTPS
+
+SSL
+
+Headers de Segurança
+
+Rate Limit
+
+RLS
+
+Tokens seguros
+
+Sessões protegidas
+
+Cookies HttpOnly (quando aplicável)
+
+Proteção contra XSS
+
+Proteção contra SQL Injection
+
+Proteção contra CSRF
+
+---
+
+# Banco de Dados
+
+Executar automaticamente
+
+- Migrações
+- Índices
+- Constraints
+- Policies
+- Triggers
+
+Nunca alterar tabelas manualmente em produção.
+
+Toda alteração deverá ocorrer através de migrações versionadas.
+
+---
+
+# Storage
+
+Separar diretórios
+
+logos/
+
+products/
+
+customers/
+
+suppliers/
+
+documents/
+
+exports/
+
+uploads/
+
+---
+
+# Backup
+
+Banco
+
+Backup diário automático.
+
+Storage
+
+Backup periódico.
+
+Configurações
+
+Backup semanal.
+
+Objetivo
+
+Possibilitar restauração rápida em caso de falhas.
+
+---
+
+# Logs
+
+Registrar
+
+Login
+
+Logout
+
+Erros
+
+APIs
+
+Exceções
+
+Alterações
+
+Movimentações financeiras
+
+Movimentações de estoque
+
+Deploys
+
+---
+
+# Monitoramento
+
+Monitorar
+
+Tempo de resposta
+
+Uso de banco
+
+Erros
+
+Falhas
+
+Sessões
+
+Uso de Storage
+
+Uso de API
+
+Uso de memória
+
+Uso de CPU
+
+---
+
+# Performance
+
+Objetivos
+
+Primeira tela
+
+Até 2 segundos
+
+Dashboard
+
+Até 3 segundos
+
+Pesquisa
+
+Até 1 segundo
+
+Consultas SQL
+
+Até 500 ms
+
+---
+
+# Cache
+
+Utilizar
+
+Cache do Next.js
+
+Cache do navegador
+
+Cache do TanStack Query
+
+Revalidação inteligente
+
+---
+
+# Build
+
+Executar antes de qualquer Deploy
+
+- npm install
+- npm run lint
+- npm run type-check
+- npm run test
+- npm run build
+
+Nenhum deploy poderá ocorrer com falhas.
+
+---
+
+# Pipeline
+
+Fluxo obrigatório
+
+1. Commit
+2. Push
+3. Build
+4. Testes
+5. Lint
+6. Type Check
+7. Deploy Homologação
+8. Validação
+9. Deploy Produção
+
+---
+
+# Rollback
+
+Toda publicação deverá permitir rollback imediato.
+
+Em caso de erro crítico
+
+- Retornar para a versão anterior
+- Preservar banco de dados
+- Registrar incidente
+
+---
+
+# Deploy em Produção
+
+Checklist
+
+- Build aprovado
+- Testes aprovados
+- Banco atualizado
+- Migrações executadas
+- Variáveis configuradas
+- Logs funcionando
+- Monitoramento ativo
+- Backup recente disponível
+
+---
+
+# Escalabilidade
+
+A infraestrutura deverá suportar futuramente
+
+- Multiempresa
+- Multiunidade
+- Milhares de usuários
+- Milhões de registros
+- API Pública
+- Aplicativo Mobile
+- Integrações externas
+- Inteligência Artificial
+- Microserviços (caso necessário)
+
+---
+
+# Recuperação de Desastres
+
+Plano mínimo
+
+- Backup diário do banco
+- Backup do Storage
+- Versionamento do código
+- Rollback rápido
+- Ambiente de homologação atualizado
+- Registro de incidentes
+
+---
+
+# Publicação
+
+Cada versão deverá possuir
+
+Número da versão
+
+Exemplo
+
+v1.0.0
+
+v1.1.0
+
+v1.2.0
+
+v2.0.0
+
+Também deverá conter
+
+- Data da publicação
+- Alterações realizadas
+- Correções
+- Novas funcionalidades
+- Migrações executadas
+
+---
+
+# Critérios de Aceite
+
+O processo de Deploy será considerado aprovado quando
+
+- Todos os ambientes estiverem configurados.
+- O pipeline estiver automatizado.
+- O deploy ocorrer sem intervenção manual.
+- O rollback estiver validado.
+- O monitoramento estiver ativo.
+- Os backups estiverem funcionando.
+- A infraestrutura estiver preparada para crescimento futuro.
