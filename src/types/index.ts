@@ -26,6 +26,16 @@ export interface Permission {
   description: string | null
 }
 
+export interface Category {
+  id: string
+  company_id: string
+  name: string
+  description: string | null
+  active: boolean
+  created_at: string
+  updated_at: string
+}
+
 export type UserStatus = "active" | "inactive" | "blocked"
 
 export interface User {
