@@ -4,6 +4,7 @@ import React, { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
+import { usePermission } from "@/hooks/usePermission"
 import {
   LayoutDashboard,
   Wine,
@@ -17,6 +18,7 @@ import {
   Wallet,
   FileText,
   Settings,
+  UserCog,
   ChevronLeft,
   ChevronRight,
   Menu,
@@ -29,6 +31,7 @@ interface SidebarProps {
 export function Sidebar({ className }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false)
   const pathname = usePathname()
+  const canViewUsers = usePermission("users.view")
 
   const menuItems = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -42,6 +45,7 @@ export function Sidebar({ className }: SidebarProps) {
     { href: "/financial", label: "Financeiro", icon: LineChart },
     { href: "/cash", label: "Caixa", icon: Wallet },
     { href: "/reports", label: "Relatórios", icon: FileText },
+    ...(canViewUsers ? [{ href: "/users", label: "Usuários", icon: UserCog }] : []),
     { href: "/settings", label: "Configurações", icon: Settings },
   ]
 

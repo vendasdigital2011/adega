@@ -18,6 +18,23 @@ export abstract class BaseService {
     }
   }
 
+  // Resolves the company_id of the currently authenticated user.
+  protected async getCurrentUserCompanyId(): Promise<string> {
+    const {
+      data: { user },
+    } = await this.supabase.auth.getUser()
+    if (!user) throw { message: "Usuário não autenticado.", code: "UNAUTHENTICATED" }
+
+    const { data: profile, error } = await this.supabase
+      .from("users")
+      .select("company_id")
+      .eq("id", user.id)
+      .single()
+
+    if (error || !profile) throw { message: "Não foi possível identificar a empresa do usuário.", code: "UNKNOWN_ERROR" }
+    return profile.company_id as string
+  }
+
   // Common audit log helper
   protected async createAuditLog(
     companyId: string,
@@ -25,8 +42,8 @@ export abstract class BaseService {
     action: string,
     tableName: string,
     recordId: string,
-    oldData: Record<string, unknown> | null = null,
-    newData: Record<string, unknown> | null = null
+    oldData: object | null = null,
+    newData: object | null = null
   ) {
     try {
       const { error } = await this.supabase.from("audit_logs").insert({
@@ -45,6 +62,27 @@ export abstract class BaseService {
       }
     } catch (e) {
       console.error("Failed to create audit log:", e)
+    }
+  }
+
+  // Convenience wrapper: audits an action performed by the currently authenticated user.
+  protected async auditAsCurrentUser(
+    action: string,
+    tableName: string,
+    recordId: string,
+    oldData: object | null = null,
+    newData: object | null = null
+  ) {
+    try {
+      const {
+        data: { user },
+      } = await this.supabase.auth.getUser()
+      if (!user) return
+
+      const companyId = await this.getCurrentUserCompanyId()
+      await this.createAuditLog(companyId, user.id, action, tableName, recordId, oldData, newData)
+    } catch (e) {
+      console.error("Failed to audit current user action:", e)
     }
   }
 }

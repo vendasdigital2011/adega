@@ -15,6 +15,7 @@ export interface Company {
 
 export interface Role {
   id: string
+  company_id: string
   name: string
   description: string | null
 }
@@ -25,6 +26,8 @@ export interface Permission {
   description: string | null
 }
 
+export type UserStatus = "active" | "inactive" | "blocked"
+
 export interface User {
   id: string
   company_id: string
@@ -32,7 +35,7 @@ export interface User {
   name: string
   email: string
   phone: string | null
-  active: boolean
+  status: UserStatus
   last_login: string | null
   created_at: string
   updated_at: string

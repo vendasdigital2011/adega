@@ -2,6 +2,20 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { createServerClient, type CookieOptions } from "@supabase/ssr"
 
+// Maps protected routes to the permission required to access them.
+// Routes not listed here only require authentication (no granular permission yet).
+const routePermissions: Record<string, string> = {
+  "/users/roles": "roles.manage",
+  "/users": "users.view",
+}
+
+function permissionForPath(pathname: string): string | null {
+  const match = Object.keys(routePermissions).find(
+    (route) => pathname === route || pathname.startsWith(route + "/")
+  )
+  return match ? routePermissions[match] : null
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
@@ -54,6 +68,19 @@ export async function middleware(request: NextRequest) {
   if (isPublicPath && user) {
     const dashboardUrl = new URL("/dashboard", request.url)
     return NextResponse.redirect(dashboardUrl)
+  }
+
+  // Validate granular permission for routes that require one
+  const requiredPermission = permissionForPath(pathname)
+  if (user && requiredPermission) {
+    const { data: hasPermission } = await supabase.rpc("user_has_permission", {
+      perm_name: requiredPermission,
+    })
+
+    if (!hasPermission) {
+      const accessDeniedUrl = new URL("/access-denied", request.url)
+      return NextResponse.redirect(accessDeniedUrl)
+    }
   }
 
   return response

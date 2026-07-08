@@ -30,7 +30,12 @@ export class AuthService extends BaseService {
       if (data?.user) {
         // Fetch detailed profile
         const profile = await this.getCurrentUserProfile(data.user.id)
-        
+
+        if (profile && profile.status !== "active") {
+          await this.supabase.auth.signOut()
+          throw { message: "Usuário inativo ou bloqueado. Contate o administrador." }
+        }
+
         if (profile) {
           // Log audit action
           await this.createAuditLog(
@@ -42,6 +47,10 @@ export class AuthService extends BaseService {
             null,
             { email }
           )
+          await this.supabase
+            .from("users")
+            .update({ last_login: new Date().toISOString() })
+            .eq("id", profile.id)
         }
       }
 
@@ -195,7 +204,7 @@ export class AuthService extends BaseService {
         name: userData.name || "Usuário",
         email: userData.email,
         phone: userData.phone || null,
-        active: userData.active ?? true,
+        status: userData.status ?? "active",
         last_login: userData.last_login || null,
         created_at: userData.created_at,
         updated_at: userData.updated_at,
@@ -230,6 +239,7 @@ export class AuthService extends BaseService {
 
     const mockRole: Role = {
       id: "mock-admin-role-id",
+      company_id: "mock-company-id",
       name: "Administrador",
       description: "Acesso total ao sistema",
     }
@@ -251,7 +261,7 @@ export class AuthService extends BaseService {
       name: "Administrador Adega",
       email: "admin@adegacloud.com.br",
       phone: "(11) 99999-8888",
-      active: true,
+      status: "active",
       last_login: new Date().toISOString(),
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),

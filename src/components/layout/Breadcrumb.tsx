@@ -20,6 +20,9 @@ const routeMap: Record<string, string> = {
   reports: "Relatórios",
   settings: "Configurações",
   profile: "Perfil",
+  users: "Usuários",
+  roles: "Perfis e Permissões",
+  "access-denied": "Acesso Negado",
 }
 
 export function Breadcrumb() {

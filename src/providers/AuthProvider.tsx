@@ -1,6 +1,6 @@
 "use client"
 
-import React, { createContext, useState, useEffect, ReactNode } from "react"
+import React, { createContext, useState, useEffect, useRef, ReactNode } from "react"
 import { authService } from "@/services/AuthService"
 import { User, Company, Role, Permission } from "@/types"
 import { supabase } from "@/lib/supabase"
@@ -25,15 +25,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const router = useRouter()
+  // Tracks which user id is currently loaded (or being loaded) so we don't
+  // re-fetch the profile for auth events that don't actually change who's signed in
+  // (e.g. TOKEN_REFRESHED, which fires periodically but never changes the user).
+  const loadedUserId = useRef<string | null>(null)
 
-  // Load user data
   const loadUser = async () => {
     try {
       setLoading(true)
       const currentUser = await authService.getCurrentUser()
+      loadedUserId.current = currentUser?.id || null
       setUser(currentUser)
     } catch (e) {
       console.error("Failed to load user session info:", e)
+      loadedUserId.current = null
       setUser(null)
     } finally {
       setLoading(false)
@@ -48,10 +53,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log(`[Supabase Auth Event] ${event}`)
       if (session?.user) {
-        if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+        // Only reload the profile when the signed-in user actually changed.
+        // Re-fetching on every TOKEN_REFRESHED would trigger another
+        // getUser() call, which can itself emit a new auth event — an infinite loop.
+        if (event === "SIGNED_IN" && session.user.id !== loadedUserId.current) {
           await loadUser()
         }
       } else {
+        loadedUserId.current = null
         setUser(null)
         setLoading(false)
       }
