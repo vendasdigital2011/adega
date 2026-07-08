@@ -14,7 +14,7 @@ import { EmptyState } from "@/components/ui/EmptyState"
 import { UserStatusBadge } from "./UserStatusBadge"
 import { formatDate } from "@/utils/format"
 import { User, UserStatus } from "@/types"
-import { Pencil, Ban, CheckCircle2, Users as UsersIcon } from "lucide-react"
+import { Pencil, Ban, CheckCircle2, Lock, Users as UsersIcon } from "lucide-react"
 
 interface UserTableProps {
   users: User[]
@@ -62,23 +62,34 @@ export function UserTable({ users, onEdit, onChangeStatus, canEdit = true }: Use
                   <Button variant="ghost" size="icon" onClick={() => onEdit(user)} title="Editar">
                     <Pencil className="h-4 w-4" />
                   </Button>
-                  {user.status === "active" ? (
+                  {user.status !== "active" && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => onChangeStatus(user, "active")}
+                      title={user.status === "blocked" ? "Desbloquear" : "Reativar"}
+                    >
+                      <CheckCircle2 className="h-4 w-4 text-success" />
+                    </Button>
+                  )}
+                  {user.status === "active" && (
                     <Button
                       variant="ghost"
                       size="icon"
                       onClick={() => onChangeStatus(user, "inactive")}
                       title="Inativar"
                     >
-                      <Ban className="h-4 w-4 text-destructive" />
+                      <Ban className="h-4 w-4 text-muted-foreground" />
                     </Button>
-                  ) : (
+                  )}
+                  {user.status !== "blocked" && (
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => onChangeStatus(user, "active")}
-                      title="Reativar"
+                      onClick={() => onChangeStatus(user, "blocked")}
+                      title="Bloquear"
                     >
-                      <CheckCircle2 className="h-4 w-4 text-success" />
+                      <Lock className="h-4 w-4 text-destructive" />
                     </Button>
                   )}
                 </div>

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { createServerClient } from "@supabase/ssr"
 import { supabaseAdmin } from "@/lib/supabase-admin"
+import { createUserSchema } from "@/features/users/schemas/user.schema"
 
 export async function POST(request: NextRequest) {
   const cookieStore = request.cookies
@@ -48,21 +49,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: "Perfil do usuário autenticado não encontrado." }, { status: 400 })
   }
 
-  const body = await request.json()
-  const { email, password, name, phone, role_id: roleId } = body as {
-    email?: string
-    password?: string
-    name?: string
-    phone?: string
-    role_id?: string
+  let body: unknown
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ message: "Corpo da requisição inválido." }, { status: 400 })
   }
 
-  if (!email || !password || !name || !roleId) {
-    return NextResponse.json(
-      { message: "Campos obrigatórios: email, password, name, role_id." },
-      { status: 400 }
-    )
+  const parsed = createUserSchema.safeParse(body)
+  if (!parsed.success) {
+    const firstError = parsed.error.issues[0]?.message || "Dados inválidos."
+    return NextResponse.json({ message: firstError }, { status: 400 })
   }
+
+  const { email, password, name, phone, role_id: roleId } = parsed.data
 
   const { data: created, error: createError } = await supabaseAdmin.auth.admin.createUser({
     email,

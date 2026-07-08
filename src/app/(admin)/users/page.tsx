@@ -81,6 +81,30 @@ export default function UsersPage() {
     }
   }
 
+  const statusDialog = (() => {
+    if (!statusChange) return { title: "", description: "", variant: "danger" as const }
+    const name = statusChange.user.name
+    switch (statusChange.status) {
+      case "active":
+        return statusChange.user.status === "blocked"
+          ? { title: "Desbloquear usuário", description: `Deseja desbloquear o acesso de ${name}?`, variant: "success" as const }
+          : { title: "Reativar usuário", description: `Deseja reativar o acesso de ${name}?`, variant: "success" as const }
+      case "blocked":
+        return {
+          title: "Bloquear usuário",
+          description: `Deseja bloquear o acesso de ${name}? Ele não conseguirá mais fazer login até ser desbloqueado.`,
+          variant: "danger" as const,
+        }
+      case "inactive":
+      default:
+        return {
+          title: "Inativar usuário",
+          description: `Deseja inativar o acesso de ${name}? Ele não conseguirá mais fazer login.`,
+          variant: "danger" as const,
+        }
+    }
+  })()
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -164,13 +188,9 @@ export default function UsersPage() {
         isOpen={!!statusChange}
         onClose={() => setStatusChange(null)}
         onConfirm={handleConfirmStatusChange}
-        title={statusChange?.status === "active" ? "Reativar usuário" : "Inativar usuário"}
-        description={
-          statusChange?.status === "active"
-            ? `Deseja reativar o acesso de ${statusChange?.user.name}?`
-            : `Deseja inativar o acesso de ${statusChange?.user.name}? Ele não conseguirá mais fazer login.`
-        }
-        variant={statusChange?.status === "active" ? "success" : "danger"}
+        title={statusDialog.title}
+        description={statusDialog.description}
+        variant={statusDialog.variant}
         isLoading={updateUser.isPending}
       />
     </div>
