@@ -45,6 +45,22 @@ export interface Brand {
   updated_at: string
 }
 
+export interface Supplier {
+  id: string
+  company_id: string
+  name: string
+  document: string
+  email: string | null
+  phone: string | null
+  address: string | null
+  city: string | null
+  state: string | null
+  notes: string | null
+  active: boolean
+  created_at: string
+  updated_at: string
+}
+
 export type UserStatus = "active" | "inactive" | "blocked"
 
 export interface User {
