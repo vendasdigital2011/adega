@@ -36,6 +36,15 @@ export interface Category {
   updated_at: string
 }
 
+export interface Brand {
+  id: string
+  company_id: string
+  name: string
+  active: boolean
+  created_at: string
+  updated_at: string
+}
+
 export type UserStatus = "active" | "inactive" | "blocked"
 
 export interface User {
