@@ -79,6 +79,32 @@ export interface Customer {
   updated_at: string
 }
 
+export interface Product {
+  id: string
+  company_id: string
+  category_id: string
+  brand_id: string | null
+  supplier_id: string | null
+  name: string
+  sku: string
+  barcode: string | null
+  description: string | null
+  unit: string | null
+  purchase_price: number | null
+  sale_price: number
+  wholesale_price: number | null
+  promotion_price: number | null
+  minimum_stock: number
+  current_stock: number
+  image_url: string | null
+  active: boolean
+  created_at: string
+  updated_at: string
+  // Loaded relationships
+  category?: { name: string } | null
+  brand?: { name: string } | null
+}
+
 export type UserStatus = "active" | "inactive" | "blocked"
 
 export interface User {
