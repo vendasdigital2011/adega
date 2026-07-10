@@ -105,6 +105,32 @@ export interface Product {
   brand?: { name: string } | null
 }
 
+export type MovementType =
+  | "Entrada"
+  | "Saída"
+  | "Venda"
+  | "Compra"
+  | "Ajuste"
+  | "Inventário"
+  | "Perda"
+  | "Quebra"
+
+export interface InventoryMovement {
+  id: string
+  company_id: string
+  product_id: string
+  movement_type: MovementType
+  quantity: number
+  previous_quantity: number
+  current_quantity: number
+  reference: string | null
+  observation: string | null
+  user_id: string | null
+  created_at: string
+  // Loaded relationships
+  product?: { name: string; sku: string } | null
+}
+
 export type UserStatus = "active" | "inactive" | "blocked"
 
 export interface User {
