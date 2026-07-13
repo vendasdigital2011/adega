@@ -131,6 +131,36 @@ export interface InventoryMovement {
   product?: { name: string; sku: string } | null
 }
 
+export type PurchaseStatus = "pendente" | "recebida" | "cancelada"
+
+export interface PurchaseItem {
+  id: string
+  purchase_id: string
+  product_id: string
+  quantity: number
+  unit_price: number
+  total: number
+  // Loaded relationship
+  product?: { name: string; sku: string } | null
+}
+
+export interface Purchase {
+  id: string
+  company_id: string
+  supplier_id: string
+  purchase_date: string
+  freight: number
+  discount: number
+  total: number
+  status: PurchaseStatus
+  notes: string | null
+  created_by: string | null
+  created_at: string
+  // Loaded relationships
+  supplier?: { name: string } | null
+  items?: PurchaseItem[]
+}
+
 export type UserStatus = "active" | "inactive" | "blocked"
 
 export interface User {
