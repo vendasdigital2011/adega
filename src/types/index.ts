@@ -161,6 +161,35 @@ export interface Purchase {
   items?: PurchaseItem[]
 }
 
+export type SaleStatus = "finalizada" | "cancelada"
+export type PaymentMethod = "Dinheiro" | "PIX" | "Cartão de Débito" | "Cartão de Crédito"
+
+export interface SaleItem {
+  id: string
+  sale_id: string
+  product_id: string
+  quantity: number
+  unit_price: number
+  total: number
+  product?: { name: string; sku: string } | null
+}
+
+export interface Sale {
+  id: string
+  company_id: string
+  customer_id: string | null
+  sale_date: string
+  subtotal: number
+  discount: number
+  total: number
+  payment_method: PaymentMethod
+  status: SaleStatus
+  created_by: string | null
+  created_at: string
+  customer?: { name: string } | null
+  items?: SaleItem[]
+}
+
 export type UserStatus = "active" | "inactive" | "blocked"
 
 export interface User {
