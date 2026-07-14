@@ -26,6 +26,27 @@ export function formatDate(date: string | Date | undefined | null): string {
 }
 
 /**
+ * Formats a date/time as a relative Portuguese string (ex: "há 10 minutos")
+ */
+export function formatRelativeTime(date: string | Date | undefined | null): string {
+  if (!date) return "-"
+  const d = typeof date === "string" ? new Date(date) : date
+  if (isNaN(d.getTime())) return "-"
+
+  const diffMs = Date.now() - d.getTime()
+  const diffMin = Math.round(diffMs / 60000)
+
+  if (diffMin < 1) return "agora mesmo"
+  if (diffMin < 60) return `há ${diffMin} min`
+  const diffHours = Math.round(diffMin / 60)
+  if (diffHours < 24) return `há ${diffHours}h`
+  const diffDays = Math.round(diffHours / 24)
+  if (diffDays === 1) return "ontem"
+  if (diffDays < 30) return `há ${diffDays} dias`
+  return formatDate(d)
+}
+
+/**
  * Formats a phone number string to (XX) XXXXX-XXXX or (XX) XXXX-XXXX format
  */
 export function formatPhone(phone: string | undefined | null): string {

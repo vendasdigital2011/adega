@@ -1,27 +1,81 @@
 "use client"
 
 import React from "react"
+import Link from "next/link"
 import { useAuth } from "@/hooks/useAuth"
+import { useDashboardSummary } from "@/features/dashboard/hooks/useDashboardSummary"
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/Card"
 import { Badge } from "@/components/ui/Badge"
-import { Wine, DollarSign, ShoppingCart, TrendingUp, AlertCircle, ArrowUpRight, ArrowDownRight } from "lucide-react"
+import { Loading } from "@/components/ui/Loading"
+import { EmptyState } from "@/components/ui/EmptyState"
+import { formatCurrency, formatRelativeTime } from "@/utils/format"
+import {
+  Wine,
+  DollarSign,
+  ShoppingCart,
+  Users,
+  AlertCircle,
+  ArrowUpRight,
+  ArrowDownRight,
+  Receipt,
+} from "lucide-react"
+
+type Trend = { direction: "up" | "down" | "flat"; label: string }
+
+function calcTrend(current: number, previous: number): Trend {
+  if (previous <= 0) {
+    if (current <= 0) return { direction: "flat", label: "Sem vendas ontem" }
+    return { direction: "up", label: "Sem comparativo (zero ontem)" }
+  }
+  const change = Math.round(((current - previous) / previous) * 100)
+  if (change === 0) return { direction: "flat", label: "Estável em relação a ontem" }
+  return {
+    direction: change > 0 ? "up" : "down",
+    label: `${change > 0 ? "+" : ""}${change}% em relação a ontem`,
+  }
+}
 
 export default function DashboardPage() {
   const { user } = useAuth()
+  const { data, isLoading } = useDashboardSummary()
 
-  const stats = [
-    { title: "Vendas do Dia", value: "R$ 1.840,00", desc: "+12% em relação a ontem", icon: DollarSign, trend: "up", trendValue: "+12%" },
-    { title: "Pedidos Concluídos", value: "32", desc: "Ticket médio de R$ 57,50", icon: ShoppingCart, trend: "up", trendValue: "+8%" },
-    { title: "Novos Clientes", value: "5", desc: "Total de 142 cadastrados", icon: TrendingUp, trend: "up", trendValue: "+25%" },
-    { title: "Produtos em Falta", value: "3", desc: "Necessitam de compra urgente", icon: AlertCircle, trend: "down", trendValue: "3 itens" },
-  ]
+  const salesTrend = data ? calcTrend(data.todayTotal, data.yesterdayTotal) : null
+  const ordersTrend = data ? calcTrend(data.todayOrders, data.yesterdayOrders) : null
+  const customersTrend = data ? calcTrend(data.newCustomersToday, data.newCustomersYesterday) : null
+  const avgTicket = data && data.todayOrders > 0 ? data.todayTotal / data.todayOrders : 0
 
-  const recentSales = [
-    { id: "V001", client: "João Silva", total: "R$ 120,00", status: "Pago", time: "há 10 min" },
-    { id: "V002", client: "Maria Souza", total: "R$ 85,50", status: "Pago", time: "há 25 min" },
-    { id: "V003", client: "Carlos Oliveira", total: "R$ 310,00", status: "Pendente", time: "há 1h" },
-    { id: "V004", client: "Ana Santos", total: "R$ 45,00", status: "Pago", time: "há 2h" },
-  ]
+  const stats = data
+    ? [
+        {
+          title: "Vendas do Dia",
+          value: formatCurrency(data.todayTotal),
+          desc: salesTrend!.label,
+          icon: DollarSign,
+          trend: salesTrend!.direction,
+        },
+        {
+          title: "Pedidos Concluídos",
+          value: String(data.todayOrders),
+          desc: `Ticket médio de ${formatCurrency(avgTicket)}`,
+          icon: ShoppingCart,
+          trend: ordersTrend!.direction,
+        },
+        {
+          title: "Novos Clientes",
+          value: String(data.newCustomersToday),
+          desc: `Total de ${data.totalCustomers} cadastrados`,
+          icon: Users,
+          trend: customersTrend!.direction,
+        },
+        {
+          title: "Produtos em Falta",
+          value: String(data.lowStockCount),
+          desc: data.lowStockCount > 0 ? "Necessitam de compra urgente" : "Estoque sob controle",
+          icon: AlertCircle,
+          trend: null,
+        },
+      ]
+    : []
 
   return (
     <div className="space-y-6">
@@ -35,111 +89,127 @@ export default function DashboardPage() {
         </div>
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="text-xs bg-muted/30 py-1 px-2.5">
-            Empresa: {user?.company?.name || "Adega Modelo"}
-          </Badge>
-          <Badge variant="success" className="text-xs py-1 px-2.5">
-            Caixa: Aberto
+            Empresa: {user?.company?.name || "-"}
           </Badge>
         </div>
       </div>
 
-      {/* KPI Cards Grid */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat, i) => {
-          const Icon = stat.icon
-          return (
-            <Card key={i} className="bg-card/30 border-border/40 hover:border-border transition-colors">
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">{stat.title}</CardTitle>
-                <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center">
-                  <Icon className="h-4 w-4" />
-                </div>
+      {isLoading || !data ? (
+        <Loading />
+      ) : (
+        <>
+          {/* KPI Cards Grid */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {stats.map((stat, i) => {
+              const Icon = stat.icon
+              return (
+                <Card key={i} className="bg-card/30 border-border/40 hover:border-border transition-colors">
+                  <CardHeader className="flex flex-row items-center justify-between pb-2">
+                    <CardTitle className="text-sm font-medium text-muted-foreground">{stat.title}</CardTitle>
+                    <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                      <Icon className="h-4 w-4" />
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{stat.value}</div>
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
+                      {stat.trend === "up" && (
+                        <span className="text-success flex items-center">
+                          <ArrowUpRight className="h-3.5 w-3.5 mr-0.5" />
+                        </span>
+                      )}
+                      {stat.trend === "down" && (
+                        <span className="text-destructive flex items-center">
+                          <ArrowDownRight className="h-3.5 w-3.5 mr-0.5" />
+                        </span>
+                      )}
+                      <span>{stat.desc}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              )
+            })}
+          </div>
+
+          {/* Layout Content: Main Area & Side Details */}
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            {/* Sales Activity */}
+            <Card className="col-span-1 lg:col-span-2 bg-card/30 border-border/40">
+              <CardHeader>
+                <CardTitle>Vendas Recentes</CardTitle>
+                <CardDescription>Últimos pedidos registrados.</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stat.value}</div>
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
-                  {stat.trend === "up" ? (
-                    <span className="text-success flex items-center">
-                      <ArrowUpRight className="h-3.5 w-3.5 mr-0.5" />
-                      {stat.trendValue}
-                    </span>
-                  ) : (
-                    <span className="text-destructive flex items-center">
-                      <ArrowDownRight className="h-3.5 w-3.5 mr-0.5" />
-                      {stat.trendValue}
-                    </span>
-                  )}
-                  <span>{stat.desc}</span>
-                </div>
+                {data.recentSales.length === 0 ? (
+                  <EmptyState
+                    icon={Receipt}
+                    title="Nenhuma venda registrada"
+                    description="As vendas realizadas vão aparecer aqui."
+                  />
+                ) : (
+                  <div className="divide-y divide-border/40">
+                    {data.recentSales.map((sale) => (
+                      <div key={sale.id} className="flex items-center justify-between py-3.5 first:pt-0 last:pb-0">
+                        <div className="flex items-center gap-3">
+                          <div className="h-9 w-9 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                            <Receipt className="h-4 w-4" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-foreground">{sale.customerName || "Balcão"}</p>
+                            <p className="text-xs text-muted-foreground">{formatRelativeTime(sale.createdAt)}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm font-bold text-foreground">{formatCurrency(sale.total)}</span>
+                          <Badge variant={sale.status === "finalizada" ? "success" : "destructive"}>
+                            {sale.status === "finalizada" ? "Finalizada" : "Cancelada"}
+                          </Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
-          )
-        })}
-      </div>
 
-      {/* Layout Content: Main Area & Side Details */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Sales Activity */}
-        <Card className="col-span-1 lg:col-span-2 bg-card/30 border-border/40">
-          <CardHeader>
-            <CardTitle>Vendas Recentes</CardTitle>
-            <CardDescription>Lista dos últimos pedidos realizados hoje.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="divide-y divide-border/40">
-              {recentSales.map((sale) => (
-                <div key={sale.id} className="flex items-center justify-between py-3.5 first:pt-0 last:pb-0">
+            {/* Action Panel */}
+            <Card className="bg-card/30 border-border/40">
+              <CardHeader>
+                <CardTitle>Ações Rápidas</CardTitle>
+                <CardDescription>Acessos rápidos do sistema.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Link
+                  href="/products"
+                  className="w-full flex items-center justify-between p-3.5 rounded-lg border border-border/40 hover:border-primary/40 bg-muted/10 hover:bg-muted/40 transition-all text-left"
+                >
                   <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">
-                      {sale.id}
-                    </div>
+                    <Wine className="h-5 w-5 text-primary" />
                     <div>
-                      <p className="text-sm font-semibold text-foreground">{sale.client}</p>
-                      <p className="text-xs text-muted-foreground">{sale.time}</p>
+                      <p className="text-sm font-semibold text-foreground">Novo Produto</p>
+                      <p className="text-xs text-muted-foreground">Cadastrar bebida</p>
                     </div>
                   </div>
+                  <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
+                </Link>
+                <Link
+                  href="/sales"
+                  className="w-full flex items-center justify-between p-3.5 rounded-lg border border-border/40 hover:border-primary/40 bg-muted/10 hover:bg-muted/40 transition-all text-left"
+                >
                   <div className="flex items-center gap-3">
-                    <span className="text-sm font-bold text-foreground">{sale.total}</span>
-                    <Badge variant={sale.status === "Pago" ? "success" : "warning"}>
-                      {sale.status}
-                    </Badge>
+                    <DollarSign className="h-5 w-5 text-success" />
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">Realizar Venda (PDV)</p>
+                      <p className="text-xs text-muted-foreground">Registrar uma nova venda</p>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Action Panel */}
-        <Card className="bg-card/30 border-border/40">
-          <CardHeader>
-            <CardTitle>Ações Rápidas</CardTitle>
-            <CardDescription>Acessos rápidos do sistema.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <button className="w-full flex items-center justify-between p-3.5 rounded-lg border border-border/40 hover:border-primary/40 bg-muted/10 hover:bg-muted/40 transition-all text-left">
-              <div className="flex items-center gap-3">
-                <Wine className="h-5 w-5 text-primary" />
-                <div>
-                  <p className="text-sm font-semibold text-foreground">Novo Produto</p>
-                  <p className="text-xs text-muted-foreground">Cadastrar bebida</p>
-                </div>
-              </div>
-              <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
-            </button>
-            <button className="w-full flex items-center justify-between p-3.5 rounded-lg border border-border/40 hover:border-primary/40 bg-muted/10 hover:bg-muted/40 transition-all text-left">
-              <div className="flex items-center gap-3">
-                <DollarSign className="h-5 w-5 text-success" />
-                <div>
-                  <p className="text-sm font-semibold text-foreground">Realizar Venda (PDV)</p>
-                  <p className="text-xs text-muted-foreground">Acessar caixa rápido</p>
-                </div>
-              </div>
-              <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
-            </button>
-          </CardContent>
-        </Card>
-      </div>
+                  <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
+                </Link>
+              </CardContent>
+            </Card>
+          </div>
+        </>
+      )}
     </div>
   )
 }
