@@ -190,6 +190,33 @@ export interface Sale {
   items?: SaleItem[]
 }
 
+export type CashRegisterStatus = "aberto" | "fechado"
+export type CashMovementType = "Entrada" | "Saída" | "Sangria" | "Suprimento"
+
+export interface CashRegister {
+  id: string
+  company_id: string
+  opened_by: string | null
+  opened_at: string
+  initial_value: number
+  closed_by: string | null
+  closed_at: string | null
+  final_value: number | null
+  difference: number | null
+  status: CashRegisterStatus
+  opened_by_user?: { name: string } | null
+}
+
+export interface CashMovement {
+  id: string
+  cash_register_id: string
+  movement_type: CashMovementType
+  value: number
+  description: string | null
+  user_id: string | null
+  created_at: string
+}
+
 export type UserStatus = "active" | "inactive" | "blocked"
 
 export interface User {

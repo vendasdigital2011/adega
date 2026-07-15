@@ -18,7 +18,8 @@ export function useSaleItems(saleId: string | null) {
   })
 }
 
-// Vendas mexem no estoque — invalida produtos e movimentos também.
+// Vendas mexem no estoque e no caixa (Entrada/Saída automáticas) — invalida
+// produtos, movimentos de estoque e movimentos/saldo de caixa também.
 function invalidateAll(queryClient: ReturnType<typeof useQueryClient>) {
   queryClient.invalidateQueries({ queryKey: ["sales"] })
   queryClient.invalidateQueries({ queryKey: ["products"] })
@@ -26,6 +27,8 @@ function invalidateAll(queryClient: ReturnType<typeof useQueryClient>) {
   queryClient.invalidateQueries({ queryKey: ["inventory-active-products"] })
   queryClient.invalidateQueries({ queryKey: ["inventory-movements"] })
   queryClient.invalidateQueries({ queryKey: ["inventory-low-stock"] })
+  queryClient.invalidateQueries({ queryKey: ["cash-movements"] })
+  queryClient.invalidateQueries({ queryKey: ["cash-open-register"] })
 }
 
 export function useCreateSale() {
