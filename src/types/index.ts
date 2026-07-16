@@ -292,6 +292,20 @@ export interface PayablePayment {
   paid_at: string
 }
 
+export type ThemePreference = "light" | "dark" | "system"
+
+export interface Settings {
+  id: string
+  company_id: string
+  theme: ThemePreference
+  currency: string
+  timezone: string
+  language: string
+  logo_url: string | null
+  created_at: string
+  updated_at: string
+}
+
 export type UserStatus = "active" | "inactive" | "blocked"
 
 export interface User {
