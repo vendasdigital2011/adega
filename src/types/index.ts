@@ -162,7 +162,14 @@ export interface Purchase {
 }
 
 export type SaleStatus = "finalizada" | "cancelada"
-export type PaymentMethod = "Dinheiro" | "PIX" | "Cartão de Débito" | "Cartão de Crédito"
+export type PaymentMethod =
+  | "Dinheiro"
+  | "PIX"
+  | "Cartão de Débito"
+  | "Cartão de Crédito"
+  | "Boleto"
+  | "Transferência"
+  | "Fiado"
 
 export interface SaleItem {
   id: string
@@ -215,6 +222,74 @@ export interface CashMovement {
   description: string | null
   user_id: string | null
   created_at: string
+}
+
+export interface CostCenter {
+  id: string
+  company_id: string
+  name: string
+  active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export type AccountsReceivableStatus = "Aberta" | "Parcial" | "Recebida" | "Cancelada"
+export type AccountsPayableStatus = "Aberta" | "Parcial" | "Paga" | "Cancelada"
+
+export interface AccountReceivable {
+  id: string
+  company_id: string
+  customer_id: string | null
+  sale_id: string | null
+  cost_center_id: string | null
+  description: string | null
+  due_date: string
+  amount: number
+  received_amount: number
+  status: AccountsReceivableStatus
+  created_by: string | null
+  created_at: string
+  updated_at: string
+  // Loaded relationships
+  customer?: { name: string } | null
+  cost_center?: { name: string } | null
+}
+
+export interface AccountPayable {
+  id: string
+  company_id: string
+  supplier_id: string | null
+  purchase_id: string | null
+  cost_center_id: string | null
+  description: string | null
+  due_date: string
+  amount: number
+  paid_amount: number
+  status: AccountsPayableStatus
+  created_by: string | null
+  created_at: string
+  updated_at: string
+  // Loaded relationships
+  supplier?: { name: string } | null
+  cost_center?: { name: string } | null
+}
+
+export interface ReceivableReceipt {
+  id: string
+  accounts_receivable_id: string
+  value: number
+  description: string | null
+  user_id: string | null
+  received_at: string
+}
+
+export interface PayablePayment {
+  id: string
+  accounts_payable_id: string
+  value: number
+  description: string | null
+  user_id: string | null
+  paid_at: string
 }
 
 export type UserStatus = "active" | "inactive" | "blocked"

@@ -22,7 +22,8 @@ export function usePurchaseItems(purchaseId: string | null) {
   })
 }
 
-// Após receber/cancelar, o estoque muda — invalida também produtos e movimentos.
+// Após receber/cancelar, o estoque muda e uma conta a pagar é gerada/cancelada
+// — invalida também produtos, movimentos e contas a pagar.
 function invalidateAll(queryClient: ReturnType<typeof useQueryClient>) {
   queryClient.invalidateQueries({ queryKey: ["purchases"] })
   queryClient.invalidateQueries({ queryKey: ["products"] })
@@ -30,6 +31,8 @@ function invalidateAll(queryClient: ReturnType<typeof useQueryClient>) {
   queryClient.invalidateQueries({ queryKey: ["inventory-active-products"] })
   queryClient.invalidateQueries({ queryKey: ["inventory-movements"] })
   queryClient.invalidateQueries({ queryKey: ["inventory-low-stock"] })
+  queryClient.invalidateQueries({ queryKey: ["accounts-payable"] })
+  queryClient.invalidateQueries({ queryKey: ["cash-flow"] })
 }
 
 export function useCreatePurchase() {

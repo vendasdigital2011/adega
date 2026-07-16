@@ -16,7 +16,16 @@ export function formatCurrency(value: number | string | undefined | null): strin
  */
 export function formatDate(date: string | Date | undefined | null): string {
   if (!date) return "-"
-  const d = typeof date === "string" ? new Date(date) : date
+  // Date-only strings ("YYYY-MM-DD") have no timezone info; parsing them with
+  // `new Date()` treats them as UTC midnight, which shifts a day back when
+  // formatted in a negative-offset timezone (e.g. America/Sao_Paulo). Parse
+  // the components directly so the calendar date shown matches what was stored.
+  const dateOnlyMatch = typeof date === "string" && date.match(/^(\d{4})-(\d{2})-(\d{2})$/)
+  const d = dateOnlyMatch
+    ? new Date(Number(dateOnlyMatch[1]), Number(dateOnlyMatch[2]) - 1, Number(dateOnlyMatch[3]))
+    : typeof date === "string"
+      ? new Date(date)
+      : date
   if (isNaN(d.getTime())) return "-"
   return new Intl.DateTimeFormat("pt-BR", {
     day: "2-digit",

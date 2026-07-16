@@ -33,6 +33,7 @@ export function Sidebar({ className }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false)
   const pathname = usePathname()
   const canViewUsers = usePermission("users.view")
+  const canViewFinancial = usePermission("financial.view")
 
   const menuItems = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -44,7 +45,7 @@ export function Sidebar({ className }: SidebarProps) {
     { href: "/sales", label: "Vendas", icon: DollarSign },
     { href: "/customers", label: "Clientes", icon: Users },
     { href: "/suppliers", label: "Fornecedores", icon: Truck },
-    { href: "/financial", label: "Financeiro", icon: LineChart },
+    ...(canViewFinancial ? [{ href: "/financial", label: "Financeiro", icon: LineChart }] : []),
     { href: "/cash", label: "Caixa", icon: Wallet },
     { href: "/reports", label: "Relatórios", icon: FileText },
     ...(canViewUsers ? [{ href: "/users", label: "Usuários", icon: UserCog }] : []),

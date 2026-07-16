@@ -18,8 +18,8 @@ export function useSaleItems(saleId: string | null) {
   })
 }
 
-// Vendas mexem no estoque e no caixa (Entrada/Saída automáticas) — invalida
-// produtos, movimentos de estoque e movimentos/saldo de caixa também.
+// Vendas mexem no estoque, no caixa (Entrada/Saída automáticas) e, no caso de
+// venda fiado, em contas a receber — invalida tudo isso também.
 function invalidateAll(queryClient: ReturnType<typeof useQueryClient>) {
   queryClient.invalidateQueries({ queryKey: ["sales"] })
   queryClient.invalidateQueries({ queryKey: ["products"] })
@@ -29,6 +29,8 @@ function invalidateAll(queryClient: ReturnType<typeof useQueryClient>) {
   queryClient.invalidateQueries({ queryKey: ["inventory-low-stock"] })
   queryClient.invalidateQueries({ queryKey: ["cash-movements"] })
   queryClient.invalidateQueries({ queryKey: ["cash-open-register"] })
+  queryClient.invalidateQueries({ queryKey: ["accounts-receivable"] })
+  queryClient.invalidateQueries({ queryKey: ["cash-flow"] })
 }
 
 export function useCreateSale() {
