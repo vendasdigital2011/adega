@@ -34,6 +34,7 @@ export function Sidebar({ className }: SidebarProps) {
   const pathname = usePathname()
   const canViewUsers = usePermission("users.view")
   const canViewFinancial = usePermission("financial.view")
+  const canViewReports = usePermission("reports.view")
 
   const menuItems = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -47,7 +48,7 @@ export function Sidebar({ className }: SidebarProps) {
     { href: "/suppliers", label: "Fornecedores", icon: Truck },
     ...(canViewFinancial ? [{ href: "/financial", label: "Financeiro", icon: LineChart }] : []),
     { href: "/cash", label: "Caixa", icon: Wallet },
-    { href: "/reports", label: "Relatórios", icon: FileText },
+    ...(canViewReports ? [{ href: "/reports", label: "Relatórios", icon: FileText }] : []),
     ...(canViewUsers ? [{ href: "/users", label: "Usuários", icon: UserCog }] : []),
     { href: "/settings", label: "Configurações", icon: Settings },
   ]
