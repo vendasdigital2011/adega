@@ -1,5 +1,6 @@
 import { BaseService } from "./BaseService"
 import { User, UserStatus } from "@/types"
+import { sanitizeSearchTerm } from "@/utils/sanitize"
 
 export interface CreateUserInput {
   email: string
@@ -55,7 +56,8 @@ export class UserService extends BaseService {
         .range(from, to)
 
       if (options.search) {
-        query = query.or(`name.ilike.%${options.search}%,email.ilike.%${options.search}%`)
+        const term = sanitizeSearchTerm(options.search)
+        query = query.or(`name.ilike.%${term}%,email.ilike.%${term}%`)
       }
       if (options.status) {
         query = query.eq("status", options.status)

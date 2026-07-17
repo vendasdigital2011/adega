@@ -1,5 +1,6 @@
 import { BaseService } from "./BaseService"
 import { InventoryMovement, MovementType, Product } from "@/types"
+import { sanitizeSearchTerm } from "@/utils/sanitize"
 
 export interface RegisterMovementInput {
   product_id: string
@@ -55,7 +56,8 @@ export class InventoryService extends BaseService {
       }
       if (options.search) {
         // Filtra pelo produto relacionado (nome ou SKU).
-        query = query.or(`name.ilike.%${options.search}%,sku.ilike.%${options.search}%`, {
+        const term = sanitizeSearchTerm(options.search)
+        query = query.or(`name.ilike.%${term}%,sku.ilike.%${term}%`, {
           referencedTable: "products",
         })
       }

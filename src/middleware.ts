@@ -25,8 +25,11 @@ export async function middleware(request: NextRequest) {
     pathname === "/forgot-password" ||
     pathname === "/reset-password"
 
-  // For testing in development without a real session, if NEXT_PUBLIC_BYPASS_MIDDLEWARE is true, bypass it
-  const bypassMiddleware = process.env.NEXT_PUBLIC_BYPASS_MIDDLEWARE === "true"
+  // For testing in development without a real session, if NEXT_PUBLIC_BYPASS_MIDDLEWARE is true, bypass it.
+  // Travado por process.env.NODE_ENV: mesmo que a env var vaze para produção
+  // por engano, o bypass nunca é aplicado fora de desenvolvimento.
+  const bypassMiddleware =
+    process.env.NODE_ENV !== "production" && process.env.NEXT_PUBLIC_BYPASS_MIDDLEWARE === "true"
 
   if (bypassMiddleware) {
     return NextResponse.next()

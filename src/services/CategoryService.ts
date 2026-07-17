@@ -1,5 +1,6 @@
 import { BaseService } from "./BaseService"
 import { Category } from "@/types"
+import { sanitizeSearchTerm } from "@/utils/sanitize"
 
 export interface CreateCategoryInput {
   name: string
@@ -50,7 +51,8 @@ export class CategoryService extends BaseService {
         .range(from, to)
 
       if (options.search) {
-        query = query.or(`name.ilike.%${options.search}%,description.ilike.%${options.search}%`)
+        const term = sanitizeSearchTerm(options.search)
+        query = query.or(`name.ilike.%${term}%,description.ilike.%${term}%`)
       }
       if (typeof options.active === "boolean") {
         query = query.eq("active", options.active)
