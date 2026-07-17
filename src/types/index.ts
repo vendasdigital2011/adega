@@ -373,3 +373,19 @@ export interface AuditLog {
   // Loaded relationship
   user?: { name: string; email: string } | null
 }
+
+export type NotificationType =
+  | "estoque_baixo"
+  | "financeiro_receber"
+  | "financeiro_pagar"
+  | "caixa_aberto"
+
+export interface Notification {
+  id: string
+  company_id: string
+  title: string
+  message: string
+  type: NotificationType
+  read: boolean
+  created_at: string
+}
