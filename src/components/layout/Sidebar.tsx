@@ -20,6 +20,7 @@ import {
   FileText,
   Settings,
   UserCog,
+  History,
   ChevronLeft,
   ChevronRight,
   Menu,
@@ -34,6 +35,7 @@ export function Sidebar({ className }: SidebarProps) {
   const pathname = usePathname()
   const canViewUsers = usePermission("users.view")
   const canViewFinancial = usePermission("financial.view")
+  const canViewAudit = usePermission("audit.view")
   const canViewReports = usePermission("reports.view")
 
   const menuItems = [
@@ -49,6 +51,7 @@ export function Sidebar({ className }: SidebarProps) {
     ...(canViewFinancial ? [{ href: "/financial", label: "Financeiro", icon: LineChart }] : []),
     { href: "/cash", label: "Caixa", icon: Wallet },
     ...(canViewReports ? [{ href: "/reports", label: "Relatórios", icon: FileText }] : []),
+    ...(canViewAudit ? [{ href: "/audit", label: "Auditoria", icon: History }] : []),
     ...(canViewUsers ? [{ href: "/users", label: "Usuários", icon: UserCog }] : []),
     { href: "/settings", label: "Configurações", icon: Settings },
   ]

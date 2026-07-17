@@ -35,6 +35,23 @@ export function formatDate(date: string | Date | undefined | null): string {
 }
 
 /**
+ * Formats a timestamp to DD/MM/YYYY HH:mm (pt-BR). Use for audit logs and other
+ * places that need the exact time, not just the calendar day.
+ */
+export function formatDateTime(date: string | Date | undefined | null): string {
+  if (!date) return "-"
+  const d = typeof date === "string" ? new Date(date) : date
+  if (isNaN(d.getTime())) return "-"
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(d)
+}
+
+/**
  * Formats a date/time as a relative Portuguese string (ex: "há 10 minutos")
  */
 export function formatRelativeTime(date: string | Date | undefined | null): string {

@@ -349,3 +349,27 @@ export interface AuditLogInput {
   new_data?: Record<string, any> | null
   observation?: string
 }
+
+export type AuditAction =
+  | "INSERT"
+  | "UPDATE"
+  | "DELETE"
+  | "LOGIN"
+  | "LOGOUT"
+  | "PASSWORD_RESET"
+  | "PASSWORD_CHANGE"
+
+export interface AuditLog {
+  id: string
+  company_id: string
+  user_id: string | null
+  table_name: string
+  record_id: string | null
+  action: string
+  old_data: Record<string, any> | null
+  new_data: Record<string, any> | null
+  ip: string | null
+  created_at: string
+  // Loaded relationship
+  user?: { name: string; email: string } | null
+}

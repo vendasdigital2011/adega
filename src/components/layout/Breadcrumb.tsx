@@ -18,6 +18,7 @@ const routeMap: Record<string, string> = {
   financial: "Financeiro",
   cash: "Caixa",
   reports: "Relatórios",
+  audit: "Auditoria",
   settings: "Configurações",
   profile: "Perfil",
   users: "Usuários",
