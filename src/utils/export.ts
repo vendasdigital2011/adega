@@ -1,12 +1,17 @@
-import jsPDF from "jspdf"
-import autoTable from "jspdf-autotable"
-
 export interface ExportColumn<T> {
   header: string
   value: (row: T) => string
 }
 
-export function exportToPdf<T>(title: string, columns: ExportColumn<T>[], rows: T[], filename: string): void {
+// jsPDF + jspdf-autotable só são carregados quando o usuário realmente clica
+// em exportar — evita ~100KB no bundle inicial de páginas com botão de
+// exportação (Relatórios, Auditoria) que a maioria das visitas não usa.
+export async function exportToPdf<T>(title: string, columns: ExportColumn<T>[], rows: T[], filename: string): Promise<void> {
+  const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+    import("jspdf"),
+    import("jspdf-autotable"),
+  ])
+
   const doc = new jsPDF({ orientation: columns.length > 5 ? "landscape" : "portrait" })
   doc.setFontSize(14)
   doc.text(title, 14, 15)
