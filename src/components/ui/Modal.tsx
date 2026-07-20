@@ -57,6 +57,9 @@ export function Modal({
 
       {/* Modal Dialog */}
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
         className={cn(
           "relative w-full rounded-lg border bg-card text-card-foreground shadow-lg duration-200 animate-in fade-in zoom-in-95 flex flex-col max-h-[90vh] overflow-hidden",
           sizeClasses[size]
@@ -72,7 +75,7 @@ export function Modal({
           >
             <X className="h-4 w-4" />
           </Button>
-          <h2 className="text-lg font-semibold leading-none tracking-tight">{title}</h2>
+          <h2 id="modal-title" className="text-lg font-semibold leading-none tracking-tight">{title}</h2>
           {description && (
             <p className="text-sm text-muted-foreground mt-1">{description}</p>
           )}

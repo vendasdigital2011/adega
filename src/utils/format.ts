@@ -2,13 +2,11 @@
  * Formats a number to Brazilian Real (R$) currency format
  */
 export function formatCurrency(value: number | string | undefined | null): string {
-  if (value === undefined || value === null) return "R$ 0,00"
-  const numericValue = typeof value === "string" ? parseFloat(value) : value
-  if (isNaN(numericValue)) return "R$ 0,00"
+  const numericValue = value === undefined || value === null ? 0 : typeof value === "string" ? parseFloat(value) : value
   return new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL",
-  }).format(numericValue)
+  }).format(isNaN(numericValue) ? 0 : numericValue)
 }
 
 /**
