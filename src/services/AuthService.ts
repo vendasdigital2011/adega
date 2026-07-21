@@ -1,5 +1,6 @@
 import { BaseService } from "./BaseService"
-import { User, Company, Role, Permission } from "@/types"
+import { User, Permission } from "@/types"
+import { logClientError } from "@/lib/logger"
 
 export class AuthService extends BaseService {
   private static instance: AuthService
@@ -31,27 +32,37 @@ export class AuthService extends BaseService {
         // Fetch detailed profile
         const profile = await this.getCurrentUserProfile(data.user.id)
 
-        if (profile && profile.status !== "active") {
+        // Sem perfil não dá pra saber o status/empresa/permissões reais do
+        // usuário — nunca deixa passar sem essa verificação (ver auditoria
+        // de logging: um fallback anterior fabricava um perfil Administrador
+        // aqui, o que mascarava exatamente esse tipo de falha).
+        if (!profile) {
+          await this.supabase.auth.signOut()
+          throw {
+            message: "Não foi possível carregar seu perfil. Tente novamente em instantes.",
+            code: "PROFILE_LOAD_FAILED",
+          }
+        }
+
+        if (profile.status !== "active") {
           await this.supabase.auth.signOut()
           throw { message: "Usuário inativo ou bloqueado. Contate o administrador." }
         }
 
-        if (profile) {
-          // Log audit action
-          await this.createAuditLog(
-            profile.company_id,
-            profile.id,
-            "LOGIN",
-            "users",
-            profile.id,
-            null,
-            { email }
-          )
-          await this.supabase
-            .from("users")
-            .update({ last_login: new Date().toISOString() })
-            .eq("id", profile.id)
-        }
+        // Log audit action
+        await this.createAuditLog(
+          profile.company_id,
+          profile.id,
+          "LOGIN",
+          "users",
+          profile.id,
+          null,
+          { email }
+        )
+        await this.supabase
+          .from("users")
+          .update({ last_login: new Date().toISOString() })
+          .eq("id", profile.id)
       }
 
       return data
@@ -156,13 +167,15 @@ export class AuthService extends BaseService {
       const profile = await this.getCurrentUserProfile(user.id)
       return profile
     } catch (error) {
-      console.error("Error getting current user:", error)
+      logClientError("auth.getCurrentUser", error)
       return null
     }
   }
 
   /**
-   * Fetch user details from database with mock failovers for development
+   * Fetch user details (profile + role + permissions) from the database.
+   * Returns null on any failure — the caller must treat that as "not
+   * authenticated", never fabricate a profile to fall back on.
    */
   private async getCurrentUserProfile(userId: string): Promise<User | null> {
     try {
@@ -178,8 +191,8 @@ export class AuthService extends BaseService {
         .single()
 
       if (userError || !userData) {
-        console.warn("Could not load user from DB, falling back to mock details for dev:", userError?.message)
-        return this.getMockProfile(userId)
+        logClientError("auth.getCurrentUserProfile.not_found", userError, { userId })
+        return null
       }
 
       // 2. Fetch permissions for the user's role
@@ -213,61 +226,8 @@ export class AuthService extends BaseService {
         permissions,
       }
     } catch (error) {
-      console.warn("Fallback to mock details due to exception:", error)
-      return this.getMockProfile(userId)
-    }
-  }
-
-  /**
-   * Mock user profile fallback for initial stage/missing DB tables
-   */
-  private getMockProfile(userId: string): User {
-    const mockCompany: Company = {
-      id: "mock-company-id",
-      name: "Adega Modelo",
-      document: "12.345.678/0001-99",
-      email: "contato@adegamodelo.com.br",
-      phone: "(11) 99999-9999",
-      address: "Av. Principal, 1000",
-      city: "São Paulo",
-      state: "SP",
-      zip_code: "01001-000",
-      active: true,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    }
-
-    const mockRole: Role = {
-      id: "mock-admin-role-id",
-      company_id: "mock-company-id",
-      name: "Administrador",
-      description: "Acesso total ao sistema",
-    }
-
-    const mockPermissions: Permission[] = [
-      { id: "p1", name: "dashboard.view", description: "Ver dashboard" },
-      { id: "p2", name: "products.view", description: "Ver produtos" },
-      { id: "p3", name: "products.create", description: "Criar produtos" },
-      { id: "p4", name: "products.edit", description: "Editar produtos" },
-      { id: "p5", name: "products.delete", description: "Excluir produtos" },
-      { id: "p6", name: "sales.create", description: "Realizar vendas" },
-      { id: "p7", name: "cash.manage", description: "Gerenciar caixa" },
-    ]
-
-    return {
-      id: userId,
-      company_id: mockCompany.id,
-      role_id: mockRole.id,
-      name: "Administrador Adega",
-      email: "admin@adegacloud.com.br",
-      phone: "(11) 99999-8888",
-      status: "active",
-      last_login: new Date().toISOString(),
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      company: mockCompany,
-      role: mockRole,
-      permissions: mockPermissions,
+      logClientError("auth.getCurrentUserProfile.exception", error, { userId })
+      return null
     }
   }
 }

@@ -5,6 +5,7 @@ import { authService } from "@/services/AuthService"
 import { User, Company, Role, Permission } from "@/types"
 import { supabase } from "@/lib/supabase"
 import { useRouter } from "next/navigation"
+import { logClientError, logClientDebug } from "@/lib/logger"
 
 interface AuthContextType {
   user: User | null
@@ -37,7 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loadedUserId.current = currentUser?.id || null
       setUser(currentUser)
     } catch (e) {
-      console.error("Failed to load user session info:", e)
+      logClientError("auth.load_session_failed", e)
       loadedUserId.current = null
       setUser(null)
     } finally {
@@ -51,7 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Ouve alterações no estado de autenticação (Sign in, Sign out, Token Refresh)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log(`[Supabase Auth Event] ${event}`)
+      logClientDebug("auth.supabase_event", { eventName: event })
       if (session?.user) {
         // Only reload the profile when the signed-in user actually changed.
         // Re-fetching on every TOKEN_REFRESHED would trigger another
@@ -91,7 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(null)
       router.push("/login")
     } catch (error) {
-      console.error("Logout failed:", error)
+      logClientError("auth.logout_failed", error)
     } finally {
       setLoading(false)
     }

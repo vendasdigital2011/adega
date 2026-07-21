@@ -12,6 +12,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Wine, Eye, EyeOff, Lock, Mail } from "lucide-react"
 import toast from "react-hot-toast"
 import { getErrorMessage } from "@/lib/utils"
+import { logClientError } from "@/lib/logger"
 
 const loginSchema = z.object({
   email: z.string().min(1, "E-mail é obrigatório").email("Formato de e-mail inválido"),
@@ -43,7 +44,7 @@ export function LoginForm() {
       await login(data.email, data.password)
       toast.success("Login realizado com sucesso!")
     } catch (error) {
-      console.error(error)
+      logClientError("auth.login", error)
       toast.error(getErrorMessage(error, "E-mail ou senha incorretos."))
     } finally {
       setIsLoading(false)

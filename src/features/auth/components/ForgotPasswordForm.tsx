@@ -12,6 +12,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Mail, ArrowLeft, Send } from "lucide-react"
 import toast from "react-hot-toast"
 import { getErrorMessage } from "@/lib/utils"
+import { logClientError } from "@/lib/logger"
 
 const forgotSchema = z.object({
   email: z.string().min(1, "E-mail é obrigatório").email("Formato de e-mail inválido"),
@@ -42,7 +43,7 @@ export function ForgotPasswordForm() {
       setIsSent(true)
       toast.success("E-mail de recuperação enviado!")
     } catch (error) {
-      console.error(error)
+      logClientError("auth.forgotPassword", error)
       toast.error(getErrorMessage(error, "Erro ao processar solicitação. Tente novamente."))
     } finally {
       setIsLoading(false)

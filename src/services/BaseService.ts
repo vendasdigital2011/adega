@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase"
+import { logClientError } from "@/lib/logger"
 
 export abstract class BaseService {
   protected supabase = supabase
@@ -9,7 +10,7 @@ export abstract class BaseService {
 
     const message = (isErrorLike(error) && error.message) || "Ocorreu um erro inesperado."
     const code = (isErrorLike(error) && error.code) || "UNKNOWN_ERROR"
-    console.error(`[BaseService Error] Code: ${code}, Message: ${message}`, error)
+    logClientError("service.error", error, { errorCode: code })
 
     throw {
       message,
@@ -58,10 +59,10 @@ export abstract class BaseService {
       })
 
       if (error) {
-        console.error("Failed to write audit log:", error)
+        logClientError("audit.write_failed", error, { tenantId: companyId, action, module: tableName })
       }
     } catch (e) {
-      console.error("Failed to create audit log:", e)
+      logClientError("audit.create_exception", e, { tenantId: companyId, action, module: tableName })
     }
   }
 
@@ -82,7 +83,7 @@ export abstract class BaseService {
       const companyId = await this.getCurrentUserCompanyId()
       await this.createAuditLog(companyId, user.id, action, tableName, recordId, oldData, newData)
     } catch (e) {
-      console.error("Failed to audit current user action:", e)
+      logClientError("audit.current_user_action_failed", e, { action, module: tableName })
     }
   }
 }

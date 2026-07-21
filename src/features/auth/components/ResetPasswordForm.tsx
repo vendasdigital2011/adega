@@ -12,6 +12,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { KeyRound, Eye, EyeOff } from "lucide-react"
 import toast from "react-hot-toast"
 import { getErrorMessage } from "@/lib/utils"
+import { logClientError } from "@/lib/logger"
 
 const resetSchema = z
   .object({
@@ -50,7 +51,7 @@ export function ResetPasswordForm() {
       toast.success("Senha atualizada com sucesso!")
       router.push("/login")
     } catch (error) {
-      console.error(error)
+      logClientError("auth.resetPassword", error)
       toast.error(getErrorMessage(error, "Não foi possível redefinir a senha."))
     } finally {
       setIsLoading(false)

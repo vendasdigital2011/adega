@@ -3,9 +3,28 @@ import type { NextRequest } from "next/server"
 import { createServerClient } from "@supabase/ssr"
 import { supabaseAdmin } from "@/lib/supabase-admin"
 import { createUserSchema } from "@/features/users/schemas/user.schema"
+import { logServer, generateRequestId } from "@/lib/logger"
+
+const ROUTE = "/api/users"
 
 export async function POST(request: NextRequest) {
+  const requestId = generateRequestId()
+  const startedAt = Date.now()
   const cookieStore = request.cookies
+
+  function fail(status: number, message: string, level: "warn" | "error", action: string, extra: Record<string, unknown> = {}) {
+    logServer(level, message, {
+      requestId,
+      route: ROUTE,
+      method: "POST",
+      statusCode: status,
+      action,
+      result: "failure",
+      durationMs: Date.now() - startedAt,
+      ...extra,
+    })
+    return NextResponse.json({ message, requestId }, { status })
+  }
 
   // Client bound to the caller's own session (respects RLS) — used only to identify who is calling.
   const supabase = createServerClient(
@@ -28,7 +47,7 @@ export async function POST(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   if (!caller) {
-    return NextResponse.json({ message: "Não autenticado." }, { status: 401 })
+    return fail(401, "Não autenticado.", "warn", "users.create.unauthenticated")
   }
 
   const { data: canCreate } = await supabase.rpc("user_has_permission", {
@@ -36,7 +55,9 @@ export async function POST(request: NextRequest) {
   })
 
   if (!canCreate) {
-    return NextResponse.json({ message: "Sem permissão para criar usuários." }, { status: 403 })
+    return fail(403, "Sem permissão para criar usuários.", "warn", "users.create.permission_denied", {
+      userId: caller.id,
+    })
   }
 
   const { data: callerProfile, error: callerProfileError } = await supabase
@@ -46,20 +67,29 @@ export async function POST(request: NextRequest) {
     .single()
 
   if (callerProfileError || !callerProfile) {
-    return NextResponse.json({ message: "Perfil do usuário autenticado não encontrado." }, { status: 400 })
+    return fail(400, "Perfil do usuário autenticado não encontrado.", "error", "users.create.caller_profile_missing", {
+      userId: caller.id,
+      errorCode: callerProfileError?.code,
+    })
   }
 
   let body: unknown
   try {
     body = await request.json()
   } catch {
-    return NextResponse.json({ message: "Corpo da requisição inválido." }, { status: 400 })
+    return fail(400, "Corpo da requisição inválido.", "warn", "users.create.invalid_body", {
+      userId: caller.id,
+      tenantId: callerProfile.company_id,
+    })
   }
 
   const parsed = createUserSchema.safeParse(body)
   if (!parsed.success) {
     const firstError = parsed.error.issues[0]?.message || "Dados inválidos."
-    return NextResponse.json({ message: firstError }, { status: 400 })
+    return fail(400, firstError, "warn", "users.create.validation_failed", {
+      userId: caller.id,
+      tenantId: callerProfile.company_id,
+    })
   }
 
   const { email, password, name, phone, role_id: roleId } = parsed.data
@@ -71,10 +101,11 @@ export async function POST(request: NextRequest) {
   })
 
   if (createError || !created?.user) {
-    return NextResponse.json(
-      { message: createError?.message || "Não foi possível criar o usuário." },
-      { status: 400 }
-    )
+    return fail(400, createError?.message || "Não foi possível criar o usuário.", "error", "users.create.admin_api_failed", {
+      userId: caller.id,
+      tenantId: callerProfile.company_id,
+      errorCode: createError?.code,
+    })
   }
 
   const { data: profile, error: insertError } = await supabaseAdmin
@@ -94,7 +125,11 @@ export async function POST(request: NextRequest) {
   if (insertError) {
     // Roll back the auth user so we don't leave an orphaned login with no profile.
     await supabaseAdmin.auth.admin.deleteUser(created.user.id)
-    return NextResponse.json({ message: insertError.message }, { status: 400 })
+    return fail(400, insertError.message, "error", "users.create.profile_insert_failed", {
+      userId: caller.id,
+      tenantId: callerProfile.company_id,
+      errorCode: insertError.code,
+    })
   }
 
   await supabaseAdmin.from("audit_logs").insert({
@@ -106,5 +141,17 @@ export async function POST(request: NextRequest) {
     new_data: profile,
   })
 
-  return NextResponse.json({ data: profile }, { status: 201 })
+  logServer("info", "Usuário criado", {
+    requestId,
+    route: ROUTE,
+    method: "POST",
+    statusCode: 201,
+    action: "users.create",
+    userId: caller.id,
+    tenantId: callerProfile.company_id,
+    result: "success",
+    durationMs: Date.now() - startedAt,
+  })
+
+  return NextResponse.json({ data: profile, requestId }, { status: 201 })
 }
