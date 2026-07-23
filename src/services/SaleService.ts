@@ -1,10 +1,11 @@
 import { BaseService } from "./BaseService"
 import { Sale, SaleItem, SaleStatus, PaymentMethod } from "@/types"
 
+// unit_price não é enviado: o servidor resolve o preço a partir do catálogo
+// (ver migration 0021 — nunca confia em preço vindo do cliente).
 export interface SaleItemInput {
   product_id: string
   quantity: number
-  unit_price: number
 }
 
 export interface CreateSaleInput {

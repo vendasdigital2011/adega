@@ -12,15 +12,14 @@ export const PAYMENT_METHODS = [
   "Fiado",
 ] as const
 
+// unit_price não faz parte do input do usuário — o preço é sempre resolvido
+// no servidor a partir do catálogo (products.sale_price/promotion_price),
+// nunca a partir do que o cliente envia (ver migration 0021).
 export const saleItemSchema = z.object({
   product_id: z.string().min(1, "Produto é obrigatório"),
   quantity: z.preprocess(
     emptyToUndefined,
     z.coerce.number({ required_error: "Qtd.", invalid_type_error: "Qtd. inválida" }).int("Inteiro").positive("Maior que zero")
-  ),
-  unit_price: z.preprocess(
-    emptyToUndefined,
-    z.coerce.number({ required_error: "Preço", invalid_type_error: "Preço inválido" }).nonnegative("Não pode ser negativo")
   ),
 })
 

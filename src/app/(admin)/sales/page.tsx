@@ -55,7 +55,6 @@ export default function SalesPage() {
         items: formData.items.map((it) => ({
           product_id: it.product_id,
           quantity: it.quantity,
-          unit_price: it.unit_price,
         })),
       })
       toast.success("Venda finalizada! Estoque atualizado.")

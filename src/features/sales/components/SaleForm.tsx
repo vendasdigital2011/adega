@@ -36,7 +36,7 @@ export function SaleForm({ onSubmit, onCancel, isLoading }: SaleFormProps) {
       sale_date: today(),
       payment_method: "Dinheiro",
       discount: "" as unknown as number,
-      items: [{ product_id: "", quantity: "" as unknown as number, unit_price: "" as unknown as number }],
+      items: [{ product_id: "", quantity: "" as unknown as number }],
     },
   })
 
@@ -48,14 +48,21 @@ export function SaleForm({ onSubmit, onCancel, isLoading }: SaleFormProps) {
   ]
   const productOptions = [
     { value: "", label: "Selecione..." },
-    ...products.map((p) => ({ value: p.id, label: `${p.name} (${p.sku}) — ${formatCurrency(p.sale_price)} · saldo ${p.current_stock}` })),
+    ...products.map((p) => ({ value: p.id, label: `${p.name} (${p.sku}) — ${formatCurrency(p.promotion_price ?? p.sale_price)} · saldo ${p.current_stock}` })),
   ]
   const paymentOptions = PAYMENT_METHODS.map((m) => ({ value: m, label: m }))
+
+  // Preço é sempre o do catálogo (promoção, se houver) — nunca digitável.
+  // A UI só mostra uma prévia; o valor real é resolvido de novo no servidor.
+  const priceOf = (productId: string | undefined) => {
+    const product = products.find((p) => p.id === productId)
+    return product ? product.promotion_price ?? product.sale_price : 0
+  }
 
   const watchedItems = watch("items")
   const watchedDiscount = Number(watch("discount")) || 0
   const subtotal = (watchedItems || []).reduce(
-    (sum, it) => sum + (Number(it?.quantity) || 0) * (Number(it?.unit_price) || 0),
+    (sum, it) => sum + (Number(it?.quantity) || 0) * priceOf(it?.product_id),
     0
   )
   const total = Math.max(0, subtotal - watchedDiscount)
@@ -81,7 +88,7 @@ export function SaleForm({ onSubmit, onCancel, isLoading }: SaleFormProps) {
             type="button"
             variant="outline"
             size="sm"
-            onClick={() => append({ product_id: "", quantity: "" as unknown as number, unit_price: "" as unknown as number })}
+            onClick={() => append({ product_id: "", quantity: "" as unknown as number })}
           >
             <Plus className="h-4 w-4 mr-1" />
             Adicionar item
@@ -92,7 +99,7 @@ export function SaleForm({ onSubmit, onCancel, isLoading }: SaleFormProps) {
         <div className="space-y-2">
           {fields.map((field, index) => {
             const qty = Number(watchedItems?.[index]?.quantity) || 0
-            const price = Number(watchedItems?.[index]?.unit_price) || 0
+            const price = priceOf(watchedItems?.[index]?.product_id)
             return (
               <div key={field.id} className="flex items-start gap-2">
                 <div className="flex-1">
@@ -112,14 +119,8 @@ export function SaleForm({ onSubmit, onCancel, isLoading }: SaleFormProps) {
                     {...register(`items.${index}.quantity` as const)}
                   />
                 </div>
-                <div className="w-28">
-                  <Input
-                    type="number"
-                    step="0.01"
-                    placeholder="Preço un."
-                    error={errors.items?.[index]?.unit_price?.message}
-                    {...register(`items.${index}.unit_price` as const)}
-                  />
+                <div className="w-28 pt-2 text-sm text-right whitespace-nowrap" title="Preço do catálogo — não editável aqui">
+                  {formatCurrency(price)}
                 </div>
                 <div className="w-24 pt-2 text-sm text-muted-foreground text-right whitespace-nowrap">
                   {formatCurrency(qty * price)}
