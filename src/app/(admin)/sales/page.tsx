@@ -8,16 +8,30 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog"
 import { Select } from "@/components/ui/Select"
 import { Pagination } from "@/components/ui/Pagination"
 import { Loading } from "@/components/ui/Loading"
+import { ShortcutsHelpModal } from "@/components/ui/ShortcutsHelpModal"
 import { SaleTable } from "@/features/sales/components/SaleTable"
 import { SaleForm } from "@/features/sales/components/SaleForm"
 import { useSales, useSaleItems, useCreateSale, useCancelSale } from "@/features/sales/hooks/useSales"
 import { SaleFormInputs } from "@/features/sales/schemas/sale.schema"
 import { usePagination } from "@/hooks/usePagination"
 import { usePermission } from "@/hooks/usePermission"
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts"
 import { getErrorMessage } from "@/lib/utils"
 import { formatCurrency } from "@/utils/format"
 import { Sale, SaleStatus } from "@/types"
 import { Plus } from "lucide-react"
+
+const SALES_SHORTCUTS = [
+  { keys: "F1", description: "Abrir esta lista de atalhos" },
+  { keys: "F2", description: "Nova venda" },
+  { keys: "F6", description: "Focar código de barras" },
+  { keys: "F8", description: "Focar desconto" },
+  { keys: "F9", description: "Focar forma de pagamento" },
+  { keys: "F10", description: "Finalizar venda" },
+  { keys: "Delete", description: "Remover item (com foco na quantidade)" },
+  { keys: "+ / -", description: "Ajustar quantidade (com foco na quantidade)" },
+  { keys: "Esc", description: "Fechar modal" },
+]
 
 export default function SalesPage() {
   const [statusFilter, setStatusFilter] = useState<"all" | SaleStatus>("all")
@@ -26,6 +40,7 @@ export default function SalesPage() {
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [viewing, setViewing] = useState<Sale | null>(null)
   const [cancelTarget, setCancelTarget] = useState<Sale | null>(null)
+  const [isHelpOpen, setIsHelpOpen] = useState(false)
 
   const { data, isLoading } = useSales({
     status: statusFilter === "all" ? undefined : statusFilter,
@@ -39,6 +54,14 @@ export default function SalesPage() {
 
   const canCreate = usePermission("sales.create")
   const canCancel = usePermission("sales.cancel")
+
+  // Atalhos de página (Etapa 6): F2 chama exatamente o mesmo setIsFormOpen
+  // do botão "Nova Venda" — mesma checagem de permissão (enabled: canCreate),
+  // nunca um caminho paralelo que pudesse contornar a permissão do botão.
+  useKeyboardShortcuts([
+    { key: "F2", handler: () => setIsFormOpen(true), enabled: canCreate },
+    { key: "F1", handler: () => setIsHelpOpen(true) },
+  ])
 
   React.useEffect(() => {
     if (data) pagination.setTotal(data.total)
@@ -164,6 +187,8 @@ export default function SalesPage() {
         variant="danger"
         isLoading={cancelSale.isPending}
       />
+
+      <ShortcutsHelpModal isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} shortcuts={SALES_SHORTCUTS} />
     </div>
   )
 }
