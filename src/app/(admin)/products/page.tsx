@@ -9,6 +9,7 @@ import { SearchInput } from "@/components/ui/SearchInput"
 import { Select } from "@/components/ui/Select"
 import { Pagination } from "@/components/ui/Pagination"
 import { Loading } from "@/components/ui/Loading"
+import { ShortcutsHelpModal } from "@/components/ui/ShortcutsHelpModal"
 import { ProductTable } from "@/features/products/components/ProductTable"
 import { ProductForm } from "@/features/products/components/ProductForm"
 import {
@@ -21,11 +22,20 @@ import { ProductFormInputs } from "@/features/products/schemas/product.schema"
 import { useDebounce } from "@/hooks/useDebounce"
 import { usePagination } from "@/hooks/usePagination"
 import { usePermission } from "@/hooks/usePermission"
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts"
 import { getErrorMessage } from "@/lib/utils"
 import { Product } from "@/types"
 import { Plus } from "lucide-react"
 
 type StatusFilter = "all" | "active" | "inactive"
+
+const PRODUCTS_SHORTCUTS = [
+  { keys: "F1", description: "Abrir esta lista de atalhos" },
+  { keys: "F2", description: "Novo produto" },
+  { keys: "F3", description: "Focar na busca de produtos" },
+  { keys: "F5", description: "Atualizar dados da tela" },
+  { keys: "Esc", description: "Fechar modal" },
+]
 
 // Converte a saída do formulário (números já coeridos pelo zod) no payload do
 // service, mapeando strings vazias de FK opcionais para null.
@@ -57,6 +67,7 @@ export default function ProductsPage() {
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingProduct, setEditingProduct] = useState<Product | undefined>(undefined)
   const [toggleTarget, setToggleTarget] = useState<{ product: Product; active: boolean } | null>(null)
+  const [isHelpOpen, setIsHelpOpen] = useState(false)
 
   const { data, isLoading } = useProducts({
     search: debouncedSearch,
@@ -71,6 +82,14 @@ export default function ProductsPage() {
 
   const canCreate = usePermission("products.create")
   const canEdit = usePermission("products.edit")
+
+  // Atalhos de página (Etapa 6): F2=Novo, F3=Focar busca, F5=Refresh
+  useKeyboardShortcuts([
+    { key: "F2", handler: () => { setEditingProduct(undefined); setIsFormOpen(true) }, enabled: canCreate },
+    { key: "F3", handler: () => { const searchInput = document.querySelector<HTMLInputElement>('input[placeholder*="Pesquisar"]'); searchInput?.focus() }, allowInTyping: true },
+    { key: "F1", handler: () => setIsHelpOpen(true) },
+    { key: "F5", handler: () => window.location.reload(), allowInTyping: true },
+  ])
 
   React.useEffect(() => {
     if (data) pagination.setTotal(data.total)
@@ -203,6 +222,8 @@ export default function ProductsPage() {
         variant={toggleTarget?.active ? "success" : "danger"}
         isLoading={setActive.isPending}
       />
+
+      <ShortcutsHelpModal isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} shortcuts={PRODUCTS_SHORTCUTS} />
     </div>
   )
 }

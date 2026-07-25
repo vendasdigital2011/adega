@@ -8,6 +8,7 @@ import { SearchInput } from "@/components/ui/SearchInput"
 import { Select } from "@/components/ui/Select"
 import { Pagination } from "@/components/ui/Pagination"
 import { Loading } from "@/components/ui/Loading"
+import { ShortcutsHelpModal } from "@/components/ui/ShortcutsHelpModal"
 import { MovementTable } from "@/features/inventory/components/MovementTable"
 import { MovementForm } from "@/features/inventory/components/MovementForm"
 import { useMovements, useLowStock, useRegisterMovement } from "@/features/inventory/hooks/useInventory"
@@ -15,9 +16,17 @@ import { MovementFormInputs, MOVEMENT_TYPES } from "@/features/inventory/schemas
 import { useDebounce } from "@/hooks/useDebounce"
 import { usePagination } from "@/hooks/usePagination"
 import { usePermission } from "@/hooks/usePermission"
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts"
 import { getErrorMessage } from "@/lib/utils"
 import { MovementType } from "@/types"
 import { Plus, AlertTriangle } from "lucide-react"
+
+const INVENTORY_SHORTCUTS = [
+  { keys: "F1", description: "Abrir esta lista de atalhos" },
+  { keys: "F2", description: "Nova movimentação" },
+  { keys: "F5", description: "Atualizar dados da tela" },
+  { keys: "Esc", description: "Fechar modal" },
+]
 
 export default function InventoryPage() {
   const [search, setSearch] = useState("")
@@ -26,6 +35,7 @@ export default function InventoryPage() {
   const pagination = usePagination({ initialLimit: 10 })
 
   const [isFormOpen, setIsFormOpen] = useState(false)
+  const [isHelpOpen, setIsHelpOpen] = useState(false)
 
   const { data, isLoading } = useMovements({
     search: debouncedSearch,
@@ -37,6 +47,13 @@ export default function InventoryPage() {
   const registerMovement = useRegisterMovement()
 
   const canCreate = usePermission("inventory.create")
+
+  // Atalhos de página (Etapa 6): F2 abre a modal, F5 força refresh
+  useKeyboardShortcuts([
+    { key: "F2", handler: () => setIsFormOpen(true), enabled: canCreate },
+    { key: "F1", handler: () => setIsHelpOpen(true) },
+    { key: "F5", handler: () => window.location.reload(), allowInTyping: true },
+  ])
 
   React.useEffect(() => {
     if (data) pagination.setTotal(data.total)
@@ -131,6 +148,8 @@ export default function InventoryPage() {
           isLoading={registerMovement.isPending}
         />
       </Modal>
+
+      <ShortcutsHelpModal isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} shortcuts={INVENTORY_SHORTCUTS} />
     </div>
   )
 }

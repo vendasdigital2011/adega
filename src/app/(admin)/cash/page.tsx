@@ -8,6 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/com
 import { Badge } from "@/components/ui/Badge"
 import { Loading } from "@/components/ui/Loading"
 import { Pagination } from "@/components/ui/Pagination"
+import { ShortcutsHelpModal } from "@/components/ui/ShortcutsHelpModal"
 import { OpenCashForm } from "@/features/cash/components/OpenCashForm"
 import { CloseCashForm } from "@/features/cash/components/CloseCashForm"
 import { CashMovementForm } from "@/features/cash/components/CashMovementForm"
@@ -24,10 +25,19 @@ import {
 import { OpenCashFormInputs, CloseCashFormInputs, MovementFormInputs } from "@/features/cash/schemas/cash.schema"
 import { usePagination } from "@/hooks/usePagination"
 import { usePermission } from "@/hooks/usePermission"
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts"
 import { getErrorMessage } from "@/lib/utils"
 import { formatCurrency, formatDate } from "@/utils/format"
 import { CashMovementType } from "@/types"
 import { Plus, Minus, Lock, Unlock } from "lucide-react"
+
+const CASH_SHORTCUTS = [
+  { keys: "F1", description: "Abrir esta lista de atalhos" },
+  { keys: "F2", description: "Abrir caixa (se fechado) ou Sangria/Suprimento (se aberto)" },
+  { keys: "F5", description: "Atualizar dados da tela" },
+  { keys: "Ctrl + Shift + E", description: "Registrar suprimento (se caixa aberto)" },
+  { keys: "Esc", description: "Fechar modal" },
+]
 
 function calcBalance(initial: number, movements: { movement_type: CashMovementType; value: number }[]): number {
   return movements.reduce((bal, m) => {
@@ -40,6 +50,7 @@ export default function CashPage() {
   const [isOpenFormOpen, setIsOpenFormOpen] = useState(false)
   const [isCloseFormOpen, setIsCloseFormOpen] = useState(false)
   const [isMovementFormOpen, setIsMovementFormOpen] = useState(false)
+  const [isHelpOpen, setIsHelpOpen] = useState(false)
 
   const historyPagination = usePagination({ initialLimit: 10 })
 
@@ -57,6 +68,30 @@ export default function CashPage() {
   const canManage = usePermission("cash.manage")
   const canApprove = usePermission("cash.approve")
   const canCreate = usePermission("cash.create")
+
+  // Atalhos de página (Etapa 6): F2=Abrir/Suprimento, F5=Refresh, Ctrl+Shift+E=Suprimento
+  useKeyboardShortcuts([
+    {
+      key: "F2",
+      handler: () => {
+        if (openRegister) {
+          setIsMovementFormOpen(true)
+        } else {
+          setIsOpenFormOpen(true)
+        }
+      },
+      enabled: openRegister ? canCreate : canManage,
+    },
+    { key: "F1", handler: () => setIsHelpOpen(true) },
+    { key: "F5", handler: () => window.location.reload(), allowInTyping: true },
+    {
+      key: "E",
+      shift: true,
+      ctrl: true,
+      handler: () => openRegister && canCreate && setIsMovementFormOpen(true),
+      enabled: openRegister && canCreate,
+    },
+  ])
 
   React.useEffect(() => {
     if (history) historyPagination.setTotal(history.total)
@@ -240,6 +275,8 @@ export default function CashPage() {
           isLoading={registerMovement.isPending}
         />
       </Modal>
+
+      <ShortcutsHelpModal isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} shortcuts={CASH_SHORTCUTS} />
     </div>
   )
 }
