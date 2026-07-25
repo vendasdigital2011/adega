@@ -76,10 +76,26 @@ describe("ProductService (integração)", () => {
     await expect(productService.update(other.id, { sku: uniqueSku })).rejects.toMatchObject({ code: "DUPLICATE_SKU" })
   })
 
-  it("RLS: vendedor sem products.view não lista produtos", async () => {
+  // Etapa 3 da auditoria "reviravolta" (migration 0022) deu products.view ao
+  // Vendedor (precisa ver o catálogo pra vender), mas NÃO products.create —
+  // ele continua sem poder alterar o catálogo.
+  it("RLS: vendedor com products.view lista produtos, mas sem products.create não consegue criar", async () => {
     const vendedor = await signInAs("vendedor")
     const { data, error } = await vendedor.from("products").select("id")
     expect(error).toBeNull()
-    expect(data).toEqual([])
+    expect(data!.length).toBeGreaterThan(0)
+
+    // company_id precisa ser o real do vendedor: se ficasse ausente, a
+    // violação de not-null mascararia o motivo verdadeiro do bloqueio (RLS
+    // por falta de products.create), tornando o teste falso-positivo.
+    const { data: authData } = await vendedor.auth.getUser()
+    const { data: me } = await vendedor.from("users").select("company_id").eq("id", authData.user!.id).single()
+    const { error: createErr } = await vendedor.from("products").insert({
+      company_id: me!.company_id,
+      name: "Tentativa Vendedor",
+      sku: `SKU-VENDEDOR-${Date.now()}`,
+      category_id: categoryId,
+    })
+    expect(createErr).toBeTruthy()
   })
 })

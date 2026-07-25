@@ -54,10 +54,25 @@ describe("CashService (integração)", () => {
     expect(open).toBeNull()
   })
 
-  it("RLS: vendedor sem cash.manage não consegue abrir caixa", async () => {
+  // Etapa 3 da auditoria "reviravolta" (migration 0022) deu cash.manage ao
+  // Vendedor (abre/opera o próprio caixa), mas NÃO cash.approve (fechar
+  // caixa é ação de Gerente/Admin — negócio de bebidas lida com bastante
+  // dinheiro em espécie, retirada/fechamento passa por alguém de confiança).
+  it("RLS: vendedor com cash.manage abre o próprio caixa, mas sem cash.approve não consegue fechar", async () => {
     const vendedor = await signInAs("vendedor")
-    const { error } = await vendedor.rpc("open_cash_register", { p_initial_value: 10 })
-    expect(error).toBeTruthy()
+    const { data: openedId, error: openErr } = await vendedor.rpc("open_cash_register", { p_initial_value: 10 })
+    expect(openErr).toBeNull()
+    expect(openedId).toBeTruthy()
+
+    const { error: closeErr } = await vendedor.rpc("close_cash_register", {
+      p_cash_register_id: openedId,
+      p_final_value: 10,
+    })
+    expect(closeErr).toBeTruthy()
+
+    // limpeza: fecha via admin (tem cash.approve) pra não deixar um caixa do
+    // vendedor aberto sujando outros testes/sessões que usam esse usuário.
+    await cashService.close(openedId as string, 10)
   })
 
   it("list() retorna o histórico com o nome de quem abriu", async () => {

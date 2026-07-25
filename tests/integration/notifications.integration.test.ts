@@ -66,10 +66,14 @@ describe("NotificationService (integração)", () => {
     expect(list.length).toBeLessThanOrEqual(15)
   })
 
-  it("RLS: vendedor sem inventory/financial/cash.view não vê nenhuma notificação", async () => {
+  // Etapa 3 da auditoria "reviravolta" (migration 0022) deu inventory.view e
+  // cash.view ao Vendedor, mas NÃO financial.view — ele passa a ver alertas
+  // de estoque baixo, mas continua sem ver nada do financeiro da empresa.
+  it("RLS: vendedor vê notificação de estoque (tem inventory.view) mas nenhuma financeira (sem financial.view)", async () => {
     const vendedor = await signInAs("vendedor")
     await vendedor.rpc("generate_notifications")
-    const { data } = await vendedor.from("notifications").select("id")
-    expect(data).toEqual([])
+    const { data } = await vendedor.from("notifications").select("id, type")
+    expect(data!.some((n) => n.type === "estoque_baixo")).toBe(true)
+    expect(data!.every((n) => n.type !== "financeiro_receber" && n.type !== "financeiro_pagar")).toBe(true)
   })
 })
