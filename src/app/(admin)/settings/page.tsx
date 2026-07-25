@@ -2,13 +2,14 @@
 
 import React from "react"
 import toast from "react-hot-toast"
-import { Building2, Palette, DatabaseBackup, Plug } from "lucide-react"
+import { Building2, Palette, DatabaseBackup, Plug, Keyboard } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card"
 import { Loading } from "@/components/ui/Loading"
 import { ChangePasswordForm } from "@/features/auth/components/ChangePasswordForm"
 import { CompanyForm } from "@/features/settings/components/CompanyForm"
 import { PreferencesForm } from "@/features/settings/components/PreferencesForm"
+import { KeyboardShortcutsManager } from "@/features/settings/components/KeyboardShortcutsManager"
 import {
   useCompany,
   useSettings,
@@ -29,7 +30,7 @@ export default function SettingsPage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Configurações</h1>
         <p className="text-muted-foreground">
-          Dados da empresa, preferências, backup, integrações e segurança.
+          Dados da empresa, preferências, backup, integrações, atalhos e segurança.
         </p>
       </div>
 
@@ -38,6 +39,7 @@ export default function SettingsPage() {
         {canView && <PreferencesSection canEdit={canEdit} />}
         {canView && <BackupSection />}
         {canView && <IntegrationsSection />}
+        {canEdit && <KeyboardShortcutsSection />}
 
         {/* Segurança: disponível para qualquer usuário autenticado */}
         <ChangePasswordForm />
@@ -163,6 +165,25 @@ function BackupSection() {
         <Button onClick={handleExport} loading={exportBackup.isPending}>
           Baixar backup (JSON)
         </Button>
+      </CardContent>
+    </Card>
+  )
+}
+
+// ============================================================
+// Atalhos de Teclado
+// ============================================================
+function KeyboardShortcutsSection() {
+  return (
+    <Card className="bg-card/30 border-border/40">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Keyboard className="h-5 w-5" /> Atalhos de Teclado
+        </CardTitle>
+        <CardDescription>Customize os atalhos de teclado da sua empresa (Etapa 6 Fase 2).</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <KeyboardShortcutsManager />
       </CardContent>
     </Card>
   )
