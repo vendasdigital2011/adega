@@ -11,9 +11,30 @@ import {
 import { Button } from "@/components/ui/Button"
 import { Badge } from "@/components/ui/Badge"
 import { EmptyState } from "@/components/ui/EmptyState"
-import { formatCurrency } from "@/utils/format"
+import { formatCurrency, formatDate } from "@/utils/format"
 import { Product } from "@/types"
-import { Pencil, Ban, CheckCircle2, Wine } from "lucide-react"
+import { Pencil, Ban, CheckCircle2, Wine, AlertTriangle } from "lucide-react"
+
+// Determina o status de validade de um produto
+function getExpiryStatus(expiryDate: string | null): { status: "expired" | "expiring" | "ok"; text: string } {
+  if (!expiryDate) return { status: "ok", text: "" }
+
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const expiry = new Date(expiryDate)
+  expiry.setHours(0, 0, 0, 0)
+
+  if (expiry < today) {
+    return { status: "expired", text: "Vencido" }
+  }
+
+  const daysUntilExpiry = Math.floor((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+  if (daysUntilExpiry <= 30) {
+    return { status: "expiring", text: `Vence em ${daysUntilExpiry}d` }
+  }
+
+  return { status: "ok", text: formatDate(expiryDate) }
+}
 
 interface ProductTableProps {
   products: Product[]
@@ -42,6 +63,7 @@ export function ProductTable({ products, onEdit, onToggleActive, canEdit = true 
           <TableHead>Categoria</TableHead>
           <TableHead>Preço venda</TableHead>
           <TableHead>Estoque</TableHead>
+          <TableHead>Validade</TableHead>
           <TableHead>Situação</TableHead>
           {canEdit && <TableHead className="text-right">Ações</TableHead>}
         </TableRow>
@@ -65,6 +87,32 @@ export function ProductTable({ products, onEdit, onToggleActive, canEdit = true 
                   {product.current_stock}
                 </span>
                 <span className="text-xs text-muted-foreground"> / mín {product.minimum_stock}</span>
+              </TableCell>
+              <TableCell>
+                {product.expiry_date ? (
+                  () => {
+                    const expiry = getExpiryStatus(product.expiry_date)
+                    return (
+                      <div className="flex items-center gap-1">
+                        {expiry.status === "expired" && (
+                          <>
+                            <AlertTriangle className="h-4 w-4 text-destructive" />
+                            <span className="text-xs text-destructive font-medium">{expiry.text}</span>
+                          </>
+                        )}
+                        {expiry.status === "expiring" && (
+                          <>
+                            <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                            <span className="text-xs text-yellow-600">{expiry.text}</span>
+                          </>
+                        )}
+                        {expiry.status === "ok" && <span className="text-xs text-muted-foreground">{expiry.text}</span>}
+                      </div>
+                    )
+                  }
+                )() : (
+                  <span className="text-xs text-muted-foreground">—</span>
+                )}
               </TableCell>
               <TableCell>
                 <Badge variant={product.active ? "success" : "secondary"}>

@@ -41,6 +41,8 @@ export function ProductForm({ product, onSubmit, onCancel, isLoading }: ProductF
       minimum_stock: product?.minimum_stock ?? ("" as unknown as number),
       description: product?.description || "",
       image_url: product?.image_url || "",
+      batch_number: product?.batch_number || "",
+      expiry_date: product?.expiry_date || "",
     },
   })
 
@@ -134,6 +136,17 @@ export function ProductForm({ product, onSubmit, onCancel, isLoading }: ProductF
       </div>
 
       <Input label="URL da imagem (opcional)" error={errors.image_url?.message} {...register("image_url")} />
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Input label="Número do lote (opcional)" error={errors.batch_number?.message} {...register("batch_number")} />
+        <Input
+          label="Data de validade (opcional)"
+          type="date"
+          error={errors.expiry_date?.message}
+          {...register("expiry_date")}
+        />
+      </div>
+
       <Textarea label="Descrição (opcional)" error={errors.description?.message} {...register("description")} />
 
       <div className="flex justify-end gap-2 pt-2">

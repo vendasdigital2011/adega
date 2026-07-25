@@ -15,6 +15,8 @@ export interface CreateProductInput {
   wholesale_price?: number | null
   promotion_price?: number | null
   minimum_stock: number
+  batch_number?: string | null
+  expiry_date?: string | null
 }
 
 export type UpdateProductInput = Partial<CreateProductInput> & { active?: boolean }
@@ -131,6 +133,8 @@ export class ProductService extends BaseService {
       "wholesale_price",
       "promotion_price",
       "image_url",
+      "batch_number",
+      "expiry_date",
     ]
     for (const key of nullableKeys) {
       if (key in out && (out[key] === "" || out[key] === undefined)) {

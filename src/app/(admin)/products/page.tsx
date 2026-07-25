@@ -50,6 +50,8 @@ function toPayload(form: ProductFormInputs) {
     unit: form.unit || null,
     description: form.description || null,
     image_url: form.image_url || null,
+    batch_number: form.batch_number || null,
+    expiry_date: form.expiry_date || null,
     sale_price: form.sale_price,
     purchase_price: form.purchase_price ?? null,
     wholesale_price: form.wholesale_price ?? null,

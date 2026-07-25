@@ -39,6 +39,8 @@ export const productSchema = z.object({
   minimum_stock: requiredStock,
   description: z.string().max(500).optional().or(z.literal("")),
   image_url: z.string().url("URL inválida").optional().or(z.literal("")),
+  batch_number: z.string().max(60).optional().or(z.literal("")).nullable(),
+  expiry_date: z.string().date().optional().or(z.literal("")).nullable(),
 })
 
 export type ProductFormInputs = z.infer<typeof productSchema>

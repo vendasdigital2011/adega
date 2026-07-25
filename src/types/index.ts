@@ -98,6 +98,8 @@ export interface Product {
   minimum_stock: number
   current_stock: number
   image_url: string | null
+  batch_number: string | null
+  expiry_date: string | null
   active: boolean
   created_at: string
   updated_at: string
