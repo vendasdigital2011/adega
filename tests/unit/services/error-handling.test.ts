@@ -20,17 +20,29 @@ function makeFailingQuery() {
   return query
 }
 
+const loginError = { message: "Invalid login credentials", code: "invalid_credentials" }
+
 vi.mock("@/lib/supabase", () => ({
   supabase: {
     from: vi.fn(() => makeFailingQuery()),
-    auth: { getUser: vi.fn(() => Promise.resolve({ data: { user: null }, error: null })) },
+    auth: {
+      getUser: vi.fn(() => Promise.resolve({ data: { user: null }, error: null })),
+      signInWithPassword: vi.fn(() => Promise.resolve({ data: { user: null }, error: loginError })),
+    },
     rpc: vi.fn(() => Promise.resolve({ data: null, error: mockError })),
   },
 }))
 
+vi.mock("@/lib/logger", async () => {
+  const actual = await vi.importActual<typeof import("@/lib/logger")>("@/lib/logger")
+  return { ...actual, logClientError: vi.fn() }
+})
+
 import { categoryService } from "@/services/CategoryService"
 import { roleService } from "@/services/RoleService"
 import { userService } from "@/services/UserService"
+import { authService } from "@/services/AuthService"
+import { logClientError } from "@/lib/logger"
 
 describe("Tratamento de erro compartilhado (BaseService.handleError)", () => {
   it("CategoryService.list propaga a mensagem/código do erro do Supabase", async () => {
@@ -46,5 +58,22 @@ describe("Tratamento de erro compartilhado (BaseService.handleError)", () => {
 
   it("UserService.list propaga o erro pelo mesmo caminho", async () => {
     await expect(userService.list({ page: 1, limit: 10 })).rejects.toMatchObject({ message: mockError.message })
+  })
+})
+
+// Achado P5 da auditoria "reviravolta": falha de login precisa ter uma action
+// própria e filtrável no logger (não cair no balde genérico "service.error"),
+// já que não dá pra gravar em audit_logs sem saber a empresa antes do login.
+describe("AuthService.signIn — falha de login tem action própria no logger", () => {
+  it("loga com action 'auth.login_failed', não 'service.error'", async () => {
+    vi.mocked(logClientError).mockClear()
+    await expect(authService.signIn("alguem@teste.com", "senha-errada")).rejects.toMatchObject({
+      message: loginError.message,
+    })
+    expect(logClientError).toHaveBeenCalledWith(
+      "auth.login_failed",
+      loginError,
+      expect.objectContaining({ errorCode: loginError.code })
+    )
   })
 })

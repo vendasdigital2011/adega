@@ -74,6 +74,7 @@ export interface Customer {
   city: string | null
   state: string | null
   notes: string | null
+  credit_limit: number | null
   active: boolean
   created_at: string
   updated_at: string

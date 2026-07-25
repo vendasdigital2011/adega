@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/Button"
 import { Badge } from "@/components/ui/Badge"
 import { EmptyState } from "@/components/ui/EmptyState"
 import { Customer } from "@/types"
+import { formatCurrency } from "@/utils/format"
 import { Pencil, Ban, CheckCircle2, Users } from "lucide-react"
 
 interface CustomerTableProps {
@@ -40,6 +41,7 @@ export function CustomerTable({ customers, onEdit, onToggleActive, canEdit = tru
           <TableHead>Documento</TableHead>
           <TableHead>Contato</TableHead>
           <TableHead>Cidade/UF</TableHead>
+          <TableHead>Limite Fiado</TableHead>
           <TableHead>Situação</TableHead>
           {canEdit && <TableHead className="text-right">Ações</TableHead>}
         </TableRow>
@@ -54,6 +56,9 @@ export function CustomerTable({ customers, onEdit, onToggleActive, canEdit = tru
             </TableCell>
             <TableCell className="text-muted-foreground">
               {customer.city ? `${customer.city}${customer.state ? "/" + customer.state : ""}` : "-"}
+            </TableCell>
+            <TableCell className="text-muted-foreground">
+              {customer.credit_limit != null ? formatCurrency(customer.credit_limit) : "Sem limite"}
             </TableCell>
             <TableCell>
               <Badge variant={customer.active ? "success" : "secondary"}>

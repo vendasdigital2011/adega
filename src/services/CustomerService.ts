@@ -12,6 +12,7 @@ export interface CreateCustomerInput {
   city?: string | null
   state?: string | null
   notes?: string | null
+  credit_limit?: number | null
 }
 
 export type UpdateCustomerInput = Partial<CreateCustomerInput> & { active?: boolean }
@@ -113,7 +114,7 @@ export class CustomerService extends BaseService {
   // único parcial só age sobre documentos não-nulos).
   private normalize<T extends object>(input: T): T {
     const out = { ...(input as Record<string, unknown>) }
-    for (const key of ["document", "email", "phone", "whatsapp", "birthday", "address", "city", "state", "notes"]) {
+    for (const key of ["document", "email", "phone", "whatsapp", "birthday", "address", "city", "state", "notes", "credit_limit"]) {
       if (key in out && (out[key] === "" || out[key] === undefined)) {
         out[key] = null
       }

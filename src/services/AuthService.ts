@@ -67,7 +67,15 @@ export class AuthService extends BaseService {
 
       return data
     } catch (error) {
-      this.handleError(error)
+      // Achado P5 da auditoria "reviravolta": falha de login precisa ser
+      // auditável (detecção de força bruta), mas não dá pra gravar em
+      // audit_logs — essa tabela exige company_id, e numa falha de login
+      // (senha errada, e-mail inexistente) ainda não sabemos a empresa do
+      // usuário, e a policy de audit_logs/users exige sessão autenticada
+      // pra sequer consultar isso. Fica registrado com uma action própria
+      // e filtrável no logger estruturado (Vercel/stdout), em vez de cair
+      // no balde genérico "service.error".
+      this.handleError(error, "auth.login_failed")
     }
   }
 

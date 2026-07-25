@@ -1,6 +1,7 @@
 import * as z from "zod"
 
 const documentDigits = (value: string) => value.replace(/\D/g, "")
+const emptyToUndefined = (v: unknown) => (v === "" || v === null || v === undefined ? undefined : v)
 
 export const customerSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório").max(120, "Nome muito longo"),
@@ -19,6 +20,12 @@ export const customerSchema = z.object({
   state: z.string().max(40).optional().or(z.literal("")),
   address: z.string().max(200).optional().or(z.literal("")),
   notes: z.string().max(300).optional().or(z.literal("")),
+  // Limite de crédito pra venda Fiado — vazio = sem limite (auditoria
+  // "reviravolta", achado P6). Só passa a valer em vendas Fiado.
+  credit_limit: z.preprocess(
+    emptyToUndefined,
+    z.coerce.number({ invalid_type_error: "Valor inválido" }).nonnegative("Não pode ser negativo").optional()
+  ),
 })
 
 export type CustomerFormInputs = z.infer<typeof customerSchema>

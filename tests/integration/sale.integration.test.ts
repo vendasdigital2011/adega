@@ -105,6 +105,38 @@ describe("SaleService (integração)", () => {
     expect(receivable?.status).toBe("Aberta")
   })
 
+  // Auditoria "reviravolta", achado P6 (migration 0023): cliente sem limite
+  // de crédito (customerId, criado sem credit_limit) já prova "sem limite"
+  // no teste acima. Aqui prova o caminho oposto: com limite definido, o
+  // saldo em aberto (contas a receber Aberta/Parcial) + a nova venda não
+  // pode ultrapassar.
+  it("venda Fiado respeita o limite de crédito do cliente (soma o saldo em aberto)", async () => {
+    const limitedCustomer = await customerService.create({
+      name: `Cliente Limite Crédito Vitest ${Date.now()}`,
+      credit_limit: 30,
+    })
+
+    // primeira venda de 25 cabe no limite de 30
+    await saleService.create({
+      customer_id: limitedCustomer.id,
+      sale_date: new Date().toISOString().slice(0, 10),
+      discount: 0,
+      payment_method: "Fiado",
+      items: [{ product_id: productId, quantity: 1 }],
+    })
+
+    // segunda venda de 25 faria o saldo em aberto ir a 50, estourando os 30
+    await expect(
+      saleService.create({
+        customer_id: limitedCustomer.id,
+        sale_date: new Date().toISOString().slice(0, 10),
+        discount: 0,
+        payment_method: "Fiado",
+        items: [{ product_id: productId, quantity: 1 }],
+      })
+    ).rejects.toBeTruthy()
+  })
+
   it("cancelar uma venda estorna o estoque", async () => {
     const { data: before } = await supabase.from("products").select("current_stock").eq("id", productId).single()
 

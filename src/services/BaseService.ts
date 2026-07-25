@@ -4,13 +4,13 @@ import { logClientError } from "@/lib/logger"
 export abstract class BaseService {
   protected supabase = supabase
 
-  protected handleError(error: unknown): never {
+  protected handleError(error: unknown, action: string = "service.error"): never {
     const isErrorLike = (e: unknown): e is { message?: string; code?: string } =>
       typeof e === "object" && e !== null
 
     const message = (isErrorLike(error) && error.message) || "Ocorreu um erro inesperado."
     const code = (isErrorLike(error) && error.code) || "UNKNOWN_ERROR"
-    logClientError("service.error", error, { errorCode: code })
+    logClientError(action, error, { errorCode: code })
 
     throw {
       message,

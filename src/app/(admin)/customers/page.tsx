@@ -69,6 +69,7 @@ export default function CustomersPage() {
         state: formData.state || null,
         address: formData.address || null,
         notes: formData.notes || null,
+        credit_limit: formData.credit_limit ?? null,
       }
       if (editingCustomer) {
         await updateCustomer.mutateAsync({ id: editingCustomer.id, input: payload })

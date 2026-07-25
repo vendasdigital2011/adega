@@ -33,6 +33,7 @@ export function CustomerForm({ customer, onSubmit, onCancel, isLoading }: Custom
       state: customer?.state || "",
       address: customer?.address || "",
       notes: customer?.notes || "",
+      credit_limit: (customer?.credit_limit ?? "") as unknown as number,
     },
   })
 
@@ -53,6 +54,14 @@ export function CustomerForm({ customer, onSubmit, onCancel, isLoading }: Custom
         <Input label="UF (opcional)" error={errors.state?.message} {...register("state")} />
       </div>
       <Input label="Endereço (opcional)" error={errors.address?.message} {...register("address")} />
+      <Input
+        label="Limite de crédito para venda Fiado (opcional)"
+        type="number"
+        step="0.01"
+        placeholder="Deixe em branco para sem limite"
+        error={errors.credit_limit?.message}
+        {...register("credit_limit")}
+      />
       <Textarea label="Observações (opcional)" error={errors.notes?.message} {...register("notes")} />
       <div className="flex justify-end gap-2 pt-2">
         <Button type="button" variant="ghost" onClick={onCancel} disabled={isLoading}>
