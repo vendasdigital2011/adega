@@ -77,6 +77,28 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(loginUrl)
     }
 
+    // Revogação imediata de sessão (auditoria "reviravolta", achado P3): o
+    // JWT sozinho continua válido por até ~1h depois que um admin bloqueia o
+    // usuário — sem isso, uma sessão já aberta seguia operando normalmente
+    // até o token expirar, mesmo com status alterado pra 'blocked'/'inactive'
+    // no meio do caminho. Reconsulta em toda requisição (não cacheado): a
+    // regra de negócio pede acesso perdido "imediatamente", não em X segundos.
+    if (user) {
+      const { data: profile } = await supabase.from("users").select("status").eq("id", user.id).single()
+      if (profile?.status !== "active") {
+        logServer("warn", "Sessão revogada: usuário bloqueado ou inativo", {
+          requestId,
+          route: pathname,
+          userId: user.id,
+          action: "middleware.blocked_session_revoked",
+          durationMs: Date.now() - startedAt,
+        })
+        await supabase.auth.signOut()
+        if (isPublicPath) return response
+        return NextResponse.redirect(new URL("/login", request.url))
+      }
+    }
+
     // If user is logged in and trying to access login, redirect to dashboard
     if (isPublicPath && user) {
       const dashboardUrl = new URL("/dashboard", request.url)
