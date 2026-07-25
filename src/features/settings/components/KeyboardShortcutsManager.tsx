@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useRef } from "react"
 import toast from "react-hot-toast"
 import { Button } from "@/components/ui/Button"
 import { Modal } from "@/components/ui/Modal"
@@ -10,15 +10,19 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/com
 import { Badge } from "@/components/ui/Badge"
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/Table"
 import { Loading } from "@/components/ui/Loading"
-import { AlertTriangle, Plus, Trash2, RotateCcw, Download } from "lucide-react"
+import { AlertTriangle, Plus, Trash2, RotateCcw, Download, Upload } from "lucide-react"
 import { keyboardShortcutService } from "@/services/KeyboardShortcutService"
 import type { KeyboardShortcut } from "@/services/KeyboardShortcutService"
 
 export function KeyboardShortcutsManager() {
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [shortcuts, setShortcuts] = useState<KeyboardShortcut[]>([])
   const [conflicts, setConflicts] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false)
+  const [importMode, setImportMode] = useState<"merge" | "replace">("merge")
+  const [importLoading, setImportLoading] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     name: "",
@@ -136,6 +140,36 @@ export function KeyboardShortcutsManager() {
     }
   }
 
+  const handleImportClick = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    try {
+      setImportLoading(true)
+      const content = await file.text()
+
+      const created = await keyboardShortcutService.importFromJson(content, {
+        mode: importMode,
+      })
+
+      toast.success(`${created} atalho(s) importado(s)!`)
+      setIsImportModalOpen(false)
+      setImportMode("merge")
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""
+      }
+      await loadShortcuts()
+    } catch (error: any) {
+      toast.error(error?.message || "Erro ao importar atalhos")
+    } finally {
+      setImportLoading(false)
+    }
+  }
+
   const openEditModal = (shortcut: KeyboardShortcut) => {
     setFormData({
       name: shortcut.name,
@@ -188,11 +222,23 @@ export function KeyboardShortcutsManager() {
           <Download className="h-4 w-4 mr-2" />
           Exportar JSON
         </Button>
+        <Button variant="outline" onClick={() => setIsImportModalOpen(true)}>
+          <Upload className="h-4 w-4 mr-2" />
+          Importar JSON
+        </Button>
         <Button variant="outline" onClick={handleRestore}>
           <RotateCcw className="h-4 w-4 mr-2" />
           Restaurar Padrão
         </Button>
       </div>
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".json"
+        onChange={handleFileSelect}
+        className="hidden"
+      />
 
       {isLoading ? (
         <Loading />
@@ -248,6 +294,64 @@ export function KeyboardShortcutsManager() {
           </CardContent>
         </Card>
       )}
+
+      <Modal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        title="Importar Atalhos do JSON"
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="text-sm font-medium">Modo de Importação</label>
+            <div className="mt-2 space-y-2">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="importMode"
+                  value="merge"
+                  checked={importMode === "merge"}
+                  onChange={(e) => setImportMode(e.target.value as "merge" | "replace")}
+                />
+                <span className="text-sm">
+                  <strong>Mesclar</strong> (manter atalhos existentes, atualizar duplicatas)
+                </span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="importMode"
+                  value="replace"
+                  checked={importMode === "replace"}
+                  onChange={(e) => setImportMode(e.target.value as "merge" | "replace")}
+                />
+                <span className="text-sm">
+                  <strong>Substituir</strong> (deletar todos os atalhos e usar apenas os do arquivo)
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <Button
+            onClick={handleImportClick}
+            disabled={importLoading}
+            className="w-full"
+          >
+            <Upload className="h-4 w-4 mr-2" />
+            Selecionar Arquivo JSON
+          </Button>
+
+          <p className="text-xs text-muted-foreground">
+            Selecione um arquivo .json exportado de outra empresa. Arquivo deve conter um array de atalhos com campos:
+            key, action, ctrl, shift, alt, enabled, etc.
+          </p>
+
+          <div className="flex justify-end gap-2 pt-4">
+            <Button variant="ghost" onClick={() => setIsImportModalOpen(false)}>
+              Cancelar
+            </Button>
+          </div>
+        </div>
+      </Modal>
 
       <Modal
         isOpen={isModalOpen}

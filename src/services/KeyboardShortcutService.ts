@@ -195,6 +195,83 @@ export class KeyboardShortcutService extends BaseService {
     }
   }
 
+  public async importFromJson(jsonString: string, options?: { mode: "merge" | "replace" }): Promise<number> {
+    try {
+      // Parse e validar JSON
+      let importedShortcuts: Array<Partial<CreateShortcutInput>>
+      try {
+        importedShortcuts = JSON.parse(jsonString)
+      } catch (e) {
+        throw { message: "JSON inválido. Verifique o formato.", code: "INVALID_JSON" }
+      }
+
+      if (!Array.isArray(importedShortcuts)) {
+        throw { message: "JSON deve ser um array de atalhos.", code: "INVALID_FORMAT" }
+      }
+
+      if (importedShortcuts.length === 0) {
+        throw { message: "Nenhum atalho para importar.", code: "EMPTY_IMPORT" }
+      }
+
+      const companyId = await this.getCurrentUserCompanyId()
+      const userId = await this.getCurrentUserId()
+      let created = 0
+
+      // Modo replace: deleta todos os atalhos antigos primeiro
+      if (options?.mode === "replace") {
+        await this.supabase.from("keyboard_shortcuts").delete().eq("company_id", companyId)
+      }
+
+      // Importar cada atalho
+      for (const item of importedShortcuts) {
+        // Validação mínima
+        if (!item.key || !item.action) {
+          continue // Skip items inválidos
+        }
+
+        try {
+          // Verificar se já existe (para merge mode)
+          const existing = await this.supabase
+            .from("keyboard_shortcuts")
+            .select("id")
+            .eq("company_id", companyId)
+            .eq("key", item.key)
+            .eq("ctrl", item.ctrl ?? false)
+            .eq("shift", item.shift ?? false)
+            .eq("alt", item.alt ?? false)
+            .single()
+
+          if (existing.data && options?.mode !== "replace") {
+            // Em merge mode, atualiza o existente
+            await this.update(existing.data.id, item as UpdateShortcutInput)
+          } else {
+            // Cria novo
+            await this.supabase
+              .from("keyboard_shortcuts")
+              .insert({
+                company_id: companyId,
+                created_by: userId,
+                ...this.normalize(item as CreateShortcutInput),
+              })
+            created++
+          }
+        } catch (e) {
+          // Continua com o próximo, não falha toda a importação
+          continue
+        }
+      }
+
+      await this.auditAsCurrentUser("INSERT", "keyboard_shortcuts", "import_json", null, {
+        mode: options?.mode || "merge",
+        itemsImported: created,
+      })
+
+      return created
+    } catch (error) {
+      this.handleError(error)
+    }
+  }
+
   private normalize<T extends object>(input: T): T {
     const out = { ...(input as Record<string, unknown>) }
     const nullableKeys = ["role_id", "description", "module"]
