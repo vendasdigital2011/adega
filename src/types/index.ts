@@ -319,6 +319,7 @@ export interface User {
   email: string
   phone: string | null
   status: UserStatus
+  two_fa_enabled: boolean
   last_login: string | null
   created_at: string
   updated_at: string

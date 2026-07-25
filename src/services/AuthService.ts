@@ -2,6 +2,53 @@ import { BaseService } from "./BaseService"
 import { User, Permission } from "@/types"
 import { logClientError } from "@/lib/logger"
 
+// Rate-limiting simples em-memória (Etapa 7.4): rastreia 5 tentativas falhadas
+// em 15 minutos por email. Em produção, use Redis ou similar.
+interface LoginAttempt {
+  count: number
+  firstAttempt: number
+}
+
+const loginAttempts = new Map<string, LoginAttempt>()
+const MAX_ATTEMPTS = 5
+const TIME_WINDOW = 15 * 60 * 1000 // 15 minutos
+
+function checkRateLimit(email: string): boolean {
+  const now = Date.now()
+  const attempt = loginAttempts.get(email)
+
+  if (!attempt) {
+    loginAttempts.set(email, { count: 0, firstAttempt: now })
+    return true
+  }
+
+  // Se a janela passou, reseta
+  if (now - attempt.firstAttempt > TIME_WINDOW) {
+    loginAttempts.set(email, { count: 0, firstAttempt: now })
+    return true
+  }
+
+  // Se já atingiu o limite, bloqueia
+  if (attempt.count >= MAX_ATTEMPTS) {
+    return false
+  }
+
+  return true
+}
+
+function recordFailedAttempt(email: string): void {
+  const attempt = loginAttempts.get(email)
+  if (attempt) {
+    attempt.count++
+  } else {
+    loginAttempts.set(email, { count: 1, firstAttempt: Date.now() })
+  }
+}
+
+function clearAttempts(email: string): void {
+  loginAttempts.delete(email)
+}
+
 export class AuthService extends BaseService {
   private static instance: AuthService
 
@@ -21,6 +68,14 @@ export class AuthService extends BaseService {
    */
   public async signIn(email: string, password: string) {
     try {
+      // Etapa 7.4: Rate-limiting (5 tentativas em 15 minutos)
+      if (!checkRateLimit(email)) {
+        throw {
+          message: "Muitas tentativas de login. Tente novamente em alguns minutos.",
+          code: "RATE_LIMIT_EXCEEDED",
+        }
+      }
+
       const { data, error } = await this.supabase.auth.signInWithPassword({
         email,
         password,
@@ -49,6 +104,9 @@ export class AuthService extends BaseService {
           throw { message: "Usuário inativo ou bloqueado. Contate o administrador." }
         }
 
+        // Login successful — clear rate limit for this email
+        clearAttempts(email)
+
         // Log audit action
         await this.createAuditLog(
           profile.company_id,
@@ -67,6 +125,9 @@ export class AuthService extends BaseService {
 
       return data
     } catch (error) {
+      // Etapa 7.4: Record failed attempt for rate-limiting
+      recordFailedAttempt(email)
+
       // Achado P5 da auditoria "reviravolta": falha de login precisa ser
       // auditável (detecção de força bruta), mas não dá pra gravar em
       // audit_logs — essa tabela exige company_id, e numa falha de login
@@ -226,6 +287,7 @@ export class AuthService extends BaseService {
         email: userData.email,
         phone: userData.phone || null,
         status: userData.status ?? "active",
+        two_fa_enabled: userData.two_fa_enabled ?? false,
         last_login: userData.last_login || null,
         created_at: userData.created_at,
         updated_at: userData.updated_at,
