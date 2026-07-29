@@ -61,6 +61,21 @@ export class KeyboardShortcutService extends BaseService {
   }
 
   public async list(module?: string | null): Promise<KeyboardShortcut[]> {
+    const initialMock: KeyboardShortcut[] = [
+      { id: "ks-1", company_id: "c1111111-1111-1111-1111-111111111111", role_id: null, name: "Abrir Atalhos", key: "F1", ctrl: false, shift: false, alt: false, enabled: true, action: "shortcuts.help", description: "Exibe lista de atalhos", module: null, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+      { id: "ks-2", company_id: "c1111111-1111-1111-1111-111111111111", role_id: null, name: "Novo Item", key: "F2", ctrl: false, shift: false, alt: false, enabled: true, action: "item.create", description: "Abre o formulário de cadastro", module: null, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+      { id: "ks-3", company_id: "c1111111-1111-1111-1111-111111111111", role_id: null, name: "Buscar", key: "F3", ctrl: false, shift: false, alt: false, enabled: true, action: "search.focus", description: "Foca no campo de busca", module: null, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+      { id: "ks-4", company_id: "c1111111-1111-1111-1111-111111111111", role_id: null, name: "Recarregar", key: "F5", ctrl: false, shift: false, alt: false, enabled: true, action: "page.reload", description: "Atualiza os dados da tela", module: null, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+    ]
+
+    if (this.isOfflineOrDemoMode()) {
+      const all = this.getLocalMockStore("keyboard_shortcuts", initialMock)
+      if (module) {
+        return all.filter((s) => s.module === module || s.module === null)
+      }
+      return all
+    }
+
     try {
       const companyId = await this.getCurrentUserCompanyId()
 
@@ -81,12 +96,6 @@ export class KeyboardShortcutService extends BaseService {
       return (data as unknown as KeyboardShortcut[]) || []
     } catch (error) {
       if (this.isOfflineOrDemoMode(error)) {
-        const initialMock: KeyboardShortcut[] = [
-          { id: "ks-1", company_id: "c1111111-1111-1111-1111-111111111111", role_id: null, name: "Abrir Atalhos", key: "F1", ctrl: false, shift: false, alt: false, enabled: true, action: "shortcuts.help", description: "Exibe lista de atalhos", module: null, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-          { id: "ks-2", company_id: "c1111111-1111-1111-1111-111111111111", role_id: null, name: "Novo Item", key: "F2", ctrl: false, shift: false, alt: false, enabled: true, action: "item.create", description: "Abre o formulário de cadastro", module: null, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-          { id: "ks-3", company_id: "c1111111-1111-1111-1111-111111111111", role_id: null, name: "Buscar", key: "F3", ctrl: false, shift: false, alt: false, enabled: true, action: "search.focus", description: "Foca no campo de busca", module: null, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-          { id: "ks-4", company_id: "c1111111-1111-1111-1111-111111111111", role_id: null, name: "Recarregar", key: "F5", ctrl: false, shift: false, alt: false, enabled: true, action: "page.reload", description: "Atualiza os dados da tela", module: null, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-        ]
         const all = this.getLocalMockStore("keyboard_shortcuts", initialMock)
         if (module) {
           return all.filter((s) => s.module === module || s.module === null)

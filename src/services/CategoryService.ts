@@ -43,6 +43,27 @@ export class CategoryService extends BaseService {
   }
 
   public async list(options: ListCategoriesOptions): Promise<ListCategoriesResult> {
+    const initialMock: Category[] = [
+      { id: "cat-1", company_id: "c1111111-1111-1111-1111-111111111111", name: "Vinhos Tintos", description: "Vinhos tintos nacionais e importados", active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+      { id: "cat-2", company_id: "c1111111-1111-1111-1111-111111111111", name: "Cervejas Especiais", description: "Cervejas artesanais e especiais", active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+      { id: "cat-3", company_id: "c1111111-1111-1111-1111-111111111111", name: "Destilados", description: "Whisky, Vodka, Gin e Cachaça", active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+    ]
+
+    if (this.isOfflineOrDemoMode()) {
+      let list = this.getLocalMockStore("categories", initialMock)
+      if (options.search) {
+        const s = options.search.toLowerCase()
+        list = list.filter((c) => c.name.toLowerCase().includes(s) || (c.description || "").toLowerCase().includes(s))
+      }
+      if (typeof options.active === "boolean") {
+        list = list.filter((c) => c.active === options.active)
+      }
+      const total = list.length
+      const from = (options.page - 1) * options.limit
+      const pagedData = list.slice(from, from + options.limit)
+      return { data: pagedData, total }
+    }
+
     try {
       const companyId = (await this.getCurrentUserCompanyId()) || "default"
       const cacheKey = `${CacheKeys.categories(companyId)}:${options.page}:${options.limit}:${options.search || ""}:${options.active ?? "all"}`
@@ -73,20 +94,18 @@ export class CategoryService extends BaseService {
       return result
     } catch (error) {
       if (this.isOfflineOrDemoMode(error)) {
-        const initialMock: Category[] = [
-          { id: "cat-1", company_id: "c1111111-1111-1111-1111-111111111111", name: "Vinhos Tintos", description: "Vinhos tintos nacionais e importados", active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-          { id: "cat-2", company_id: "c1111111-1111-1111-1111-111111111111", name: "Cervejas Especiais", description: "Cervejas artesanais e especiais", active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-          { id: "cat-3", company_id: "c1111111-1111-1111-1111-111111111111", name: "Destilados", description: "Whisky, Vodka, Gin e Cachaça", active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-        ]
-        let items = this.getLocalMockStore("categories", initialMock)
+        let list = this.getLocalMockStore("categories", initialMock)
         if (options.search) {
-          const term = options.search.toLowerCase()
-          items = items.filter((c) => c.name.toLowerCase().includes(term) || (c.description && c.description.toLowerCase().includes(term)))
+          const s = options.search.toLowerCase()
+          list = list.filter((c) => c.name.toLowerCase().includes(s) || (c.description || "").toLowerCase().includes(s))
         }
         if (typeof options.active === "boolean") {
-          items = items.filter((c) => c.active === options.active)
+          list = list.filter((c) => c.active === options.active)
         }
-        return { data: items, total: items.length }
+        const total = list.length
+        const from = (options.page - 1) * options.limit
+        const pagedData = list.slice(from, from + options.limit)
+        return { data: pagedData, total }
       }
       this.handleError(error, "categories.list")
     }
