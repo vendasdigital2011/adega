@@ -5,6 +5,8 @@ import { supabaseAdmin } from "@/lib/supabase-admin"
 import { createUserSchema } from "@/features/users/schemas/user.schema"
 import { logServer, generateRequestId } from "@/lib/logger"
 
+export const dynamic = "force-dynamic"
+
 const ROUTE = "/api/users"
 
 export async function POST(request: NextRequest) {
@@ -28,8 +30,8 @@ export async function POST(request: NextRequest) {
 
   // Client bound to the caller's own session (respects RLS) — used only to identify who is calling.
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder-project.supabase.co",
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder",
     {
       cookies: {
         getAll() {

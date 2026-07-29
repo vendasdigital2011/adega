@@ -1,7 +1,8 @@
 import { createClient } from "@supabase/supabase-js"
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder-project.supabase.co"
-const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ""
+const serviceRoleKey =
+  process.env.SUPABASE_SERVICE_ROLE_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder-service-role"
 
 // Server-only client using the service role key.
 // NEVER import this file from a "use client" component — it must stay on the server
