@@ -181,13 +181,17 @@ export class AuthService extends BaseService {
       const isPlaceholder = process.env.NEXT_PUBLIC_SUPABASE_URL?.includes("placeholder") || !process.env.NEXT_PUBLIC_SUPABASE_URL
       const isBypass = process.env.NEXT_PUBLIC_BYPASS_MIDDLEWARE === "true"
 
-      if (isPlaceholder || isBypass) {
-        const mock = email === "vendedor@teste.com" ? MOCK_VENDEDOR_USER : MOCK_ADMIN_USER
-        if (typeof window !== "undefined") {
-          localStorage.setItem("adega_demo_user", JSON.stringify(mock))
+      if ((isPlaceholder || isBypass) && process.env.NODE_ENV !== "test") {
+        const isDemoEmail = email === "teste@teste.com" || email === "vendedor@teste.com"
+        if (isDemoEmail) {
+          const mock = email === "vendedor@teste.com" ? MOCK_VENDEDOR_USER : MOCK_ADMIN_USER
+          if (typeof window !== "undefined") {
+            localStorage.setItem("adega_demo_user", JSON.stringify(mock))
+          }
+          clearAttempts(email)
+          return { user: mock }
         }
-        clearAttempts(email)
-        return { user: mock }
+        throw { message: "E-mail ou senha inválidos.", code: "INVALID_CREDENTIALS" }
       }
 
       try {
@@ -393,7 +397,7 @@ export class AuthService extends BaseService {
       const isPlaceholder = process.env.NEXT_PUBLIC_SUPABASE_URL?.includes("placeholder") || !process.env.NEXT_PUBLIC_SUPABASE_URL
       const isBypass = process.env.NEXT_PUBLIC_BYPASS_MIDDLEWARE === "true"
 
-      if (isPlaceholder || isBypass) {
+      if ((isPlaceholder || isBypass) && process.env.NODE_ENV !== "test") {
         if (typeof window !== "undefined") {
           localStorage.setItem("adega_demo_user", JSON.stringify(MOCK_ADMIN_USER))
         }
