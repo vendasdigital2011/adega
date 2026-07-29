@@ -24,14 +24,13 @@ const productionOnlyHeaders =
           key: "Content-Security-Policy",
           value: [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline'",
-            "style-src 'self' 'unsafe-inline'",
-            // remotePatterns abaixo aceita imagem de qualquer host https (URL de
-            // produto cadastrada pelo usuário) — CSP precisa acompanhar isso.
-            "img-src 'self' data: https:",
-            "font-src 'self' data:",
-            "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
-            "frame-ancestors 'none'",
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://*.vercel.live https://*.vercel.com",
+            "style-src 'self' 'unsafe-inline' https://vercel.live https://fonts.googleapis.com",
+            "img-src 'self' data: blob: https:",
+            "font-src 'self' data: https://fonts.gstatic.com",
+            "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.upstash.io wss://*.upstash.io https://api.openai.com https://generativelanguage.googleapis.com https://vercel.live https://*.vercel.live https://*.vercel.com",
+            "frame-src 'self' https://vercel.live https://*.vercel.live https://*.vercel.com",
+            "frame-ancestors 'self' https://vercel.live https://*.vercel.live https://*.vercel.com",
             "base-uri 'self'",
             "form-action 'self'",
           ].join("; "),
