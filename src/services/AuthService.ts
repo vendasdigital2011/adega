@@ -191,7 +191,7 @@ export class AuthService extends BaseService {
           clearAttempts(email)
           return { user: mock }
         }
-        throw { message: "E-mail ou senha inválidos.", code: "INVALID_CREDENTIALS" }
+        throw { message: "Invalid login credentials", code: "INVALID_CREDENTIALS" }
       }
 
       try {

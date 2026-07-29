@@ -7,7 +7,8 @@ export abstract class BaseService {
   protected isOfflineOrDemoMode(error?: unknown): boolean {
     if (process.env.NODE_ENV === "test") {
       const isFetchError = typeof error === "object" && error !== null && "message" in error && String((error as any).message).toLowerCase().includes("fetch")
-      return Boolean(isFetchError)
+      const isBypass = process.env.NEXT_PUBLIC_BYPASS_MIDDLEWARE === "true"
+      return Boolean(isFetchError || isBypass)
     }
     const isBypass = process.env.NEXT_PUBLIC_BYPASS_MIDDLEWARE === "true"
     const isPlaceholder = process.env.NEXT_PUBLIC_SUPABASE_URL?.includes("placeholder") || !process.env.NEXT_PUBLIC_SUPABASE_URL
