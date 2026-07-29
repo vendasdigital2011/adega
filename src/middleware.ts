@@ -35,8 +35,7 @@ export async function middleware(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ""
   const isPlaceholderSupabase = supabaseUrl.includes("placeholder") || supabaseUrl === ""
   const bypassMiddleware =
-    process.env.NODE_ENV === "development" &&
-    (process.env.NEXT_PUBLIC_BYPASS_MIDDLEWARE === "true" || isPlaceholderSupabase)
+    process.env.NEXT_PUBLIC_BYPASS_MIDDLEWARE === "true" || isPlaceholderSupabase
 
   if (bypassMiddleware) {
     return NextResponse.next()
