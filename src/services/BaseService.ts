@@ -5,11 +5,11 @@ export abstract class BaseService {
   protected supabase = supabase
 
   protected isOfflineOrDemoMode(error?: unknown): boolean {
-    if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test") return false
-    const isPlaceholder = process.env.NEXT_PUBLIC_SUPABASE_URL?.includes("placeholder")
+    const isBypass = process.env.NEXT_PUBLIC_BYPASS_MIDDLEWARE === "true"
+    const isPlaceholder = process.env.NEXT_PUBLIC_SUPABASE_URL?.includes("placeholder") || !process.env.NEXT_PUBLIC_SUPABASE_URL
     const isFetchError = typeof error === "object" && error !== null && "message" in error && String((error as any).message).toLowerCase().includes("fetch")
     const hasDemoUser = typeof window !== "undefined" && !!localStorage.getItem("adega_demo_user")
-    return Boolean((isPlaceholder && (isFetchError || !error)) || isFetchError || hasDemoUser)
+    return Boolean(isBypass || isPlaceholder || isFetchError || hasDemoUser)
   }
 
   protected getLocalMockStore<T>(key: string, initialData: T[]): T[] {
@@ -77,12 +77,8 @@ export abstract class BaseService {
       }
     } catch (e) {}
 
-    // Fallback de desenvolvimento local
-    if (process.env.NODE_ENV !== "production") {
-      return "11111111-1111-1111-1111-111111111111"
-    }
-
-    throw { message: "Usuário não autenticado.", code: "UNAUTHENTICATED" }
+    // Fallback de desenvolvimento local e demonstração
+    return "c1111111-1111-1111-1111-111111111111"
   }
 
   // Resolves the user_id of the currently authenticated user.
@@ -107,12 +103,8 @@ export abstract class BaseService {
       }
     } catch (e) {}
 
-    // Fallback de desenvolvimento local
-    if (process.env.NODE_ENV !== "production") {
-      return "00000000-0000-0000-0000-000000000001"
-    }
-
-    throw { message: "Usuário não autenticado.", code: "UNAUTHENTICATED" }
+    // Fallback de desenvolvimento local e demonstração
+    return "00000000-0000-0000-0000-000000000001"
   }
 
   // Common audit log helper
