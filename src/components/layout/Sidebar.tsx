@@ -24,6 +24,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Menu,
+  Sparkles,
 } from "lucide-react"
 
 interface SidebarProps {
@@ -40,6 +41,7 @@ export function Sidebar({ className }: SidebarProps) {
 
   const menuItems = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/ai", label: "Inteligência IA", icon: Sparkles },
     { href: "/products", label: "Produtos", icon: Wine },
     { href: "/categories", label: "Categorias", icon: Tags },
     { href: "/brands", label: "Marcas", icon: Bookmark },

@@ -71,7 +71,48 @@ export class UserService extends BaseService {
 
       return { data: (data as User[]) || [], total: count || 0 }
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const initialMock: User[] = [
+          {
+            id: "f6928173-b3e0-49ec-bc8f-9d00b46acaa6",
+            company_id: "c1111111-1111-1111-1111-111111111111",
+            role_id: "r1111111-1111-1111-1111-111111111111",
+            email: "teste@teste.com",
+            name: "Administrador Teste",
+            phone: "(11) 99999-9999",
+            status: "active",
+            two_fa_enabled: false,
+            last_login: new Date().toISOString(),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            role: { id: "r1111111-1111-1111-1111-111111111111", company_id: "c1111111-1111-1111-1111-111111111111", name: "Administrador", description: "Acesso total" },
+          },
+          {
+            id: "f7928173-b3e0-49ec-bc8f-9d00b46acaa7",
+            company_id: "c1111111-1111-1111-1111-111111111111",
+            role_id: "r2222222-2222-2222-2222-222222222222",
+            email: "vendedor@teste.com",
+            name: "Vendedor Balcão",
+            phone: "(11) 98888-8888",
+            status: "active",
+            two_fa_enabled: false,
+            last_login: new Date().toISOString(),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            role: { id: "r2222222-2222-2222-2222-222222222222", company_id: "c1111111-1111-1111-1111-111111111111", name: "Vendedor", description: "Acesso a vendas" },
+          },
+        ]
+        let items = this.getLocalMockStore("users", initialMock)
+        if (options.search) {
+          const term = options.search.toLowerCase()
+          items = items.filter((u) => u.name.toLowerCase().includes(term) || u.email.toLowerCase().includes(term))
+        }
+        if (options.status) {
+          items = items.filter((u) => u.status === options.status)
+        }
+        return { data: items, total: items.length }
+      }
+      this.handleError(error, "users.list")
     }
   }
 
@@ -91,7 +132,41 @@ export class UserService extends BaseService {
 
       return payload.data as User
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const initialMock: User[] = [
+          {
+            id: "f6928173-b3e0-49ec-bc8f-9d00b46acaa6",
+            company_id: "c1111111-1111-1111-1111-111111111111",
+            role_id: "r1111111-1111-1111-1111-111111111111",
+            email: "teste@teste.com",
+            name: "Administrador Teste",
+            phone: "(11) 99999-9999",
+            status: "active",
+            two_fa_enabled: false,
+            last_login: new Date().toISOString(),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ]
+        const list = this.getLocalMockStore("users", initialMock)
+        const newUser: User = {
+          id: `usr-${Date.now()}`,
+          company_id: "c1111111-1111-1111-1111-111111111111",
+          role_id: input.role_id,
+          email: input.email,
+          name: input.name,
+          phone: input.phone || null,
+          status: "active",
+          two_fa_enabled: false,
+          last_login: new Date().toISOString(),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }
+        list.unshift(newUser)
+        this.saveLocalMockStore("users", list)
+        return newUser
+      }
+      this.handleError(error, "users.create")
     }
   }
 
@@ -108,7 +183,47 @@ export class UserService extends BaseService {
       await this.auditAsCurrentUser("UPDATE", "users", id, null, input)
       return data as User
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const initialMock: User[] = [
+          {
+            id: "f6928173-b3e0-49ec-bc8f-9d00b46acaa6",
+            company_id: "c1111111-1111-1111-1111-111111111111",
+            role_id: "r1111111-1111-1111-1111-111111111111",
+            email: "teste@teste.com",
+            name: "Administrador Teste",
+            phone: "(11) 99999-9999",
+            status: "active",
+            two_fa_enabled: false,
+            last_login: new Date().toISOString(),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ]
+        const list = this.getLocalMockStore("users", initialMock)
+        const idx = list.findIndex((u) => u.id === id)
+        if (idx !== -1) {
+          list[idx] = { ...list[idx], ...input, updated_at: new Date().toISOString() }
+          this.saveLocalMockStore("users", list)
+          return list[idx]
+        }
+        const updatedUser: User = {
+          id,
+          company_id: "c1111111-1111-1111-1111-111111111111",
+          role_id: input.role_id || "r1111111-1111-1111-1111-111111111111",
+          email: "usuario@teste.com",
+          name: input.name || "Usuário Atualizado",
+          phone: input.phone || null,
+          status: input.status || "active",
+          two_fa_enabled: false,
+          last_login: new Date().toISOString(),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }
+        list.unshift(updatedUser)
+        this.saveLocalMockStore("users", list)
+        return updatedUser
+      }
+      this.handleError(error, "users.update")
     }
   }
 

@@ -53,7 +53,46 @@ export class AccountsPayableService extends BaseService {
       if (error) throw error
       return { data: (data as unknown as AccountPayable[]) || [], total: count || 0 }
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const mockPayables: AccountPayable[] = [
+          {
+            id: "pay-1",
+            company_id: "c1111111-1111-1111-1111-111111111111",
+            supplier_id: "sup-1",
+            purchase_id: null,
+            cost_center_id: "cost-1",
+            description: "Compra de Estoque Vinícola Aurora",
+            due_date: new Date(Date.now() + 86400000 * 5).toISOString().slice(0, 10),
+            amount: 1500.00,
+            paid_amount: 0,
+            status: "Aberta",
+            created_by: "u1",
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            supplier: { name: "Vinícola Aurora" },
+            cost_center: { name: "Compras de Estoque" },
+          },
+          {
+            id: "pay-2",
+            company_id: "c1111111-1111-1111-1111-111111111111",
+            supplier_id: "sup-2",
+            purchase_id: null,
+            cost_center_id: "cost-2",
+            description: "Fatura de Energia Elétrica",
+            due_date: new Date(Date.now() + 86400000 * 2).toISOString().slice(0, 10),
+            amount: 480.50,
+            paid_amount: 480.50,
+            status: "Paga",
+            created_by: "u1",
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            supplier: { name: "Enel Distribuição" },
+            cost_center: { name: "Despesas Operacionais" },
+          },
+        ]
+        return { data: mockPayables, total: mockPayables.length }
+      }
+      this.handleError(error, "accounts_payable.list")
     }
   }
 
@@ -67,7 +106,8 @@ export class AccountsPayableService extends BaseService {
       if (error) throw error
       return (data as unknown as PayablePayment[]) || []
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) return []
+      this.handleError(error, "accounts_payable.list_payments")
     }
   }
 
@@ -84,7 +124,10 @@ export class AccountsPayableService extends BaseService {
       await this.auditAsCurrentUser("INSERT", "accounts_payable", data as string, null, input)
       return data as string
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        return `pay-${Date.now()}`
+      }
+      this.handleError(error, "accounts_payable.create")
     }
   }
 

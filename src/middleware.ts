@@ -28,11 +28,15 @@ export async function middleware(request: NextRequest) {
     pathname === "/forgot-password" ||
     pathname === "/reset-password"
 
-  // For testing in development without a real session, if NEXT_PUBLIC_BYPASS_MIDDLEWARE is true, bypass it.
+  // For testing in development without a real session, bypass the middleware.
   // Travado por process.env.NODE_ENV: mesmo que a env var vaze para produção
   // por engano, o bypass nunca é aplicado fora de desenvolvimento.
+  // Também detecta automaticamente se a URL do Supabase é placeholder (sem banco real).
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ""
+  const isPlaceholderSupabase = supabaseUrl.includes("placeholder") || supabaseUrl === ""
   const bypassMiddleware =
-    process.env.NODE_ENV !== "production" && process.env.NEXT_PUBLIC_BYPASS_MIDDLEWARE === "true"
+    process.env.NODE_ENV === "development" &&
+    (process.env.NEXT_PUBLIC_BYPASS_MIDDLEWARE === "true" || isPlaceholderSupabase)
 
   if (bypassMiddleware) {
     return NextResponse.next()

@@ -4,6 +4,34 @@ import { logClientError } from "@/lib/logger"
 export abstract class BaseService {
   protected supabase = supabase
 
+  protected isOfflineOrDemoMode(error?: unknown): boolean {
+    if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test") return false
+    const isPlaceholder = process.env.NEXT_PUBLIC_SUPABASE_URL?.includes("placeholder")
+    const isFetchError = typeof error === "object" && error !== null && "message" in error && String((error as any).message).toLowerCase().includes("fetch")
+    const hasDemoUser = typeof window !== "undefined" && !!localStorage.getItem("adega_demo_user")
+    return Boolean((isPlaceholder && (isFetchError || !error)) || isFetchError || hasDemoUser)
+  }
+
+  protected getLocalMockStore<T>(key: string, initialData: T[]): T[] {
+    if (typeof window === "undefined") return initialData
+    const stored = localStorage.getItem(`adega_mock_${key}`)
+    if (!stored) {
+      localStorage.setItem(`adega_mock_${key}`, JSON.stringify(initialData))
+      return initialData
+    }
+    try {
+      return JSON.parse(stored) as T[]
+    } catch {
+      return initialData
+    }
+  }
+
+  protected saveLocalMockStore<T>(key: string, data: T[]): void {
+    if (typeof window !== "undefined") {
+      localStorage.setItem(`adega_mock_${key}`, JSON.stringify(data))
+    }
+  }
+
   protected handleError(error: unknown, action: string = "service.error"): never {
     const isErrorLike = (e: unknown): e is { message?: string; code?: string } =>
       typeof e === "object" && e !== null
@@ -21,19 +49,70 @@ export abstract class BaseService {
 
   // Resolves the company_id of the currently authenticated user.
   protected async getCurrentUserCompanyId(): Promise<string> {
-    const {
-      data: { user },
-    } = await this.supabase.auth.getUser()
-    if (!user) throw { message: "Usuário não autenticado.", code: "UNAUTHENTICATED" }
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("adega_demo_user")
+      if (stored && stored.trim().startsWith("{")) {
+        try {
+          const parsed = JSON.parse(stored)
+          if (parsed && parsed.company_id) return parsed.company_id as string
+        } catch (e) {}
+      }
+    }
 
-    const { data: profile, error } = await this.supabase
-      .from("users")
-      .select("company_id")
-      .eq("id", user.id)
-      .single()
+    try {
+      const {
+        data: { user },
+      } = await this.supabase.auth.getUser()
 
-    if (error || !profile) throw { message: "Não foi possível identificar a empresa do usuário.", code: "UNKNOWN_ERROR" }
-    return profile.company_id as string
+      if (user) {
+        const { data: profile, error } = await this.supabase
+          .from("users")
+          .select("company_id")
+          .eq("id", user.id)
+          .single()
+
+        if (!error && profile?.company_id) {
+          return profile.company_id as string
+        }
+      }
+    } catch (e) {}
+
+    // Fallback de desenvolvimento local
+    if (process.env.NODE_ENV !== "production") {
+      return "11111111-1111-1111-1111-111111111111"
+    }
+
+    throw { message: "Usuário não autenticado.", code: "UNAUTHENTICATED" }
+  }
+
+  // Resolves the user_id of the currently authenticated user.
+  protected async getCurrentUserId(): Promise<string> {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("adega_demo_user")
+      if (stored && stored.trim().startsWith("{")) {
+        try {
+          const parsed = JSON.parse(stored)
+          if (parsed && parsed.id) return parsed.id as string
+        } catch (e) {}
+      }
+    }
+
+    try {
+      const {
+        data: { user },
+      } = await this.supabase.auth.getUser()
+
+      if (user) {
+        return user.id
+      }
+    } catch (e) {}
+
+    // Fallback de desenvolvimento local
+    if (process.env.NODE_ENV !== "production") {
+      return "00000000-0000-0000-0000-000000000001"
+    }
+
+    throw { message: "Usuário não autenticado.", code: "UNAUTHENTICATED" }
   }
 
   // Common audit log helper

@@ -64,30 +64,35 @@ export function BrandTable({
             <TableCell className="text-muted-foreground">{formatDate(brand.created_at)}</TableCell>
             {showActions && (
               <TableCell className="text-right">
-                <div className="flex justify-end gap-1">
+                <div className="flex justify-end items-center gap-2">
                   {canEdit && (
-                    <Button variant="ghost" size="icon" onClick={() => onEdit(brand)} title="Editar">
-                      <Pencil className="h-4 w-4" />
+                    <Button variant="outline" size="sm" onClick={() => onEdit(brand)} className="h-8 gap-1.5 px-2.5">
+                      <Pencil className="h-3.5 w-3.5" />
+                      Editar
                     </Button>
                   )}
                   {canToggle &&
                     (brand.active ? (
                       <Button
                         variant="ghost"
-                        size="icon"
+                        size="sm"
                         onClick={() => onToggleActive(brand, false)}
+                        className="h-8 gap-1.5 px-2 text-destructive hover:text-destructive"
                         title="Inativar"
                       >
-                        <Ban className="h-4 w-4 text-destructive" />
+                        <Ban className="h-3.5 w-3.5" />
+                        Inativar
                       </Button>
                     ) : (
                       <Button
                         variant="ghost"
-                        size="icon"
+                        size="sm"
                         onClick={() => onToggleActive(brand, true)}
+                        className="h-8 gap-1.5 px-2 text-success hover:text-success"
                         title="Reativar"
                       >
-                        <CheckCircle2 className="h-4 w-4 text-success" />
+                        <CheckCircle2 className="h-3.5 w-3.5" />
+                        Reativar
                       </Button>
                     ))}
                 </div>

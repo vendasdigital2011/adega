@@ -58,38 +58,45 @@ export function UserTable({ users, onEdit, onChangeStatus, canEdit = true }: Use
             <TableCell className="text-muted-foreground">{formatDate(user.last_login)}</TableCell>
             {canEdit && (
               <TableCell className="text-right">
-                <div className="flex justify-end gap-1">
-                  <Button variant="ghost" size="icon" onClick={() => onEdit(user)} title="Editar">
-                    <Pencil className="h-4 w-4" />
+                <div className="flex justify-end items-center gap-2">
+                  <Button variant="outline" size="sm" onClick={() => onEdit(user)} className="h-8 gap-1.5 px-2.5">
+                    <Pencil className="h-3.5 w-3.5" />
+                    Editar
                   </Button>
                   {user.status !== "active" && (
                     <Button
                       variant="ghost"
-                      size="icon"
+                      size="sm"
                       onClick={() => onChangeStatus(user, "active")}
+                      className="h-8 gap-1.5 px-2 text-success hover:text-success"
                       title={user.status === "blocked" ? "Desbloquear" : "Reativar"}
                     >
-                      <CheckCircle2 className="h-4 w-4 text-success" />
+                      <CheckCircle2 className="h-3.5 w-3.5" />
+                      {user.status === "blocked" ? "Desbloquear" : "Reativar"}
                     </Button>
                   )}
                   {user.status === "active" && (
                     <Button
                       variant="ghost"
-                      size="icon"
+                      size="sm"
                       onClick={() => onChangeStatus(user, "inactive")}
+                      className="h-8 gap-1.5 px-2 text-muted-foreground"
                       title="Inativar"
                     >
-                      <Ban className="h-4 w-4 text-muted-foreground" />
+                      <Ban className="h-3.5 w-3.5" />
+                      Inativar
                     </Button>
                   )}
                   {user.status !== "blocked" && (
                     <Button
                       variant="ghost"
-                      size="icon"
+                      size="sm"
                       onClick={() => onChangeStatus(user, "blocked")}
+                      className="h-8 gap-1.5 px-2 text-destructive hover:text-destructive"
                       title="Bloquear"
                     >
-                      <Lock className="h-4 w-4 text-destructive" />
+                      <Lock className="h-3.5 w-3.5" />
+                      Bloquear
                     </Button>
                   )}
                 </div>

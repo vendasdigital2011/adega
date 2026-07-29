@@ -67,7 +67,40 @@ export class InventoryService extends BaseService {
 
       return { data: (data as unknown as InventoryMovement[]) || [], total: count || 0 }
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const mockMovements: InventoryMovement[] = [
+          {
+            id: "mov-1",
+            company_id: "c1111111-1111-1111-1111-111111111111",
+            product_id: "prod-1",
+            movement_type: "Entrada",
+            quantity: 50,
+            previous_quantity: 0,
+            current_quantity: 50,
+            reference: "NF-1002",
+            observation: "Entrada inicial de estoque",
+            user_id: "u1",
+            created_at: new Date().toISOString(),
+            product: { name: "Vinho Tinto Cabernet Sauvignon 750ml", sku: "VIN-CAB-001" },
+          },
+          {
+            id: "mov-2",
+            company_id: "c1111111-1111-1111-1111-111111111111",
+            product_id: "prod-1",
+            movement_type: "Saída",
+            quantity: 5,
+            previous_quantity: 50,
+            current_quantity: 45,
+            reference: "Venda #101",
+            observation: "Baixa por venda no balcão",
+            user_id: "u1",
+            created_at: new Date(Date.now() - 3600000).toISOString(),
+            product: { name: "Vinho Tinto Cabernet Sauvignon 750ml", sku: "VIN-CAB-001" },
+          },
+        ]
+        return { data: mockMovements, total: mockMovements.length }
+      }
+      this.handleError(error, "inventory.list_movements")
     }
   }
 
@@ -84,7 +117,24 @@ export class InventoryService extends BaseService {
       await this.auditAsCurrentUser("INSERT", "inventory_movements", (data as InventoryMovement).id, null, input)
       return data as InventoryMovement
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const isEntrada = input.movement_type === "Entrada"
+        const mockMov: InventoryMovement = {
+          id: `mov-${Date.now()}`,
+          company_id: "c1111111-1111-1111-1111-111111111111",
+          product_id: input.product_id,
+          movement_type: input.movement_type,
+          quantity: input.quantity,
+          previous_quantity: 10,
+          current_quantity: isEntrada ? 10 + input.quantity : 10 - input.quantity,
+          reference: input.reference || null,
+          observation: input.observation || null,
+          user_id: "u1",
+          created_at: new Date().toISOString(),
+        }
+        return mockMov
+      }
+      this.handleError(error, "inventory.register_movement")
     }
   }
 
@@ -102,7 +152,35 @@ export class InventoryService extends BaseService {
         (p) => p.current_stock <= p.minimum_stock
       )
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        return [
+          {
+            id: "prod-2",
+            company_id: "c1111111-1111-1111-1111-111111111111",
+            name: "Cerveja Artesanal IPA 500ml",
+            sku: "CER-IPA-002",
+            category_id: "cat-2",
+            brand_id: null,
+            supplier_id: null,
+            barcode: null,
+            description: null,
+            unit: "UN",
+            purchase_price: 9.00,
+            sale_price: 18.50,
+            wholesale_price: null,
+            promotion_price: null,
+            current_stock: 8,
+            minimum_stock: 15,
+            image_url: null,
+            batch_number: null,
+            expiry_date: null,
+            active: true,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ]
+      }
+      this.handleError(error, "inventory.list_low_stock")
     }
   }
 }

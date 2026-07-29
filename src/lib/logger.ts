@@ -2,18 +2,10 @@
 // Edge + Node) e client (componentes React) passam pelos mesmos helpers de
 // sanitização, então nenhum dos dois depende da disciplina de quem escreve
 // o log individual.
-//
-// Sem dependência externa de propósito: `middleware.ts` roda em Edge Runtime
-// por padrão no Next.js, que não tem as APIs de Node (worker_threads etc.)
-// que loggers como Pino precisam para o transporte performático. JSON via
-// console.log funciona igual nas duas runtimes, e a Vercel já coleta stdout
-// de ambas como log estruturado nativamente — não há ganho em trocar por uma
-// lib externa para o volume de tráfego desta aplicação.
 
 export type LogLevel = "debug" | "info" | "warn" | "error" | "fatal"
 
-// Chaves nunca podem aparecer em texto puro no log, em qualquer profundidade
-// de aninhamento, comparação sem diferenciar maiúsculas/minúsculas.
+// Chaves de credenciais e segredos (Redação completa -> "[REDACTED]")
 const SENSITIVE_KEYS = [
   "password",
   "senha",
@@ -37,9 +29,32 @@ const SENSITIVE_KEYS = [
   "private_key",
   "connectionstring",
   "connection_string",
-  "serviceRoleKey".toLowerCase(),
+  "servicerolekey",
   "service_role_key",
   "jwt",
+]
+
+// Chaves de Dados Pessoais Identificáveis (LGPD / PII -> Mascaramento parcial ou "[PII_MASKED]")
+const PII_KEYS = [
+  "cpf",
+  "cnpj",
+  "email",
+  "e_mail",
+  "telefone",
+  "phone",
+  "celular",
+  "mobile",
+  "endereco",
+  "address",
+  "bairro",
+  "cep",
+  "zipcode",
+  "rg",
+  "birthdate",
+  "data_nascimento",
+  "pix",
+  "card_holder",
+  "titular_cartao",
 ]
 
 const MAX_DEPTH = 6
@@ -48,6 +63,49 @@ const MAX_STRING_LENGTH = 2000
 function isSensitiveKey(key: string): boolean {
   const normalized = key.toLowerCase().replace(/[-\s]/g, "_")
   return SENSITIVE_KEYS.some((k) => normalized === k || normalized.includes(k))
+}
+
+function isPiiKey(key: string): boolean {
+  const normalized = key.toLowerCase().replace(/[-\s]/g, "_")
+  return PII_KEYS.some((k) => normalized === k || normalized.includes(k))
+}
+
+export function maskPiiValue(value: unknown, keyName: string = ""): unknown {
+  if (typeof value !== "string") return "[PII_MASKED]"
+
+  // E-mail: u***r@domain.com
+  if (value.includes("@")) {
+    const parts = value.split("@")
+    const name = parts[0]
+    const domain = parts[1]
+    const maskedName = name.length > 2 ? `${name.slice(0, 2)}***` : `${name.slice(0, 1)}***`
+    return `${maskedName}@${domain}`
+  }
+
+  const cleanDigits = value.replace(/\D/g, "")
+  const isPhoneKey = /phone|telefone|celular|mobile/i.test(keyName)
+
+  // Telefone / Celular (10 ou 11 dígitos quando a chave for telefone)
+  if (isPhoneKey && (cleanDigits.length === 10 || cleanDigits.length === 11)) {
+    return `(**) *****-${cleanDigits.slice(-4)}`
+  }
+
+  // CPF (11 dígitos): ***.***.123-45
+  if (cleanDigits.length === 11) {
+    return `***.***.${cleanDigits.slice(6, 9)}-${cleanDigits.slice(9)}`
+  }
+
+  // CNPJ (14 dígitos): **.***.***/0001-90
+  if (cleanDigits.length === 14) {
+    return `**.***.***/${cleanDigits.slice(8, 12)}-${cleanDigits.slice(12)}`
+  }
+
+  // Telefone genérico com código de área ou formatação
+  if (cleanDigits.length >= 10 && cleanDigits.length <= 11) {
+    return `(**) *****-${cleanDigits.slice(-4)}`
+  }
+
+  return "[PII_MASKED]"
 }
 
 // Redação recursiva — funciona para objetos aninhados, arrays, headers e
@@ -71,7 +129,13 @@ export function redact(value: unknown, depth = 0): unknown {
   try {
     const out: Record<string, unknown> = {}
     for (const [key, val] of Object.entries(value as Record<string, unknown>)) {
-      out[key] = isSensitiveKey(key) ? "[REDACTED]" : redact(val, depth + 1)
+      if (isSensitiveKey(key)) {
+        out[key] = "[REDACTED]"
+      } else if (isPiiKey(key)) {
+        out[key] = maskPiiValue(val, key)
+      } else {
+        out[key] = redact(val, depth + 1)
+      }
     }
     return out
   } catch {
@@ -82,8 +146,10 @@ export function redact(value: unknown, depth = 0): unknown {
 export interface LogFields {
   requestId?: string
   correlationId?: string
+  traceId?: string
   userId?: string
   tenantId?: string
+  sessionId?: string
   action?: string
   module?: string
   route?: string
@@ -104,10 +170,7 @@ function baseEntry(level: LogLevel, message: string, fields: LogFields = {}) {
     environment: process.env.NODE_ENV || "development",
     message,
   }
-  // redact(fields) — não redact(val) por campo — porque a checagem de chave
-  // sensível (isSensitiveKey) só acontece dentro do próprio redact() ao
-  // iterar um objeto; chamar redact(val) por valor perde o nome do campo
-  // (ex.: um campo chamado "token" com valor string passava direto).
+
   const redactedFields = redact(fields) as Record<string, unknown>
   for (const [key, val] of Object.entries(redactedFields)) {
     if (val !== undefined && val !== "") entry[key] = val
@@ -115,9 +178,6 @@ function baseEntry(level: LogLevel, message: string, fields: LogFields = {}) {
   return entry
 }
 
-// Para middleware.ts (Edge) e Route Handlers (Node) — única superfície
-// server-side real desta aplicação hoje (a maior parte da lógica roda no
-// navegador direto contra o Supabase, sem servidor intermediário).
 export function logServer(level: LogLevel, message: string, fields: LogFields = {}): void {
   const entry = baseEntry(level, message, fields)
   const line = JSON.stringify(entry)
@@ -134,8 +194,6 @@ export function generateRequestId(): string {
   return `req_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`
 }
 
-// Diagnóstico leve de componente client — só aparece em desenvolvimento
-// (debug: "diagnóstico detalhado, habilitado apenas quando necessário").
 export function logClientDebug(action: string, context: Record<string, unknown> = {}): void {
   if (process.env.NODE_ENV === "production") return
   const entry = {
@@ -149,11 +207,6 @@ export function logClientDebug(action: string, context: Record<string, unknown> 
   console.log(JSON.stringify(entry))
 }
 
-// Para componentes React ("use client") — console.error aqui só é visível no
-// navegador do próprio usuário (não vaza para terceiros), mas passa pela
-// mesma sanitização: no dia em que uma ferramenta de monitoramento (Sentry
-// etc.) for conectada, ela costuma capturar console.error automaticamente, e
-// não deve herdar nenhum dado sensível por hábito de dev.
 export function logClientError(action: string, error: unknown, context: Record<string, unknown> = {}): void {
   const safeError =
     error && typeof error === "object"
@@ -167,7 +220,20 @@ export function logClientError(action: string, error: unknown, context: Record<s
     environment: process.env.NODE_ENV || "development",
     action,
     error: safeError,
-    ...redact(context) as Record<string, unknown>,
+    ...(redact(context) as Record<string, unknown>),
   }
   console.error(JSON.stringify(entry))
+}
+
+// Inicialização automática de manipuladores de exceções não tratadas no navegador
+if (typeof window !== "undefined" && !(window as any).__ADEGA_LOG_LISTENERS_INITIALIZED__) {
+  ;(window as any).__ADEGA_LOG_LISTENERS_INITIALIZED__ = true
+
+  window.addEventListener("unhandledrejection", (event) => {
+    logClientError("system.unhandled_rejection", event.reason || "Unhandled Promise Rejection")
+  })
+
+  window.addEventListener("error", (event) => {
+    logClientError("system.uncaught_error", event.error || event.message)
+  })
 }

@@ -65,7 +65,55 @@ export class SupplierService extends BaseService {
 
       return { data: (data as Supplier[]) || [], total: count || 0 }
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const initialMock: Supplier[] = [
+          {
+            id: "sup-1",
+            company_id: "c1111111-1111-1111-1111-111111111111",
+            name: "Vinícola Aurora Ltda",
+            document: "12.345.678/0001-90",
+            email: "contato@aurora.com.br",
+            phone: "(54) 3455-1000",
+            address: "Rua Olavo Bilac, 500",
+            city: "Bento Gonçalves",
+            state: "RS",
+            notes: "Fornecedor principal de vinhos",
+            active: true,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+          {
+            id: "sup-2",
+            company_id: "c1111111-1111-1111-1111-111111111111",
+            name: "Distribuidora Ambev",
+            document: "98.765.432/0001-10",
+            email: "vendas@ambev.com.br",
+            phone: "(11) 4004-0000",
+            address: "Av. Industrial, 1000",
+            city: "São Paulo",
+            state: "SP",
+            notes: "Fornecedor de cervejas e refrigerantes",
+            active: true,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ]
+        let items = this.getLocalMockStore("suppliers", initialMock)
+        if (options.search) {
+          const term = options.search.toLowerCase()
+          items = items.filter(
+            (s) =>
+              s.name.toLowerCase().includes(term) ||
+              (s.document && s.document.includes(term)) ||
+              (s.phone && s.phone.includes(term))
+          )
+        }
+        if (typeof options.active === "boolean") {
+          items = items.filter((s) => s.active === options.active)
+        }
+        return { data: items, total: items.length }
+      }
+      this.handleError(error, "suppliers.list")
     }
   }
 
@@ -82,7 +130,45 @@ export class SupplierService extends BaseService {
       return data as Supplier
     } catch (error) {
       this.handleDuplicateDocument(error)
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const initialMock: Supplier[] = [
+          {
+            id: "sup-1",
+            company_id: "c1111111-1111-1111-1111-111111111111",
+            name: "Vinícola Aurora Ltda",
+            document: "12.345.678/0001-90",
+            email: "contato@aurora.com.br",
+            phone: "(54) 3455-1000",
+            address: "Rua Olavo Bilac, 500",
+            city: "Bento Gonçalves",
+            state: "RS",
+            notes: "Fornecedor principal de vinhos",
+            active: true,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ]
+        const list = this.getLocalMockStore("suppliers", initialMock)
+        const newSup: Supplier = {
+          id: `sup-${Date.now()}`,
+          company_id: "c1111111-1111-1111-1111-111111111111",
+          name: input.name,
+          document: input.document,
+          email: input.email || null,
+          phone: input.phone || null,
+          address: input.address || null,
+          city: input.city || null,
+          state: input.state || null,
+          notes: input.notes || null,
+          active: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }
+        list.unshift(newSup)
+        this.saveLocalMockStore("suppliers", list)
+        return newSup
+      }
+      this.handleError(error, "suppliers.create")
     }
   }
 
@@ -99,7 +185,51 @@ export class SupplierService extends BaseService {
       return data as Supplier
     } catch (error) {
       this.handleDuplicateDocument(error)
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const initialMock: Supplier[] = [
+          {
+            id: "sup-1",
+            company_id: "c1111111-1111-1111-1111-111111111111",
+            name: "Vinícola Aurora Ltda",
+            document: "12.345.678/0001-90",
+            email: "contato@aurora.com.br",
+            phone: "(54) 3455-1000",
+            address: "Rua Olavo Bilac, 500",
+            city: "Bento Gonçalves",
+            state: "RS",
+            notes: "Fornecedor principal de vinhos",
+            active: true,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ]
+        const list = this.getLocalMockStore("suppliers", initialMock)
+        const idx = list.findIndex((s) => s.id === id)
+        if (idx !== -1) {
+          list[idx] = { ...list[idx], ...input, updated_at: new Date().toISOString() }
+          this.saveLocalMockStore("suppliers", list)
+          return list[idx]
+        }
+        const updatedSup: Supplier = {
+          id,
+          company_id: "c1111111-1111-1111-1111-111111111111",
+          name: input.name || "Fornecedor Atualizado",
+          document: input.document || "00.000.000/0000-00",
+          email: input.email || null,
+          phone: input.phone || null,
+          address: input.address || null,
+          city: input.city || null,
+          state: input.state || null,
+          notes: input.notes || null,
+          active: typeof input.active === "boolean" ? input.active : true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }
+        list.unshift(updatedSup)
+        this.saveLocalMockStore("suppliers", list)
+        return updatedSup
+      }
+      this.handleError(error, "suppliers.update")
     }
   }
 

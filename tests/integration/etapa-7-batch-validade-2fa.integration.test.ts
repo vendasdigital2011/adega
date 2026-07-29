@@ -6,6 +6,7 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll } from "vitest"
+import { z } from "zod"
 import { productService, ProductService } from "@/services/ProductService"
 import { authService } from "@/services/AuthService"
 import { createServerClient } from "@supabase/ssr"
@@ -59,10 +60,9 @@ describe("Etapa 7: Lote/Validade + 2FA + Rate-limiting", () => {
     it("rejeita expiry_date inválida (não é data)", () => {
       const testCases = ["not-a-date", "32/13/2024", "2024-13-45"]
 
-      // zod.string().date() valida o formato ISO 8601
-      // (testes headless reais fariam via ProductSchema.parse())
+      // zod.string().date() valida se é uma data ISO 8601 válida (AAAA-MM-DD)
       testCases.forEach((invalid) => {
-        expect(invalid).not.toMatch(/^\d{4}-\d{2}-\d{2}$/)
+        expect(z.string().date().safeParse(invalid).success).toBe(false)
       })
     })
 

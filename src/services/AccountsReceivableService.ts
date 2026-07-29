@@ -53,7 +53,33 @@ export class AccountsReceivableService extends BaseService {
       if (error) throw error
       return { data: (data as unknown as AccountReceivable[]) || [], total: count || 0 }
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const initialMock: AccountReceivable[] = [
+          {
+            id: "rec-1",
+            company_id: "c1111111-1111-1111-1111-111111111111",
+            customer_id: "cust-1",
+            sale_id: "sale-101",
+            cost_center_id: "cost-1",
+            description: "Venda Fiado de Vinhos",
+            due_date: new Date(Date.now() + 86400000 * 10).toISOString().slice(0, 10),
+            amount: 250.00,
+            received_amount: 0,
+            status: "Aberta",
+            created_by: "u1",
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            customer: { name: "João Silva" },
+            cost_center: { name: "Vendas Fiado" },
+          },
+        ]
+        let items = this.getLocalMockStore("accounts_receivable", initialMock)
+        if (options.status) {
+          items = items.filter((r) => r.status === options.status)
+        }
+        return { data: items, total: items.length }
+      }
+      this.handleError(error, "accounts_receivable.list")
     }
   }
 
@@ -67,7 +93,10 @@ export class AccountsReceivableService extends BaseService {
       if (error) throw error
       return (data as unknown as ReceivableReceipt[]) || []
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        return []
+      }
+      this.handleError(error, "accounts_receivable.list_receipts")
     }
   }
 
@@ -84,7 +113,48 @@ export class AccountsReceivableService extends BaseService {
       await this.auditAsCurrentUser("INSERT", "accounts_receivable", data as string, null, input)
       return data as string
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const id = `rec-${Date.now()}`
+        const initialMock: AccountReceivable[] = [
+          {
+            id: "rec-1",
+            company_id: "c1111111-1111-1111-1111-111111111111",
+            customer_id: "cust-1",
+            sale_id: "sale-101",
+            cost_center_id: "cost-1",
+            description: "Venda Fiado de Vinhos",
+            due_date: new Date(Date.now() + 86400000 * 10).toISOString().slice(0, 10),
+            amount: 250.00,
+            received_amount: 0,
+            status: "Aberta",
+            created_by: "u1",
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            customer: { name: "João Silva" },
+            cost_center: { name: "Vendas Fiado" },
+          },
+        ]
+        const list = this.getLocalMockStore("accounts_receivable", initialMock)
+        const newRec: AccountReceivable = {
+          id,
+          company_id: "c1111111-1111-1111-1111-111111111111",
+          customer_id: input.customer_id,
+          sale_id: null,
+          cost_center_id: input.cost_center_id,
+          description: input.description,
+          due_date: input.due_date,
+          amount: input.amount,
+          received_amount: 0,
+          status: "Aberta",
+          created_by: "u1",
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }
+        list.unshift(newRec)
+        this.saveLocalMockStore("accounts_receivable", list)
+        return id
+      }
+      this.handleError(error, "accounts_receivable.create")
     }
   }
 
@@ -106,7 +176,38 @@ export class AccountsReceivableService extends BaseService {
       })
       return data as unknown as AccountReceivable
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const initialMock: AccountReceivable[] = []
+        const list = this.getLocalMockStore("accounts_receivable", initialMock)
+        const idx = list.findIndex((r) => r.id === accountsReceivableId)
+        if (idx !== -1) {
+          list[idx].received_amount = (list[idx].received_amount || 0) + value
+          if (list[idx].received_amount >= list[idx].amount) {
+            list[idx].status = "Recebida"
+          } else {
+            list[idx].status = "Parcial"
+          }
+          this.saveLocalMockStore("accounts_receivable", list)
+          return list[idx]
+        }
+        const mockRec: AccountReceivable = {
+          id: accountsReceivableId,
+          company_id: "c1111111-1111-1111-1111-111111111111",
+          customer_id: "cust-1",
+          sale_id: null,
+          cost_center_id: null,
+          description: description || "Recebimento",
+          due_date: new Date().toISOString().slice(0, 10),
+          amount: value,
+          received_amount: value,
+          status: "Recebida",
+          created_by: "u1",
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }
+        return mockRec
+      }
+      this.handleError(error, "accounts_receivable.register_receipt")
     }
   }
 
@@ -118,7 +219,17 @@ export class AccountsReceivableService extends BaseService {
       if (error) throw error
       await this.auditAsCurrentUser("UPDATE", "accounts_receivable", accountsReceivableId, null, { action: "cancel" })
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const initialMock: AccountReceivable[] = []
+        const list = this.getLocalMockStore("accounts_receivable", initialMock)
+        const idx = list.findIndex((r) => r.id === accountsReceivableId)
+        if (idx !== -1) {
+          list[idx].status = "Cancelada"
+          this.saveLocalMockStore("accounts_receivable", list)
+        }
+        return
+      }
+      this.handleError(error, "accounts_receivable.cancel")
     }
   }
 }

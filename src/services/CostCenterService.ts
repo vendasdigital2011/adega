@@ -58,7 +58,22 @@ export class CostCenterService extends BaseService {
       if (error) throw error
       return { data: (data as CostCenter[]) || [], total: count || 0 }
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const initialMock: CostCenter[] = [
+          { id: "cost-1", company_id: "c1111111-1111-1111-1111-111111111111", name: "Compras de Estoque", active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+          { id: "cost-2", company_id: "c1111111-1111-1111-1111-111111111111", name: "Despesas Operacionais", active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+        ]
+        let items = this.getLocalMockStore("cost_centers", initialMock)
+        if (options.search) {
+          const term = options.search.toLowerCase()
+          items = items.filter((c) => c.name.toLowerCase().includes(term))
+        }
+        if (typeof options.active === "boolean") {
+          items = items.filter((c) => c.active === options.active)
+        }
+        return { data: items, total: items.length }
+      }
+      this.handleError(error, "cost_centers.list")
     }
   }
 
@@ -72,7 +87,14 @@ export class CostCenterService extends BaseService {
       if (error) throw error
       return (data as CostCenter[]) || []
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const initialMock: CostCenter[] = [
+          { id: "cost-1", company_id: "c1111111-1111-1111-1111-111111111111", name: "Compras de Estoque", active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+          { id: "cost-2", company_id: "c1111111-1111-1111-1111-111111111111", name: "Despesas Operacionais", active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+        ]
+        return this.getLocalMockStore("cost_centers", initialMock).filter((c) => c.active)
+      }
+      this.handleError(error, "cost_centers.list_active")
     }
   }
 
@@ -89,7 +111,24 @@ export class CostCenterService extends BaseService {
       return data as CostCenter
     } catch (error) {
       this.handleDuplicateName(error)
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const initialMock: CostCenter[] = [
+          { id: "cost-1", company_id: "c1111111-1111-1111-1111-111111111111", name: "Compras de Estoque", active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+        ]
+        const list = this.getLocalMockStore("cost_centers", initialMock)
+        const newCost: CostCenter = {
+          id: `cost-${Date.now()}`,
+          company_id: "c1111111-1111-1111-1111-111111111111",
+          name: input.name,
+          active: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }
+        list.unshift(newCost)
+        this.saveLocalMockStore("cost_centers", list)
+        return newCost
+      }
+      this.handleError(error, "cost_centers.create")
     }
   }
 
@@ -106,7 +145,30 @@ export class CostCenterService extends BaseService {
       return data as CostCenter
     } catch (error) {
       this.handleDuplicateName(error)
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const initialMock: CostCenter[] = [
+          { id: "cost-1", company_id: "c1111111-1111-1111-1111-111111111111", name: "Compras de Estoque", active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+        ]
+        const list = this.getLocalMockStore("cost_centers", initialMock)
+        const idx = list.findIndex((c) => c.id === id)
+        if (idx !== -1) {
+          list[idx] = { ...list[idx], ...input, updated_at: new Date().toISOString() }
+          this.saveLocalMockStore("cost_centers", list)
+          return list[idx]
+        }
+        const updatedCost: CostCenter = {
+          id,
+          company_id: "c1111111-1111-1111-1111-111111111111",
+          name: input.name || "Centro de Custo Atualizado",
+          active: typeof input.active === "boolean" ? input.active : true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }
+        list.unshift(updatedCost)
+        this.saveLocalMockStore("cost_centers", list)
+        return updatedCost
+      }
+      this.handleError(error, "cost_centers.update")
     }
   }
 

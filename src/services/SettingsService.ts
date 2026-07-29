@@ -69,7 +69,27 @@ export class SettingsService extends BaseService {
       if (error) throw error
       return data as Company
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const initialMock: Company[] = [
+          {
+            id: "c1111111-1111-1111-1111-111111111111",
+            name: "Adega Cloud Demo",
+            document: "12.345.678/0001-99",
+            email: "contato@adegacloud.com.br",
+            phone: "(11) 99999-8888",
+            address: "Rua do Comércio, 100",
+            city: "São Paulo",
+            state: "SP",
+            zip_code: "01000-000",
+            active: true,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ]
+        const list = this.getLocalMockStore("companies", initialMock)
+        return list[0]
+      }
+      this.handleError(error, "settings.get_company")
     }
   }
 
@@ -89,7 +109,29 @@ export class SettingsService extends BaseService {
       await this.auditAsCurrentUser("UPDATE", "companies", companyId, null, normalized)
       return data as Company
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const initialMock: Company[] = [
+          {
+            id: "c1111111-1111-1111-1111-111111111111",
+            name: "Adega Cloud Demo",
+            document: "12.345.678/0001-99",
+            email: "contato@adegacloud.com.br",
+            phone: "(11) 99999-8888",
+            address: "Rua do Comércio, 100",
+            city: "São Paulo",
+            state: "SP",
+            zip_code: "01000-000",
+            active: true,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ]
+        const list = this.getLocalMockStore("companies", initialMock)
+        list[0] = { ...list[0], ...input, updated_at: new Date().toISOString() }
+        this.saveLocalMockStore("companies", list)
+        return list[0]
+      }
+      this.handleError(error, "settings.update_company")
     }
   }
 
@@ -100,7 +142,24 @@ export class SettingsService extends BaseService {
       if (error) throw error
       return (data as Settings) ?? null
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const initialMock: Settings[] = [
+          {
+            id: "set-1",
+            company_id: "c1111111-1111-1111-1111-111111111111",
+            logo_url: null,
+            theme: "system",
+            currency: "BRL",
+            timezone: "America/Sao_Paulo",
+            language: "pt-BR",
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ]
+        const list = this.getLocalMockStore("settings", initialMock)
+        return list[0] || null
+      }
+      this.handleError(error, "settings.get_settings")
     }
   }
 
@@ -116,7 +175,33 @@ export class SettingsService extends BaseService {
       await this.auditAsCurrentUser("UPDATE", "settings", (data as Settings).id, null, input)
       return data as Settings
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const initialMock: Settings[] = [
+          {
+            id: "set-1",
+            company_id: "c1111111-1111-1111-1111-111111111111",
+            logo_url: null,
+            theme: "system",
+            currency: "BRL",
+            timezone: "America/Sao_Paulo",
+            language: "pt-BR",
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ]
+        const list = this.getLocalMockStore("settings", initialMock)
+        const updated: Settings = {
+          id: list[0]?.id || "set-1",
+          company_id: "c1111111-1111-1111-1111-111111111111",
+          logo_url: list[0]?.logo_url || null,
+          ...input,
+          created_at: list[0]?.created_at || new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }
+        this.saveLocalMockStore("settings", [updated])
+        return updated
+      }
+      this.handleError(error, "settings.upsert_settings")
     }
   }
 
@@ -134,7 +219,22 @@ export class SettingsService extends BaseService {
 
       return { exported_at: new Date().toISOString(), tables }
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        return {
+          exported_at: new Date().toISOString(),
+          tables: {
+            companies: this.getLocalMockStore("companies", []),
+            products: this.getLocalMockStore("products", []),
+            categories: this.getLocalMockStore("categories", []),
+            brands: this.getLocalMockStore("brands", []),
+            suppliers: this.getLocalMockStore("suppliers", []),
+            customers: this.getLocalMockStore("customers", []),
+            sales: this.getLocalMockStore("sales", []),
+            purchases: this.getLocalMockStore("purchases", []),
+          },
+        }
+      }
+      this.handleError(error, "settings.export_backup")
     }
   }
 }

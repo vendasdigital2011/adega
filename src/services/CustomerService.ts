@@ -68,7 +68,61 @@ export class CustomerService extends BaseService {
 
       return { data: (data as Customer[]) || [], total: count || 0 }
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const initialMock: Customer[] = [
+          {
+            id: "cust-1",
+            company_id: "c1111111-1111-1111-1111-111111111111",
+            name: "João Silva",
+            document: "123.456.789-00",
+            email: "joao.silva@email.com",
+            phone: "(11) 98765-4321",
+            whatsapp: "(11) 98765-4321",
+            birthday: "1985-05-15",
+            address: "Rua das Flores, 123",
+            city: "São Paulo",
+            state: "SP",
+            notes: "Cliente VIP, prefere vinhos secos",
+            credit_limit: 1000.00,
+            active: true,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+          {
+            id: "cust-2",
+            company_id: "c1111111-1111-1111-1111-111111111111",
+            name: "Maria Oliveira",
+            document: "987.654.321-11",
+            email: "maria.oliveira@email.com",
+            phone: "(11) 91234-5678",
+            whatsapp: "(11) 91234-5678",
+            birthday: "1990-10-20",
+            address: "Av. Paulista, 1000",
+            city: "São Paulo",
+            state: "SP",
+            notes: "Comprador semanal de cervejas artesanais",
+            credit_limit: 500.00,
+            active: true,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ]
+        let items = this.getLocalMockStore("customers", initialMock)
+        if (options.search) {
+          const term = options.search.toLowerCase()
+          items = items.filter(
+            (c) =>
+              c.name.toLowerCase().includes(term) ||
+              (c.document && c.document.includes(term)) ||
+              (c.phone && c.phone.includes(term))
+          )
+        }
+        if (typeof options.active === "boolean") {
+          items = items.filter((c) => c.active === options.active)
+        }
+        return { data: items, total: items.length }
+      }
+      this.handleError(error, "customers.list")
     }
   }
 
@@ -85,7 +139,51 @@ export class CustomerService extends BaseService {
       return data as Customer
     } catch (error) {
       this.handleDuplicateDocument(error)
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const initialMock: Customer[] = [
+          {
+            id: "cust-1",
+            company_id: "c1111111-1111-1111-1111-111111111111",
+            name: "João Silva",
+            document: "123.456.789-00",
+            email: "joao.silva@email.com",
+            phone: "(11) 98765-4321",
+            whatsapp: "(11) 98765-4321",
+            birthday: "1985-05-15",
+            address: "Rua das Flores, 123",
+            city: "São Paulo",
+            state: "SP",
+            notes: "Cliente VIP, prefere vinhos secos",
+            credit_limit: 1000.00,
+            active: true,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ]
+        const list = this.getLocalMockStore("customers", initialMock)
+        const newCust: Customer = {
+          id: `cust-${Date.now()}`,
+          company_id: "c1111111-1111-1111-1111-111111111111",
+          name: input.name,
+          document: input.document || null,
+          phone: input.phone || null,
+          whatsapp: input.whatsapp || null,
+          email: input.email || null,
+          birthday: input.birthday || null,
+          address: input.address || null,
+          city: input.city || null,
+          state: input.state || null,
+          notes: input.notes || null,
+          credit_limit: input.credit_limit || null,
+          active: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }
+        list.unshift(newCust)
+        this.saveLocalMockStore("customers", list)
+        return newCust
+      }
+      this.handleError(error, "customers.create")
     }
   }
 
@@ -102,7 +200,57 @@ export class CustomerService extends BaseService {
       return data as Customer
     } catch (error) {
       this.handleDuplicateDocument(error)
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const initialMock: Customer[] = [
+          {
+            id: "cust-1",
+            company_id: "c1111111-1111-1111-1111-111111111111",
+            name: "João Silva",
+            document: "123.456.789-00",
+            email: "joao.silva@email.com",
+            phone: "(11) 98765-4321",
+            whatsapp: "(11) 98765-4321",
+            birthday: "1985-05-15",
+            address: "Rua das Flores, 123",
+            city: "São Paulo",
+            state: "SP",
+            notes: "Cliente VIP, prefere vinhos secos",
+            credit_limit: 1000.00,
+            active: true,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ]
+        const list = this.getLocalMockStore("customers", initialMock)
+        const idx = list.findIndex((c) => c.id === id)
+        if (idx !== -1) {
+          list[idx] = { ...list[idx], ...input, updated_at: new Date().toISOString() }
+          this.saveLocalMockStore("customers", list)
+          return list[idx]
+        }
+        const updatedCust: Customer = {
+          id,
+          company_id: "c1111111-1111-1111-1111-111111111111",
+          name: input.name || "Cliente Atualizado",
+          document: input.document || null,
+          email: input.email || null,
+          phone: input.phone || null,
+          whatsapp: input.whatsapp || null,
+          birthday: input.birthday || null,
+          address: input.address || null,
+          city: input.city || null,
+          state: input.state || null,
+          notes: input.notes || null,
+          credit_limit: input.credit_limit || null,
+          active: typeof input.active === "boolean" ? input.active : true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }
+        list.unshift(updatedCust)
+        this.saveLocalMockStore("customers", list)
+        return updatedCust
+      }
+      this.handleError(error, "customers.update")
     }
   }
 

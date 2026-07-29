@@ -38,7 +38,26 @@ export class CashService extends BaseService {
       if (error) throw error
       return (data as unknown as CashRegister) ?? null
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const initialMock: CashRegister[] = [
+          {
+            id: "cash-1",
+            company_id: "c1111111-1111-1111-1111-111111111111",
+            opened_by: "u1",
+            opened_at: new Date().toISOString(),
+            initial_value: 200.00,
+            closed_by: null,
+            closed_at: null,
+            final_value: null,
+            difference: null,
+            status: "aberto",
+            opened_by_user: { name: "Administrador Teste" },
+          },
+        ]
+        const list = this.getLocalMockStore("cash_registers", initialMock)
+        return list.find((c) => c.status === "aberto") || null
+      }
+      this.handleError(error, "cash.get_open_register")
     }
   }
 
@@ -55,7 +74,26 @@ export class CashService extends BaseService {
       if (error) throw error
       return { data: (data as unknown as CashRegister[]) || [], total: count || 0 }
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const initialMock: CashRegister[] = [
+          {
+            id: "cash-1",
+            company_id: "c1111111-1111-1111-1111-111111111111",
+            opened_by: "u1",
+            opened_at: new Date().toISOString(),
+            initial_value: 200.00,
+            closed_by: null,
+            closed_at: null,
+            final_value: null,
+            difference: null,
+            status: "aberto",
+            opened_by_user: { name: "Administrador Teste" },
+          },
+        ]
+        const list = this.getLocalMockStore("cash_registers", initialMock)
+        return { data: list, total: list.length }
+      }
+      this.handleError(error, "cash.list")
     }
   }
 
@@ -69,7 +107,22 @@ export class CashService extends BaseService {
       if (error) throw error
       return (data as unknown as CashMovement[]) || []
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const initialMock: CashMovement[] = [
+          {
+            id: "cm-1",
+            cash_register_id: cashRegisterId,
+            movement_type: "Suprimento",
+            value: 200.00,
+            description: "Fundo de Troco Inicial",
+            user_id: "u1",
+            created_at: new Date().toISOString(),
+          },
+        ]
+        const list = this.getLocalMockStore(`cash_movements_${cashRegisterId}`, initialMock)
+        return list
+      }
+      this.handleError(error, "cash.list_movements")
     }
   }
 
@@ -82,7 +135,28 @@ export class CashService extends BaseService {
       await this.auditAsCurrentUser("INSERT", "cash_registers", data as string, null, { initialValue })
       return data as string
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const id = `cash-${Date.now()}`
+        const initialMock: CashRegister[] = []
+        const list = this.getLocalMockStore("cash_registers", initialMock)
+        const newRegister: CashRegister = {
+          id,
+          company_id: "c1111111-1111-1111-1111-111111111111",
+          opened_by: "u1",
+          opened_at: new Date().toISOString(),
+          initial_value: initialValue,
+          closed_by: null,
+          closed_at: null,
+          final_value: null,
+          difference: null,
+          status: "aberto",
+          opened_by_user: { name: "Administrador Teste" },
+        }
+        list.unshift(newRegister)
+        this.saveLocalMockStore("cash_registers", list)
+        return id
+      }
+      this.handleError(error, "cash.open")
     }
   }
 
@@ -96,7 +170,34 @@ export class CashService extends BaseService {
       await this.auditAsCurrentUser("UPDATE", "cash_registers", cashRegisterId, null, { action: "close", finalValue })
       return data as unknown as CashRegister
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const initialMock: CashRegister[] = []
+        const list = this.getLocalMockStore("cash_registers", initialMock)
+        const idx = list.findIndex((c) => c.id === cashRegisterId)
+        if (idx !== -1) {
+          list[idx].status = "fechado"
+          list[idx].closed_by = "u1"
+          list[idx].closed_at = new Date().toISOString()
+          list[idx].final_value = finalValue
+          list[idx].difference = finalValue - list[idx].initial_value
+          this.saveLocalMockStore("cash_registers", list)
+          return list[idx]
+        }
+        const mockClosed: CashRegister = {
+          id: cashRegisterId,
+          company_id: "c1111111-1111-1111-1111-111111111111",
+          opened_by: "u1",
+          opened_at: new Date().toISOString(),
+          initial_value: 200.00,
+          closed_by: "u1",
+          closed_at: new Date().toISOString(),
+          final_value: finalValue,
+          difference: finalValue - 200.00,
+          status: "fechado",
+        }
+        return mockClosed
+      }
+      this.handleError(error, "cash.close")
     }
   }
 
@@ -120,7 +221,22 @@ export class CashService extends BaseService {
       })
       return data as unknown as CashMovement
     } catch (error) {
-      this.handleError(error)
+      if (this.isOfflineOrDemoMode(error)) {
+        const newMov: CashMovement = {
+          id: `cm-${Date.now()}`,
+          cash_register_id: cashRegisterId,
+          movement_type: movementType,
+          value,
+          description: description || null,
+          user_id: "u1",
+          created_at: new Date().toISOString(),
+        }
+        const list = this.getLocalMockStore<CashMovement>(`cash_movements_${cashRegisterId}`, [])
+        list.unshift(newMov)
+        this.saveLocalMockStore(`cash_movements_${cashRegisterId}`, list)
+        return newMov
+      }
+      this.handleError(error, "cash.register_movement")
     }
   }
 }

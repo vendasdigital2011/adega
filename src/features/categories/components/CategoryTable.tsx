@@ -66,30 +66,35 @@ export function CategoryTable({
             <TableCell className="text-muted-foreground">{formatDate(category.created_at)}</TableCell>
             {showActions && (
               <TableCell className="text-right">
-                <div className="flex justify-end gap-1">
+                <div className="flex justify-end items-center gap-2">
                   {canEdit && (
-                    <Button variant="ghost" size="icon" onClick={() => onEdit(category)} title="Editar">
-                      <Pencil className="h-4 w-4" />
+                    <Button variant="outline" size="sm" onClick={() => onEdit(category)} className="h-8 gap-1.5 px-2.5">
+                      <Pencil className="h-3.5 w-3.5" />
+                      Editar
                     </Button>
                   )}
                   {canToggle &&
                     (category.active ? (
                       <Button
                         variant="ghost"
-                        size="icon"
+                        size="sm"
                         onClick={() => onToggleActive(category, false)}
+                        className="h-8 gap-1.5 px-2 text-destructive hover:text-destructive"
                         title="Inativar"
                       >
-                        <Ban className="h-4 w-4 text-destructive" />
+                        <Ban className="h-3.5 w-3.5" />
+                        Inativar
                       </Button>
                     ) : (
                       <Button
                         variant="ghost"
-                        size="icon"
+                        size="sm"
                         onClick={() => onToggleActive(category, true)}
+                        className="h-8 gap-1.5 px-2 text-success hover:text-success"
                         title="Reativar"
                       >
-                        <CheckCircle2 className="h-4 w-4 text-success" />
+                        <CheckCircle2 className="h-3.5 w-3.5" />
+                        Reativar
                       </Button>
                     ))}
                 </div>

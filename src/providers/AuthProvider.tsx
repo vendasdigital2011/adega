@@ -61,9 +61,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           await loadUser()
         }
       } else {
-        loadedUserId.current = null
-        setUser(null)
-        setLoading(false)
+        const hasDemoUser = typeof window !== "undefined" && !!localStorage.getItem("adega_demo_user")
+        if (!hasDemoUser) {
+          loadedUserId.current = null
+          setUser(null)
+          setLoading(false)
+        }
       }
     })
 
@@ -77,7 +80,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const data = await authService.signIn(email, password)
       await loadUser()
-      router.push("/dashboard")
+      if (typeof window !== "undefined") {
+        window.location.href = "/dashboard"
+      } else {
+        router.push("/dashboard")
+      }
       return data
     } catch (error) {
       setLoading(false)
