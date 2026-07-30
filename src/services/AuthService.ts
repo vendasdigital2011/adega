@@ -191,8 +191,9 @@ export class AuthService extends BaseService {
         if (isDemoAdmin || isDemoVendedor) {
           const mock = isDemoVendedor ? MOCK_VENDEDOR_USER : MOCK_ADMIN_USER
           if (typeof window !== "undefined") {
+            const lightCookie = JSON.stringify({ id: mock.id, email: mock.email, role: mock.role?.name || "Administrador" })
             localStorage.setItem("adega_demo_user", JSON.stringify(mock))
-            document.cookie = `adega_demo_user=${encodeURIComponent(JSON.stringify(mock))}; path=/; max-age=86400; SameSite=Lax`
+            document.cookie = `adega_demo_user=${encodeURIComponent(lightCookie)}; path=/; max-age=86400; SameSite=Lax`
           }
           clearAttempts(cleanEmail)
           return { user: mock }
@@ -223,8 +224,9 @@ export class AuthService extends BaseService {
           const isDemoVendedor = cleanEmail === "vendedor@teste.com" && cleanPassword === "vendedor1234"
           if (isDemoAdmin || isDemoVendedor) {
             const mock = isDemoVendedor ? MOCK_VENDEDOR_USER : MOCK_ADMIN_USER
+            const lightCookie = JSON.stringify({ id: mock.id, email: mock.email, role: mock.role?.name || "Administrador" })
             localStorage.setItem("adega_demo_user", JSON.stringify(mock))
-            document.cookie = `adega_demo_user=${encodeURIComponent(JSON.stringify(mock))}; path=/; max-age=86400; SameSite=Lax`
+            document.cookie = `adega_demo_user=${encodeURIComponent(lightCookie)}; path=/; max-age=86400; SameSite=Lax`
             clearAttempts(cleanEmail)
             return { user: mock }
           }
@@ -243,8 +245,9 @@ export class AuthService extends BaseService {
 
         if (typeof window !== "undefined" && (isDemoAdmin || isDemoVendedor) && isNetworkOrPlaceholderError) {
           const mock = isDemoVendedor ? MOCK_VENDEDOR_USER : MOCK_ADMIN_USER
+          const lightCookie = JSON.stringify({ id: mock.id, email: mock.email, role: mock.role?.name || "Administrador" })
           localStorage.setItem("adega_demo_user", JSON.stringify(mock))
-          document.cookie = `adega_demo_user=${encodeURIComponent(JSON.stringify(mock))}; path=/; max-age=86400; SameSite=Lax`
+          document.cookie = `adega_demo_user=${encodeURIComponent(lightCookie)}; path=/; max-age=86400; SameSite=Lax`
           clearAttempts(cleanEmail)
           return { user: mock }
         }
