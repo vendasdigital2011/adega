@@ -29,6 +29,37 @@ export class FinancialService extends BaseService {
   // Fluxo de caixa: leitura combinada de recebimentos, pagamentos e
   // movimentos de caixa (venda à vista, sangria, suprimento) no período.
   public async getCashFlow(startDate: string, endDate: string): Promise<CashFlowEntry[]> {
+    const initialMock: CashFlowEntry[] = [
+      {
+        id: "receipt-1",
+        type: "Venda",
+        direction: "Entrada",
+        value: 450.00,
+        description: "Venda PDV à vista #1001",
+        date: new Date().toISOString(),
+      },
+      {
+        id: "receipt-2",
+        type: "Recebimento",
+        direction: "Entrada",
+        value: 1200.00,
+        description: "Recebimento de conta de cliente",
+        date: new Date(Date.now() - 86400000).toISOString(),
+      },
+      {
+        id: "payment-1",
+        type: "Pagamento",
+        direction: "Saída",
+        value: 680.00,
+        description: "Pagamento de fornecedor (Vinícola Aurora)",
+        date: new Date(Date.now() - 172800000).toISOString(),
+      },
+    ]
+
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+      return initialMock
+    }
+
     try {
       const [receiptsRes, paymentsRes, movementsRes] = await Promise.all([
         this.supabase
@@ -96,14 +127,14 @@ export class FinancialService extends BaseService {
             date: m.created_at,
           })
         }
-        // 'Saída' pura de cash_movements é sempre estorno de venda cancelada
-        // (dinheiro devolvido) — não entra como saída de fluxo de caixa
-        // financeiro, pois a "Venda" que a originou também não fica no fluxo.
       }
 
       entries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
       return entries
     } catch (error) {
+      if (this.isOfflineOrDemoMode(error)) {
+        return initialMock
+      }
       this.handleError(error)
     }
   }

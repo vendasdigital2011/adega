@@ -27,6 +27,27 @@ export class CashService extends BaseService {
 
   // Caixa aberto do usuário logado, se houver.
   public async getOpenRegister(): Promise<CashRegister | null> {
+    const initialMock: CashRegister[] = [
+      {
+        id: "cash-1",
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        opened_by: "u1",
+        opened_at: new Date().toISOString(),
+        initial_value: 200.00,
+        closed_by: null,
+        closed_at: null,
+        final_value: null,
+        difference: null,
+        status: "aberto",
+        opened_by_user: { name: "Administrador Teste" },
+      },
+    ]
+
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+      const list = this.getLocalMockStore("cash_registers", initialMock)
+      return list.find((c) => c.status === "aberto") || null
+    }
+
     try {
       const { data, error } = await this.supabase
         .from("cash_registers")
@@ -39,21 +60,6 @@ export class CashService extends BaseService {
       return (data as unknown as CashRegister) ?? null
     } catch (error) {
       if (this.isOfflineOrDemoMode(error)) {
-        const initialMock: CashRegister[] = [
-          {
-            id: "cash-1",
-            company_id: "c1111111-1111-1111-1111-111111111111",
-            opened_by: "u1",
-            opened_at: new Date().toISOString(),
-            initial_value: 200.00,
-            closed_by: null,
-            closed_at: null,
-            final_value: null,
-            difference: null,
-            status: "aberto",
-            opened_by_user: { name: "Administrador Teste" },
-          },
-        ]
         const list = this.getLocalMockStore("cash_registers", initialMock)
         return list.find((c) => c.status === "aberto") || null
       }
@@ -62,6 +68,27 @@ export class CashService extends BaseService {
   }
 
   public async list(options: ListRegistersOptions): Promise<ListRegistersResult> {
+    const initialMock: CashRegister[] = [
+      {
+        id: "cash-1",
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        opened_by: "u1",
+        opened_at: new Date().toISOString(),
+        initial_value: 200.00,
+        closed_by: null,
+        closed_at: null,
+        final_value: null,
+        difference: null,
+        status: "aberto",
+        opened_by_user: { name: "Administrador Teste" },
+      },
+    ]
+
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+      const list = this.getLocalMockStore("cash_registers", initialMock)
+      return { data: list, total: list.length }
+    }
+
     try {
       const from = (options.page - 1) * options.limit
       const to = from + options.limit - 1
@@ -75,21 +102,6 @@ export class CashService extends BaseService {
       return { data: (data as unknown as CashRegister[]) || [], total: count || 0 }
     } catch (error) {
       if (this.isOfflineOrDemoMode(error)) {
-        const initialMock: CashRegister[] = [
-          {
-            id: "cash-1",
-            company_id: "c1111111-1111-1111-1111-111111111111",
-            opened_by: "u1",
-            opened_at: new Date().toISOString(),
-            initial_value: 200.00,
-            closed_by: null,
-            closed_at: null,
-            final_value: null,
-            difference: null,
-            status: "aberto",
-            opened_by_user: { name: "Administrador Teste" },
-          },
-        ]
         const list = this.getLocalMockStore("cash_registers", initialMock)
         return { data: list, total: list.length }
       }
@@ -98,6 +110,23 @@ export class CashService extends BaseService {
   }
 
   public async listMovements(cashRegisterId: string): Promise<CashMovement[]> {
+    const initialMock: CashMovement[] = [
+      {
+        id: "cm-1",
+        cash_register_id: cashRegisterId,
+        movement_type: "Suprimento",
+        value: 200.00,
+        description: "Fundo de Troco Inicial",
+        user_id: "u1",
+        created_at: new Date().toISOString(),
+      },
+    ]
+
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+      const list = this.getLocalMockStore(`cash_movements_${cashRegisterId}`, initialMock)
+      return list
+    }
+
     try {
       const { data, error } = await this.supabase
         .from("cash_movements")
@@ -108,17 +137,6 @@ export class CashService extends BaseService {
       return (data as unknown as CashMovement[]) || []
     } catch (error) {
       if (this.isOfflineOrDemoMode(error)) {
-        const initialMock: CashMovement[] = [
-          {
-            id: "cm-1",
-            cash_register_id: cashRegisterId,
-            movement_type: "Suprimento",
-            value: 200.00,
-            description: "Fundo de Troco Inicial",
-            user_id: "u1",
-            created_at: new Date().toISOString(),
-          },
-        ]
         const list = this.getLocalMockStore(`cash_movements_${cashRegisterId}`, initialMock)
         return list
       }
