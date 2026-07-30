@@ -7,7 +7,7 @@ import { useTheme } from "@/hooks/useTheme"
 import { Breadcrumb } from "./Breadcrumb"
 import { Avatar } from "../ui/Avatar"
 import { Button } from "../ui/Button"
-import { Sun, Moon, Bell, LogOut, User, Search, Settings, Shield } from "lucide-react"
+import { Sun, Moon, Bell, LogOut, User, Search, Settings, Shield, Menu } from "lucide-react"
 import { useNotifications, useMarkNotificationRead, useMarkAllNotificationsRead } from "@/features/notifications/hooks/useNotifications"
 import { formatRelativeTime } from "@/utils/format"
 import { NotificationType } from "@/types"
@@ -19,7 +19,11 @@ const NOTIFICATION_LINK: Record<NotificationType, string> = {
   caixa_aberto: "/cash",
 }
 
-export function Header() {
+interface HeaderProps {
+  onToggleMobileMenu?: () => void
+}
+
+export function Header({ onToggleMobileMenu }: HeaderProps) {
   const { user, logout } = useAuth()
   const { toggleTheme, isDark } = useTheme()
   const [showUserMenu, setShowUserMenu] = useState(false)
@@ -37,10 +41,20 @@ export function Header() {
   const markAllAsRead = useMarkAllNotificationsRead()
 
   return (
-    <header className="flex h-16 w-full items-center justify-between border-b border-border bg-card px-6 text-card-foreground">
-      {/* Left side: Breadcrumbs */}
-      <div className="flex items-center">
-        <Breadcrumb />
+    <header className="flex h-16 w-full items-center justify-between border-b border-border bg-card px-3 sm:px-6 text-card-foreground">
+      {/* Left side: Mobile Toggle & Breadcrumbs */}
+      <div className="flex items-center gap-2">
+        <button
+          onClick={onToggleMobileMenu}
+          className="md:hidden flex h-9 w-9 items-center justify-center rounded-md border border-border bg-muted hover:bg-accent text-muted-foreground transition-colors"
+          title="Abrir Menu"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+
+        <div className="hidden sm:flex items-center">
+          <Breadcrumb />
+        </div>
       </div>
 
       {/* Right side: Global Actions & User Profile */}
