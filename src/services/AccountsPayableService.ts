@@ -35,6 +35,51 @@ export class AccountsPayableService extends BaseService {
   }
 
   public async list(options: ListPayablesOptions): Promise<ListPayablesResult> {
+    const mockPayables: AccountPayable[] = [
+      {
+        id: "pay-1",
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        supplier_id: "sup-1",
+        purchase_id: null,
+        cost_center_id: "cost-1",
+        description: "Compra de Estoque Vinícola Aurora",
+        due_date: new Date(Date.now() + 86400000 * 5).toISOString().slice(0, 10),
+        amount: 1500.00,
+        paid_amount: 0,
+        status: "Aberta",
+        created_by: "u1",
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        supplier: { name: "Vinícola Aurora" },
+        cost_center: { name: "Compras de Estoque" },
+      },
+      {
+        id: "pay-2",
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        supplier_id: "sup-2",
+        purchase_id: null,
+        cost_center_id: "cost-2",
+        description: "Fatura de Energia Elétrica",
+        due_date: new Date(Date.now() + 86400000 * 2).toISOString().slice(0, 10),
+        amount: 480.50,
+        paid_amount: 480.50,
+        status: "Paga",
+        created_by: "u1",
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        supplier: { name: "Enel Distribuição" },
+        cost_center: { name: "Despesas Operacionais" },
+      },
+    ]
+
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+      let list = this.getLocalMockStore("accounts_payable", mockPayables)
+      if (options.status) {
+        list = list.filter((p) => p.status === options.status)
+      }
+      return { data: list, total: list.length }
+    }
+
     try {
       const from = (options.page - 1) * options.limit
       const to = from + options.limit - 1
@@ -54,49 +99,21 @@ export class AccountsPayableService extends BaseService {
       return { data: (data as unknown as AccountPayable[]) || [], total: count || 0 }
     } catch (error) {
       if (this.isOfflineOrDemoMode(error)) {
-        const mockPayables: AccountPayable[] = [
-          {
-            id: "pay-1",
-            company_id: "c1111111-1111-1111-1111-111111111111",
-            supplier_id: "sup-1",
-            purchase_id: null,
-            cost_center_id: "cost-1",
-            description: "Compra de Estoque Vinícola Aurora",
-            due_date: new Date(Date.now() + 86400000 * 5).toISOString().slice(0, 10),
-            amount: 1500.00,
-            paid_amount: 0,
-            status: "Aberta",
-            created_by: "u1",
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            supplier: { name: "Vinícola Aurora" },
-            cost_center: { name: "Compras de Estoque" },
-          },
-          {
-            id: "pay-2",
-            company_id: "c1111111-1111-1111-1111-111111111111",
-            supplier_id: "sup-2",
-            purchase_id: null,
-            cost_center_id: "cost-2",
-            description: "Fatura de Energia Elétrica",
-            due_date: new Date(Date.now() + 86400000 * 2).toISOString().slice(0, 10),
-            amount: 480.50,
-            paid_amount: 480.50,
-            status: "Paga",
-            created_by: "u1",
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            supplier: { name: "Enel Distribuição" },
-            cost_center: { name: "Despesas Operacionais" },
-          },
-        ]
-        return { data: mockPayables, total: mockPayables.length }
+        let list = this.getLocalMockStore("accounts_payable", mockPayables)
+        if (options.status) {
+          list = list.filter((p) => p.status === options.status)
+        }
+        return { data: list, total: list.length }
       }
       this.handleError(error, "accounts_payable.list")
     }
   }
 
   public async listPayments(accountsPayableId: string): Promise<PayablePayment[]> {
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+      return []
+    }
+
     try {
       const { data, error } = await this.supabase
         .from("payable_payments")

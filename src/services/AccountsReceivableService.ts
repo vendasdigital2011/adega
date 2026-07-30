@@ -35,6 +35,34 @@ export class AccountsReceivableService extends BaseService {
   }
 
   public async list(options: ListReceivablesOptions): Promise<ListReceivablesResult> {
+    const initialMock: AccountReceivable[] = [
+      {
+        id: "rec-1",
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        customer_id: "cust-1",
+        sale_id: "sale-101",
+        cost_center_id: "cost-1",
+        description: "Venda Fiado de Vinhos",
+        due_date: new Date(Date.now() + 86400000 * 10).toISOString().slice(0, 10),
+        amount: 250.00,
+        received_amount: 0,
+        status: "Aberta",
+        created_by: "u1",
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        customer: { name: "João Silva" },
+        cost_center: { name: "Vendas Fiado" },
+      },
+    ]
+
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+      let items = this.getLocalMockStore("accounts_receivable", initialMock)
+      if (options.status) {
+        items = items.filter((r) => r.status === options.status)
+      }
+      return { data: items, total: items.length }
+    }
+
     try {
       const from = (options.page - 1) * options.limit
       const to = from + options.limit - 1
@@ -54,25 +82,6 @@ export class AccountsReceivableService extends BaseService {
       return { data: (data as unknown as AccountReceivable[]) || [], total: count || 0 }
     } catch (error) {
       if (this.isOfflineOrDemoMode(error)) {
-        const initialMock: AccountReceivable[] = [
-          {
-            id: "rec-1",
-            company_id: "c1111111-1111-1111-1111-111111111111",
-            customer_id: "cust-1",
-            sale_id: "sale-101",
-            cost_center_id: "cost-1",
-            description: "Venda Fiado de Vinhos",
-            due_date: new Date(Date.now() + 86400000 * 10).toISOString().slice(0, 10),
-            amount: 250.00,
-            received_amount: 0,
-            status: "Aberta",
-            created_by: "u1",
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            customer: { name: "João Silva" },
-            cost_center: { name: "Vendas Fiado" },
-          },
-        ]
         let items = this.getLocalMockStore("accounts_receivable", initialMock)
         if (options.status) {
           items = items.filter((r) => r.status === options.status)
@@ -84,6 +93,10 @@ export class AccountsReceivableService extends BaseService {
   }
 
   public async listReceipts(accountsReceivableId: string): Promise<ReceivableReceipt[]> {
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+      return []
+    }
+
     try {
       const { data, error } = await this.supabase
         .from("receivable_receipts")

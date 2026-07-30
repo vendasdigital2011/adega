@@ -37,6 +37,23 @@ export class CostCenterService extends BaseService {
   }
 
   public async list(options: ListCostCentersOptions): Promise<ListCostCentersResult> {
+    const initialMock: CostCenter[] = [
+      { id: "cost-1", company_id: "c1111111-1111-1111-1111-111111111111", name: "Compras de Estoque", active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+      { id: "cost-2", company_id: "c1111111-1111-1111-1111-111111111111", name: "Despesas Operacionais", active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+    ]
+
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+      let items = this.getLocalMockStore("cost_centers", initialMock)
+      if (options.search) {
+        const term = options.search.toLowerCase()
+        items = items.filter((c) => c.name.toLowerCase().includes(term))
+      }
+      if (typeof options.active === "boolean") {
+        items = items.filter((c) => c.active === options.active)
+      }
+      return { data: items, total: items.length }
+    }
+
     try {
       const from = (options.page - 1) * options.limit
       const to = from + options.limit - 1
@@ -59,10 +76,6 @@ export class CostCenterService extends BaseService {
       return { data: (data as CostCenter[]) || [], total: count || 0 }
     } catch (error) {
       if (this.isOfflineOrDemoMode(error)) {
-        const initialMock: CostCenter[] = [
-          { id: "cost-1", company_id: "c1111111-1111-1111-1111-111111111111", name: "Compras de Estoque", active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-          { id: "cost-2", company_id: "c1111111-1111-1111-1111-111111111111", name: "Despesas Operacionais", active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-        ]
         let items = this.getLocalMockStore("cost_centers", initialMock)
         if (options.search) {
           const term = options.search.toLowerCase()
@@ -78,6 +91,15 @@ export class CostCenterService extends BaseService {
   }
 
   public async listActive(): Promise<CostCenter[]> {
+    const initialMock: CostCenter[] = [
+      { id: "cost-1", company_id: "c1111111-1111-1111-1111-111111111111", name: "Compras de Estoque", active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+      { id: "cost-2", company_id: "c1111111-1111-1111-1111-111111111111", name: "Despesas Operacionais", active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+    ]
+
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+      return this.getLocalMockStore("cost_centers", initialMock).filter((c) => c.active)
+    }
+
     try {
       const { data, error } = await this.supabase
         .from("cost_centers")
@@ -88,10 +110,6 @@ export class CostCenterService extends BaseService {
       return (data as CostCenter[]) || []
     } catch (error) {
       if (this.isOfflineOrDemoMode(error)) {
-        const initialMock: CostCenter[] = [
-          { id: "cost-1", company_id: "c1111111-1111-1111-1111-111111111111", name: "Compras de Estoque", active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-          { id: "cost-2", company_id: "c1111111-1111-1111-1111-111111111111", name: "Despesas Operacionais", active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-        ]
         return this.getLocalMockStore("cost_centers", initialMock).filter((c) => c.active)
       }
       this.handleError(error, "cost_centers.list_active")
