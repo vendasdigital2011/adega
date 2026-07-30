@@ -171,6 +171,18 @@ export class AIService extends BaseService {
    * Processa uma consulta em linguagem natural do usuário e retorna a resposta da IA.
    */
   public async processChatQuery(prompt: string, conversationId?: string | null): Promise<{ conversation_id: string; response_message: string; context_data: Record<string, any> }> {
+    const demoCompanyId = "c1111111-1111-1111-1111-111111111111"
+    const promptLower = prompt.toLowerCase()
+
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+      const contextAnswer = await this.generateAnswerFromSystemData(demoCompanyId, promptLower)
+      return {
+        conversation_id: conversationId || "demo-conv-1",
+        response_message: contextAnswer.message,
+        context_data: contextAnswer.contextData,
+      }
+    }
+
     try {
       const companyId = await this.getCurrentUserCompanyId()
       const userId = await this.getCurrentUserId()
@@ -245,6 +257,19 @@ export class AIService extends BaseService {
    * Lista histórico de conversas do usuário.
    */
   public async getConversations(): Promise<AIChatConversation[]> {
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+      return [
+        {
+          id: "demo-conv-1",
+          company_id: "c1111111-1111-1111-1111-111111111111",
+          user_id: "u1",
+          title: "Consulta sobre vendas do dia",
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+      ]
+    }
+
     try {
       const companyId = await this.getCurrentUserCompanyId()
       const userId = await this.getCurrentUserId()
@@ -268,6 +293,27 @@ export class AIService extends BaseService {
    * Busca mensagens de uma conversa.
    */
   public async getConversationMessages(conversationId: string): Promise<AIChatMessage[]> {
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+      return [
+        {
+          id: "msg-1",
+          conversation_id: conversationId || "demo-conv-1",
+          sender: "user",
+          message: "Quanto vendi hoje?",
+          context_data: undefined,
+          created_at: new Date(Date.now() - 60000).toISOString(),
+        },
+        {
+          id: "msg-2",
+          conversation_id: conversationId || "demo-conv-1",
+          sender: "assistant",
+          message: `📊 **Resumo de Vendas de Hoje (${new Date().toLocaleDateString("pt-BR")}):**\n- **Faturamento Total:** R$ 1.450,00\n- **Pedidos Finalizados:** 8 pedido(s)\n- **Status:** Operação excelente!`,
+          context_data: { totalSalesToday: 1450, totalOrdersToday: 8 },
+          created_at: new Date().toISOString(),
+        },
+      ]
+    }
+
     try {
       const { data, error } = await this.supabase
         .from("ai_chat_messages")
@@ -289,6 +335,31 @@ export class AIService extends BaseService {
   private async generateSalesForecast(companyId: string): Promise<AISalesForecastSummary> {
     const today = new Date()
     const todayStr = today.toISOString().slice(0, 10)
+
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+      const forecastItems = []
+      for (let i = -7; i <= 7; i++) {
+        const d = new Date(today)
+        d.setDate(d.getDate() + i)
+        const dStr = d.toISOString().slice(0, 10)
+        const val = 1200 + (Math.abs(i) % 4) * 150
+        forecastItems.push({
+          date: dStr,
+          historical_sales: i <= 0 ? val : 0,
+          projected_sales: val,
+          confidence_upper: val * 1.15,
+          confidence_lower: val * 0.85,
+        })
+      }
+      return {
+        daily_forecast: 1450.00,
+        weekly_forecast: 10150.00,
+        monthly_forecast: 43500.00,
+        trend: "upward",
+        percentage_change: 8.5,
+        forecast_items: forecastItems,
+      }
+    }
 
     // Busca vendas dos últimos 30 dias
     const past30Days = new Date(today)
@@ -352,6 +423,37 @@ export class AIService extends BaseService {
   }
 
   private async generatePurchasingSuggestions(companyId: string): Promise<AIPurchasingSuggestion[]> {
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+      return [
+        {
+          product_id: "prod-1",
+          product_name: "Vinho Tinto Cabernet Sauvignon 750ml",
+          sku: "VIN-CAB-001",
+          current_stock: 5,
+          min_stock: 15,
+          average_daily_sales: 3,
+          days_until_stockout: 1,
+          recommended_quantity: 30,
+          estimated_cost: 1350.00,
+          supplier_name: "Vinícola Aurora Ltda",
+          urgency: "high",
+        },
+        {
+          product_id: "prod-2",
+          product_name: "Cerveja IPA Artesanal 500ml",
+          sku: "CER-IPA-002",
+          current_stock: 12,
+          min_stock: 20,
+          average_daily_sales: 4,
+          days_until_stockout: 3,
+          recommended_quantity: 40,
+          estimated_cost: 340.00,
+          supplier_name: "Distribuidora Bebidas Brasil",
+          urgency: "medium",
+        },
+      ]
+    }
+
     const { data: products } = await this.supabase
       .from("products")
       .select("id, name, sku, current_stock, minimum_stock, purchase_price, supplier:suppliers(name)")
@@ -392,6 +494,20 @@ export class AIService extends BaseService {
   }
 
   private async generateStockAnalysis(companyId: string): Promise<AIStockAnalysisSummary> {
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+      return {
+        idle_products_count: 3,
+        fast_moving_products_count: 18,
+        low_stock_products_count: 2,
+        expiring_products_count: 1,
+        total_stock_value: 48500.00,
+        recommendations: [
+          "2 produto(s) abaixo do estoque mínimo exigem reposição imediata.",
+          "3 produto(s) apresentam estoque elevado em relação ao giro estimado.",
+        ],
+      }
+    }
+
     const { data: products } = await this.supabase
       .from("products")
       .select("id, current_stock, minimum_stock, purchase_price, expiry_date")
@@ -449,6 +565,23 @@ export class AIService extends BaseService {
   }
 
   private async generateFinancialAnalysis(companyId: string): Promise<AIFinancialAnalysisSummary> {
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+      return {
+        revenue_this_month: 42500.00,
+        expenses_this_month: 18200.00,
+        net_profit_this_month: 24300.00,
+        margin_percentage: 57.2,
+        overdue_receivables: 1200.00,
+        overdue_payables: 0,
+        cashflow_health: "healthy",
+        key_takeaways: [
+          "Faturamento acumulado do mês: R$ 42.500,00",
+          "Margem de lucro bruta estimada em 57.2%",
+          "Nenhuma conta a pagar vencida registrada.",
+        ],
+      }
+    }
+
     const now = new Date()
     const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
 
@@ -656,6 +789,8 @@ export class AIService extends BaseService {
   }
 
   private async logAIAction(actionType: string, promptSummary: string, details: Record<string, any>): Promise<void> {
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") return
+
     try {
       const companyId = await this.getCurrentUserCompanyId()
       const userId = await this.getCurrentUserId()
