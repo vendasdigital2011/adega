@@ -21,16 +21,21 @@ export class RoleService extends BaseService {
   }
 
   public async list(): Promise<Role[]> {
+    const initialMock: Role[] = [
+      { id: "r1111111-1111-1111-1111-111111111111", company_id: "c1111111-1111-1111-1111-111111111111", name: "Administrador", description: "Acesso total ao sistema" },
+      { id: "r2222222-2222-2222-2222-222222222222", company_id: "c1111111-1111-1111-1111-111111111111", name: "Vendedor", description: "Acesso ao PDV e vendas" },
+    ]
+
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+      return this.getLocalMockStore("roles", initialMock)
+    }
+
     try {
       const { data, error } = await this.supabase.from("roles").select("*").order("name")
       if (error) throw error
       return (data as Role[]) || []
     } catch (error) {
       if (this.isOfflineOrDemoMode(error)) {
-        const initialMock: Role[] = [
-          { id: "r1111111-1111-1111-1111-111111111111", company_id: "c1111111-1111-1111-1111-111111111111", name: "Administrador", description: "Acesso total ao sistema" },
-          { id: "r2222222-2222-2222-2222-222222222222", company_id: "c1111111-1111-1111-1111-111111111111", name: "Vendedor", description: "Acesso ao PDV e vendas" },
-        ]
         return this.getLocalMockStore("roles", initialMock)
       }
       this.handleError(error, "roles.list")

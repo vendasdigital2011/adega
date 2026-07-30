@@ -82,6 +82,49 @@ export class ReportService extends BaseService {
   }
 
   public async getProductsReport(options: ProductsReportOptions = {}): Promise<Product[]> {
+    const mockProducts = [
+      {
+        id: "prod-1",
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        name: "Vinho Tinto Cabernet Sauvignon 750ml",
+        sku: "VIN-CAB-001",
+        category_id: "cat-1",
+        sale_price: 45.0,
+        purchase_price: 25.0,
+        minimum_stock: 10,
+        current_stock: 45,
+        active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        category: { name: "Vinhos Tintos" },
+        brand: { name: "Concha y Toro" },
+      },
+      {
+        id: "prod-2",
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        name: "Cerveja IPA Artesanal 500ml",
+        sku: "CER-IPA-002",
+        category_id: "cat-2",
+        sale_price: 18.9,
+        purchase_price: 8.5,
+        minimum_stock: 20,
+        current_stock: 120,
+        active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        category: { name: "Cervejas Especiais" },
+        brand: { name: "Colorado" },
+      },
+    ] as unknown as Product[]
+
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+      let list = this.getLocalMockStore("products", mockProducts)
+      if (typeof options.active === "boolean") {
+        list = list.filter((p) => p.active === options.active)
+      }
+      return list
+    }
+
     try {
       let query = this.supabase
         .from("products")
@@ -96,11 +139,39 @@ export class ReportService extends BaseService {
       if (error) throw error
       return (data as unknown as Product[]) || []
     } catch (error) {
+      if (this.isOfflineOrDemoMode(error)) {
+        return mockProducts
+      }
       this.handleError(error)
     }
   }
 
   public async getInventoryReport(options: InventoryReportOptions): Promise<InventoryMovement[]> {
+    const mockMovements: InventoryMovement[] = [
+      {
+        id: "mov-1",
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        product_id: "prod-1",
+        movement_type: "Entrada",
+        quantity: 50,
+        previous_quantity: 0,
+        current_quantity: 50,
+        reference: "NF-1002",
+        observation: "Entrada de compra",
+        user_id: "u1",
+        created_at: new Date().toISOString(),
+        product: { name: "Vinho Tinto Cabernet Sauvignon 750ml", sku: "VIN-CAB-001" },
+      },
+    ]
+
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+      let list = this.getLocalMockStore("inventory_movements", mockMovements)
+      if (options.movementType) {
+        list = list.filter((m) => m.movement_type === options.movementType)
+      }
+      return list
+    }
+
     try {
       let query = this.supabase
         .from("inventory_movements")
@@ -117,11 +188,39 @@ export class ReportService extends BaseService {
       if (error) throw error
       return (data as unknown as InventoryMovement[]) || []
     } catch (error) {
+      if (this.isOfflineOrDemoMode(error)) {
+        return mockMovements
+      }
       this.handleError(error)
     }
   }
 
   public async getPurchasesReport(options: PurchasesReportOptions): Promise<Purchase[]> {
+    const mockPurchases: Purchase[] = [
+      {
+        id: "pur-1",
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        supplier_id: "sup-1",
+        created_by: "u1",
+        purchase_date: new Date().toISOString(),
+        freight: 50.0,
+        discount: 0,
+        total: 1550.0,
+        notes: "Compra mensal",
+        status: "recebida",
+        created_at: new Date().toISOString(),
+        supplier: { name: "Vinícola Aurora Ltda" },
+      },
+    ]
+
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+      let list = this.getLocalMockStore("purchases", mockPurchases)
+      if (options.status) {
+        list = list.filter((p) => p.status === options.status)
+      }
+      return list
+    }
+
     try {
       let query = this.supabase
         .from("purchases")
@@ -138,11 +237,42 @@ export class ReportService extends BaseService {
       if (error) throw error
       return (data as unknown as Purchase[]) || []
     } catch (error) {
+      if (this.isOfflineOrDemoMode(error)) {
+        return mockPurchases
+      }
       this.handleError(error)
     }
   }
 
   public async getSalesReport(options: SalesReportOptions): Promise<Sale[]> {
+    const mockSales = [
+      {
+        id: "sale-1",
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        sale_number: 1001,
+        cash_register_id: "cash-1",
+        user_id: "u1",
+        customer_id: "cust-1",
+        sale_date: new Date().toISOString().slice(0, 10),
+        subtotal: 90.0,
+        discount: 0,
+        total: 90.0,
+        payment_method: "PIX",
+        status: "finalizada",
+        notes: null,
+        created_at: new Date().toISOString(),
+        customer: { name: "João Silva" },
+      },
+    ] as unknown as Sale[]
+
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+      let list = this.getLocalMockStore("sales", mockSales)
+      if (options.status) {
+        list = list.filter((s) => s.status === options.status)
+      }
+      return list
+    }
+
     try {
       let query = this.supabase
         .from("sales")
@@ -159,11 +289,67 @@ export class ReportService extends BaseService {
       if (error) throw error
       return (data as unknown as Sale[]) || []
     } catch (error) {
+      if (this.isOfflineOrDemoMode(error)) {
+        return mockSales
+      }
       this.handleError(error)
     }
   }
 
   public async getFinancialReport(options: FinancialReportOptions): Promise<FinancialReportResult> {
+    const mockReceivables: AccountReceivable[] = [
+      {
+        id: "rec-1",
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        customer_id: "cust-1",
+        sale_id: "sale-101",
+        cost_center_id: "cost-1",
+        description: "Venda Fiado de Vinhos",
+        due_date: new Date().toISOString().slice(0, 10),
+        amount: 250.0,
+        received_amount: 0,
+        status: "Aberta",
+        created_by: "u1",
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        customer: { name: "João Silva" },
+        cost_center: { name: "Vendas Fiado" },
+      },
+    ]
+
+    const mockPayables: AccountPayable[] = [
+      {
+        id: "pay-1",
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        supplier_id: "sup-1",
+        purchase_id: null,
+        cost_center_id: "cost-1",
+        description: "Compra de Estoque Vinícola Aurora",
+        due_date: new Date().toISOString().slice(0, 10),
+        amount: 1500.0,
+        paid_amount: 0,
+        status: "Aberta",
+        created_by: "u1",
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        supplier: { name: "Vinícola Aurora" },
+        cost_center: { name: "Compras de Estoque" },
+      },
+    ]
+
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+      const receivables = this.getLocalMockStore("accounts_receivable", mockReceivables)
+      const payables = this.getLocalMockStore("accounts_payable", mockPayables)
+      return {
+        receivables,
+        payables,
+        totalReceivableOpen: 250.0,
+        totalPayableOpen: 1500.0,
+        totalReceivedInPeriod: 1200.0,
+        totalPaidInPeriod: 680.0,
+      }
+    }
+
     try {
       const [receivablesRes, payablesRes, receiptsRes, paymentsRes] = await Promise.all([
         this.supabase
@@ -215,11 +401,46 @@ export class ReportService extends BaseService {
 
       return { receivables, payables, totalReceivableOpen, totalPayableOpen, totalReceivedInPeriod, totalPaidInPeriod }
     } catch (error) {
+      if (this.isOfflineOrDemoMode(error)) {
+        return {
+          receivables: mockReceivables,
+          payables: mockPayables,
+          totalReceivableOpen: 250.0,
+          totalPayableOpen: 1500.0,
+          totalReceivedInPeriod: 1200.0,
+          totalPaidInPeriod: 680.0,
+        }
+      }
       this.handleError(error)
     }
   }
 
   public async getCustomersReport(): Promise<CustomerReportRow[]> {
+    const mockCustomers: CustomerReportRow[] = [
+      {
+        id: "cust-1",
+        name: "João Silva",
+        document: "123.456.789-00",
+        active: true,
+        orderCount: 5,
+        totalSpent: 450.0,
+        lastPurchaseAt: new Date().toISOString().slice(0, 10),
+      },
+      {
+        id: "cust-2",
+        name: "Maria Oliveira",
+        document: "987.654.321-11",
+        active: true,
+        orderCount: 3,
+        totalSpent: 280.0,
+        lastPurchaseAt: new Date(Date.now() - 86400000 * 2).toISOString().slice(0, 10),
+      },
+    ]
+
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+      return mockCustomers
+    }
+
     try {
       const [customersRes, salesRes] = await Promise.all([
         this.supabase.from("customers").select("id, name, document, active").order("name", { ascending: true }),
@@ -253,11 +474,34 @@ export class ReportService extends BaseService {
         }
       })
     } catch (error) {
+      if (this.isOfflineOrDemoMode(error)) {
+        return mockCustomers
+      }
       this.handleError(error)
     }
   }
 
   public async getCashReport(options: CashReportOptions): Promise<CashRegister[]> {
+    const mockCash: CashRegister[] = [
+      {
+        id: "cash-1",
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        opened_by: "u1",
+        opened_at: new Date().toISOString(),
+        initial_value: 200.0,
+        closed_by: null,
+        closed_at: null,
+        final_value: null,
+        difference: null,
+        status: "aberto",
+        opened_by_user: { name: "Administrador Teste" },
+      },
+    ]
+
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+      return this.getLocalMockStore("cash_registers", mockCash)
+    }
+
     try {
       const { data, error } = await this.supabase
         .from("cash_registers")
@@ -268,6 +512,9 @@ export class ReportService extends BaseService {
       if (error) throw error
       return (data as unknown as CashRegister[]) || []
     } catch (error) {
+      if (this.isOfflineOrDemoMode(error)) {
+        return mockCash
+      }
       this.handleError(error)
     }
   }

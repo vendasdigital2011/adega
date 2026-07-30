@@ -45,6 +45,55 @@ export class UserService extends BaseService {
   }
 
   public async list(options: ListUsersOptions): Promise<ListUsersResult> {
+    const initialMock: User[] = [
+      {
+        id: "u1",
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        email: "teste@teste.com",
+        name: "Administrador Teste",
+        phone: "(11) 99999-9999",
+        role_id: "r1111111-1111-1111-1111-111111111111",
+        status: "active",
+        two_fa_enabled: false,
+        last_login: new Date().toISOString(),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        role: { id: "r1111111-1111-1111-1111-111111111111", name: "Administrador", description: "Acesso total ao sistema", company_id: "c1111111-1111-1111-1111-111111111111" },
+      },
+      {
+        id: "u2",
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        email: "vendedor@teste.com",
+        name: "Vendedor Teste",
+        phone: "(11) 98888-8888",
+        role_id: "r2222222-2222-2222-2222-222222222222",
+        status: "active",
+        two_fa_enabled: false,
+        last_login: new Date().toISOString(),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        role: { id: "r2222222-2222-2222-2222-222222222222", name: "Vendedor", description: "Acesso ao PDV e vendas", company_id: "c1111111-1111-1111-1111-111111111111" },
+      },
+    ]
+
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+      let list = this.getLocalMockStore("users", initialMock)
+      if (options.search) {
+        const s = options.search.toLowerCase()
+        list = list.filter((u) => u.name.toLowerCase().includes(s) || u.email.toLowerCase().includes(s))
+      }
+      if (options.status) {
+        list = list.filter((u) => u.status === options.status)
+      }
+      if (options.roleId) {
+        list = list.filter((u) => u.role_id === options.roleId)
+      }
+      const total = list.length
+      const from = (options.page - 1) * options.limit
+      const pagedData = list.slice(from, from + options.limit)
+      return { data: pagedData, total }
+    }
+
     try {
       const from = (options.page - 1) * options.limit
       const to = from + options.limit - 1
@@ -72,36 +121,6 @@ export class UserService extends BaseService {
       return { data: (data as User[]) || [], total: count || 0 }
     } catch (error) {
       if (this.isOfflineOrDemoMode(error)) {
-        const initialMock: User[] = [
-          {
-            id: "f6928173-b3e0-49ec-bc8f-9d00b46acaa6",
-            company_id: "c1111111-1111-1111-1111-111111111111",
-            role_id: "r1111111-1111-1111-1111-111111111111",
-            email: "teste@teste.com",
-            name: "Administrador Teste",
-            phone: "(11) 99999-9999",
-            status: "active",
-            two_fa_enabled: false,
-            last_login: new Date().toISOString(),
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            role: { id: "r1111111-1111-1111-1111-111111111111", company_id: "c1111111-1111-1111-1111-111111111111", name: "Administrador", description: "Acesso total" },
-          },
-          {
-            id: "f7928173-b3e0-49ec-bc8f-9d00b46acaa7",
-            company_id: "c1111111-1111-1111-1111-111111111111",
-            role_id: "r2222222-2222-2222-2222-222222222222",
-            email: "vendedor@teste.com",
-            name: "Vendedor Balcão",
-            phone: "(11) 98888-8888",
-            status: "active",
-            two_fa_enabled: false,
-            last_login: new Date().toISOString(),
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            role: { id: "r2222222-2222-2222-2222-222222222222", company_id: "c1111111-1111-1111-1111-111111111111", name: "Vendedor", description: "Acesso a vendas" },
-          },
-        ]
         let items = this.getLocalMockStore("users", initialMock)
         if (options.search) {
           const term = options.search.toLowerCase()
