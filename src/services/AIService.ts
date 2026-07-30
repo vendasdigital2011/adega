@@ -30,7 +30,7 @@ export class AIService extends BaseService {
   public async getDashboardSummary(): Promise<AIDashboardSummary> {
     const demoCompanyId = "c1111111-1111-1111-1111-111111111111"
 
-    if (this.isOfflineOrDemoMode()) {
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
       const insights = await this.generateDynamicInsights(demoCompanyId)
       const salesForecast = await this.generateSalesForecast(demoCompanyId)
       const purchasingSuggestions = await this.generatePurchasingSuggestions(demoCompanyId)

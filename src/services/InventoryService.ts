@@ -72,7 +72,7 @@ export class InventoryService extends BaseService {
       },
     ]
 
-    if (this.isOfflineOrDemoMode()) {
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
       let list = this.getLocalMockStore("inventory_movements", mockMovements)
       if (options.movementType) {
         list = list.filter((m) => m.movement_type === options.movementType)

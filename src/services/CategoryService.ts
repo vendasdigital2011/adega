@@ -49,7 +49,7 @@ export class CategoryService extends BaseService {
       { id: "cat-3", company_id: "c1111111-1111-1111-1111-111111111111", name: "Destilados", description: "Whisky, Vodka, Gin e Cachaça", active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
     ]
 
-    if (this.isOfflineOrDemoMode()) {
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
       let list: Category[] = this.getLocalMockStore("categories", initialMock)
       if (options.search) {
         const s = options.search.toLowerCase()

@@ -59,7 +59,7 @@ export class PurchaseService extends BaseService {
       },
     ]
 
-    if (this.isOfflineOrDemoMode()) {
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
       let items = this.getLocalMockStore("purchases", initialMock)
       if (options.status) {
         items = items.filter((p) => p.status === options.status)
