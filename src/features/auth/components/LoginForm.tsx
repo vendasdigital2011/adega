@@ -52,19 +52,9 @@ export function LoginForm() {
     }
   }
 
-  const handleQuickLogin = async (emailVal: string, passVal: string) => {
+  const handleFillEmail = (emailVal: string) => {
     setValue("email", emailVal)
-    setValue("password", passVal)
-    setIsLoading(true)
-    try {
-      await login(emailVal, passVal)
-      toast.success("Login realizado com sucesso!")
-    } catch (error) {
-      logClientError("auth.quick_login", error)
-      toast.error(getErrorMessage(error, "Erro ao realizar login."))
-    } finally {
-      setIsLoading(false)
-    }
+    toast.success(`E-mail ${emailVal} preenchido! Agora digite a senha.`)
   }
 
   return (
@@ -140,10 +130,10 @@ export function LoginForm() {
             Entrar no Painel
           </Button>
 
-          {/* Quick Demo Section */}
+          {/* Quick Fill Email Section */}
           <div className="pt-4 border-t border-border/40 mt-6">
             <p className="text-xs text-center font-semibold text-muted-foreground mb-3 uppercase tracking-wider">
-              ⚡ Acesso Rápido de Teste:
+              💡 Preencher E-mail (Exige Senha):
             </p>
             <div className="grid grid-cols-2 gap-2">
               <Button
@@ -151,18 +141,18 @@ export function LoginForm() {
                 variant="outline"
                 size="sm"
                 className="text-xs font-semibold hover:bg-primary/10 border-primary/30"
-                onClick={() => handleQuickLogin("teste@teste.com", "teste1234")}
+                onClick={() => handleFillEmail("teste@teste.com")}
               >
-                👑 Dono
+                👑 E-mail Dono
               </Button>
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
                 className="text-xs font-semibold hover:bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
-                onClick={() => handleQuickLogin("vendedor@teste.com", "vendedor1234")}
+                onClick={() => handleFillEmail("vendedor@teste.com")}
               >
-                🛒 Vendedor
+                🛒 E-mail Vendedor
               </Button>
             </div>
           </div>
