@@ -221,6 +221,7 @@ export class AuthService extends BaseService {
           if (isDemoAdmin || isDemoVendedor) {
             const mock = isDemoVendedor ? MOCK_VENDEDOR_USER : MOCK_ADMIN_USER
             localStorage.setItem("adega_demo_user", JSON.stringify(mock))
+            document.cookie = `adega_demo_user=${encodeURIComponent(JSON.stringify(mock))}; path=/; max-age=86400; SameSite=Lax`
             clearAttempts(email)
             return { user: mock }
           }
@@ -240,6 +241,7 @@ export class AuthService extends BaseService {
         if (typeof window !== "undefined" && (isDemoAdmin || isDemoVendedor) && isNetworkOrPlaceholderError) {
           const mock = isDemoVendedor ? MOCK_VENDEDOR_USER : MOCK_ADMIN_USER
           localStorage.setItem("adega_demo_user", JSON.stringify(mock))
+          document.cookie = `adega_demo_user=${encodeURIComponent(JSON.stringify(mock))}; path=/; max-age=86400; SameSite=Lax`
           clearAttempts(email)
           return { user: mock }
         }
