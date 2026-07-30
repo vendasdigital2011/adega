@@ -181,9 +181,12 @@ export class AuthService extends BaseService {
       const isPlaceholder = process.env.NEXT_PUBLIC_SUPABASE_URL?.includes("placeholder") || !process.env.NEXT_PUBLIC_SUPABASE_URL
       const isBypass = process.env.NEXT_PUBLIC_BYPASS_MIDDLEWARE === "true"
 
+      const cleanEmail = email ? email.trim().toLowerCase() : ""
+      const cleanPassword = password ? password.trim() : ""
+
       if ((isPlaceholder || isBypass) && process.env.NODE_ENV !== "test") {
-        const isDemoAdmin = email === "teste@teste.com" && password === "teste1234"
-        const isDemoVendedor = email === "vendedor@teste.com" && password === "vendedor1234"
+        const isDemoAdmin = cleanEmail === "teste@teste.com" && cleanPassword === "teste1234"
+        const isDemoVendedor = cleanEmail === "vendedor@teste.com" && cleanPassword === "vendedor1234"
 
         if (isDemoAdmin || isDemoVendedor) {
           const mock = isDemoVendedor ? MOCK_VENDEDOR_USER : MOCK_ADMIN_USER
@@ -191,23 +194,23 @@ export class AuthService extends BaseService {
             localStorage.setItem("adega_demo_user", JSON.stringify(mock))
             document.cookie = `adega_demo_user=${encodeURIComponent(JSON.stringify(mock))}; path=/; max-age=86400; SameSite=Lax`
           }
-          clearAttempts(email)
+          clearAttempts(cleanEmail)
           return { user: mock }
         }
 
-        recordFailedAttempt(email)
+        recordFailedAttempt(cleanEmail)
         logClientError(
           "Invalid login credentials",
           "auth.login_failed",
-          { email }
+          { email: cleanEmail }
         )
         throw { message: "E-mail ou senha inválidos.", code: "INVALID_CREDENTIALS" }
       }
 
       try {
         const res = await this.supabase.auth.signInWithPassword({
-          email,
-          password,
+          email: cleanEmail,
+          password: cleanPassword,
         })
         data = res.data
         error = res.error
@@ -216,13 +219,13 @@ export class AuthService extends BaseService {
           typeof window !== "undefined" &&
           (err?.message?.includes("fetch") || isPlaceholder || isBypass)
         ) {
-          const isDemoAdmin = email === "teste@teste.com" && password === "teste1234"
-          const isDemoVendedor = email === "vendedor@teste.com" && password === "vendedor1234"
+          const isDemoAdmin = cleanEmail === "teste@teste.com" && cleanPassword === "teste1234"
+          const isDemoVendedor = cleanEmail === "vendedor@teste.com" && cleanPassword === "vendedor1234"
           if (isDemoAdmin || isDemoVendedor) {
             const mock = isDemoVendedor ? MOCK_VENDEDOR_USER : MOCK_ADMIN_USER
             localStorage.setItem("adega_demo_user", JSON.stringify(mock))
             document.cookie = `adega_demo_user=${encodeURIComponent(JSON.stringify(mock))}; path=/; max-age=86400; SameSite=Lax`
-            clearAttempts(email)
+            clearAttempts(cleanEmail)
             return { user: mock }
           }
         }
@@ -231,8 +234,8 @@ export class AuthService extends BaseService {
 
       if (error) {
         // Se for erro de rede/fetch e for uma das credenciais de teste oficiais do sistema
-        const isDemoAdmin = email === "teste@teste.com" && password === "teste1234"
-        const isDemoVendedor = email === "vendedor@teste.com" && password === "vendedor1234"
+        const isDemoAdmin = cleanEmail === "teste@teste.com" && cleanPassword === "teste1234"
+        const isDemoVendedor = cleanEmail === "vendedor@teste.com" && cleanPassword === "vendedor1234"
         const isNetworkOrPlaceholderError =
           error.message?.toLowerCase().includes("fetch") ||
           error.message?.toLowerCase().includes("failed") ||
@@ -242,11 +245,11 @@ export class AuthService extends BaseService {
           const mock = isDemoVendedor ? MOCK_VENDEDOR_USER : MOCK_ADMIN_USER
           localStorage.setItem("adega_demo_user", JSON.stringify(mock))
           document.cookie = `adega_demo_user=${encodeURIComponent(JSON.stringify(mock))}; path=/; max-age=86400; SameSite=Lax`
-          clearAttempts(email)
+          clearAttempts(cleanEmail)
           return { user: mock }
         }
 
-        recordFailedAttempt(email)
+        recordFailedAttempt(cleanEmail)
         throw error
       }
 
