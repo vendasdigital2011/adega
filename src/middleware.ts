@@ -39,6 +39,25 @@ export async function middleware(request: NextRequest) {
     (process.env.NEXT_PUBLIC_BYPASS_MIDDLEWARE === "true" || isPlaceholderSupabase)
 
   if (bypassMiddleware) {
+    const demoCookie = request.cookies.get("adega_demo_user")?.value
+    const isAuthenticated = !!demoCookie && demoCookie.trim().length > 0
+
+    if (!isPublicPath && !isAuthenticated) {
+      logServer("info", "Redirecionado para login em modo demo: sem sessão ativa", {
+        requestId,
+        route: pathname,
+        action: "middleware.demo_redirect_unauthenticated",
+        durationMs: Date.now() - startedAt,
+      })
+      const loginUrl = new URL("/login", request.url)
+      return NextResponse.redirect(loginUrl)
+    }
+
+    if (isPublicPath && isAuthenticated && pathname === "/login") {
+      const dashboardUrl = new URL("/dashboard", request.url)
+      return NextResponse.redirect(dashboardUrl)
+    }
+
     return NextResponse.next()
   }
 

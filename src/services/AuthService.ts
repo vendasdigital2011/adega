@@ -189,6 +189,7 @@ export class AuthService extends BaseService {
           const mock = isDemoVendedor ? MOCK_VENDEDOR_USER : MOCK_ADMIN_USER
           if (typeof window !== "undefined") {
             localStorage.setItem("adega_demo_user", JSON.stringify(mock))
+            document.cookie = `adega_demo_user=${encodeURIComponent(JSON.stringify(mock))}; path=/; max-age=86400; SameSite=Lax`
           }
           clearAttempts(email)
           return { user: mock }
@@ -311,6 +312,7 @@ export class AuthService extends BaseService {
     try {
       if (typeof window !== "undefined") {
         localStorage.removeItem("adega_demo_user")
+        document.cookie = "adega_demo_user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax"
       }
 
       const { data: { user } } = await this.supabase.auth.getUser()
@@ -412,10 +414,7 @@ export class AuthService extends BaseService {
       const isBypass = process.env.NEXT_PUBLIC_BYPASS_MIDDLEWARE === "true"
 
       if ((isPlaceholder || isBypass) && process.env.NODE_ENV !== "test") {
-        if (typeof window !== "undefined") {
-          localStorage.setItem("adega_demo_user", JSON.stringify(MOCK_ADMIN_USER))
-        }
-        return MOCK_ADMIN_USER
+        return null
       }
 
       const { data: { user }, error } = await this.supabase.auth.getUser()
@@ -433,7 +432,7 @@ export class AuthService extends BaseService {
           } catch (e) {}
         }
       }
-      return MOCK_ADMIN_USER
+      return null
     }
   }
 
