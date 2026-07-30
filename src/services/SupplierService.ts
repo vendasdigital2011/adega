@@ -41,6 +41,54 @@ export class SupplierService extends BaseService {
   }
 
   public async list(options: ListSuppliersOptions): Promise<ListSuppliersResult> {
+    const initialMock: Supplier[] = [
+      {
+        id: "sup-1",
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        name: "Distribuidora Ambev",
+        document: "00.336.301/0001-40",
+        email: "contato@ambev.com.br",
+        phone: "(11) 4004-0001",
+        address: null,
+        city: null,
+        state: null,
+        notes: null,
+        active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },
+      {
+        id: "sup-2",
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        name: "Importadora de Vinhos Grand Cru",
+        document: "05.123.456/0001-78",
+        email: "vendas@grandcru.com.br",
+        phone: "(11) 3003-5555",
+        address: null,
+        city: null,
+        state: null,
+        notes: null,
+        active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },
+    ]
+
+    if (this.isOfflineOrDemoMode()) {
+      let list = this.getLocalMockStore("suppliers", initialMock)
+      if (options.search) {
+        const s = options.search.toLowerCase()
+        list = list.filter((item) => item.name.toLowerCase().includes(s) || (item.document || "").includes(s))
+      }
+      if (typeof options.active === "boolean") {
+        list = list.filter((item) => item.active === options.active)
+      }
+      const total = list.length
+      const from = (options.page - 1) * options.limit
+      const pagedData = list.slice(from, from + options.limit)
+      return { data: pagedData, total }
+    }
+
     try {
       const from = (options.page - 1) * options.limit
       const to = from + options.limit - 1

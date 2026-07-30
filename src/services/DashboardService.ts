@@ -44,27 +44,6 @@ export class DashboardService extends BaseService {
   }
 
   public async getSummary(): Promise<DashboardSummary> {
-    const mockSummary: DashboardSummary = {
-      todayTotal: 1250.80,
-      yesterdayTotal: 980.50,
-      todayOrders: 14,
-      yesterdayOrders: 10,
-      newCustomersToday: 3,
-      newCustomersYesterday: 2,
-      totalCustomers: 128,
-      lowStockCount: 4,
-      recentSales: [
-        { id: "sale-101", customerName: "João Silva", total: 159.90, status: "finalizada", createdAt: new Date().toISOString() },
-        { id: "sale-102", customerName: "Maria Oliveira", total: 89.90, status: "finalizada", createdAt: new Date(Date.now() - 3600000).toISOString() },
-        { id: "sale-103", customerName: "Carlos Pereira", total: 320.00, status: "finalizada", createdAt: new Date(Date.now() - 7200000).toISOString() },
-        { id: "sale-104", customerName: "Ana Costa", total: 45.00, status: "finalizada", createdAt: new Date(Date.now() - 10800000).toISOString() },
-      ],
-    }
-
-    if (this.isOfflineOrDemoMode()) {
-      return mockSummary
-    }
-
     try {
       const companyId = (await this.getCurrentUserCompanyId()) || "default"
       const cacheKey = CacheKeys.dashboard(companyId)
@@ -164,11 +143,7 @@ export class DashboardService extends BaseService {
       await cacheService.set(cacheKey, summary, CACHE_TTL.DASHBOARD)
       return summary
     } catch (error: any) {
-      if (
-        process.env.NODE_ENV !== "production" ||
-        error?.message?.toLowerCase().includes("fetch") ||
-        process.env.NEXT_PUBLIC_SUPABASE_URL?.includes("placeholder")
-      ) {
+      if (this.isOfflineOrDemoMode(error)) {
         return {
           todayTotal: 1450.50,
           yesterdayTotal: 980.00,

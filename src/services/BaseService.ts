@@ -5,16 +5,17 @@ export abstract class BaseService {
   protected supabase = supabase
 
   protected isOfflineOrDemoMode(error?: unknown): boolean {
-    if (process.env.NODE_ENV === "test") {
-      const isFetchError = typeof error === "object" && error !== null && "message" in error && String((error as any).message).toLowerCase().includes("fetch")
-      const isBypass = process.env.NEXT_PUBLIC_BYPASS_MIDDLEWARE === "true"
-      return Boolean(isFetchError || isBypass)
+    if (error && typeof error === "object") {
+      const msg = String((error as any).message || "").toLowerCase()
+      const code = String((error as any).code || "")
+      const isNetworkError = msg.includes("fetch") || msg.includes("failed") || msg.includes("network") || msg.includes("err_")
+      if (code && !isNetworkError) return false
     }
+
     const isBypass = process.env.NEXT_PUBLIC_BYPASS_MIDDLEWARE === "true"
     const isPlaceholder = process.env.NEXT_PUBLIC_SUPABASE_URL?.includes("placeholder") || !process.env.NEXT_PUBLIC_SUPABASE_URL
-    const isFetchError = typeof error === "object" && error !== null && "message" in error && String((error as any).message).toLowerCase().includes("fetch")
     const hasDemoUser = typeof window !== "undefined" && !!localStorage.getItem("adega_demo_user")
-    return Boolean(isBypass || isPlaceholder || isFetchError || hasDemoUser)
+    return Boolean(isBypass || isPlaceholder || hasDemoUser)
   }
 
   protected getLocalMockStore<T>(key: string, initialData: T[]): T[] {

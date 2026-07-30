@@ -182,16 +182,25 @@ export class AuthService extends BaseService {
       const isBypass = process.env.NEXT_PUBLIC_BYPASS_MIDDLEWARE === "true"
 
       if ((isPlaceholder || isBypass) && process.env.NODE_ENV !== "test") {
-        const isDemoEmail = email === "teste@teste.com" || email === "vendedor@teste.com"
-        if (isDemoEmail) {
-          const mock = email === "vendedor@teste.com" ? MOCK_VENDEDOR_USER : MOCK_ADMIN_USER
+        const isDemoAdmin = email === "teste@teste.com" && password === "teste1234"
+        const isDemoVendedor = email === "vendedor@teste.com" && password === "vendedor1234"
+
+        if (isDemoAdmin || isDemoVendedor) {
+          const mock = isDemoVendedor ? MOCK_VENDEDOR_USER : MOCK_ADMIN_USER
           if (typeof window !== "undefined") {
             localStorage.setItem("adega_demo_user", JSON.stringify(mock))
           }
           clearAttempts(email)
           return { user: mock }
         }
-        throw { message: "Invalid login credentials", code: "INVALID_CREDENTIALS" }
+
+        recordFailedAttempt(email)
+        logClientError(
+          "Invalid login credentials",
+          "auth.login_failed",
+          { email }
+        )
+        throw { message: "E-mail ou senha inválidos.", code: "INVALID_CREDENTIALS" }
       }
 
       try {
@@ -206,24 +215,29 @@ export class AuthService extends BaseService {
           typeof window !== "undefined" &&
           (err?.message?.includes("fetch") || isPlaceholder || isBypass)
         ) {
-          const mock = email === "vendedor@teste.com" ? MOCK_VENDEDOR_USER : MOCK_ADMIN_USER
-          localStorage.setItem("adega_demo_user", JSON.stringify(mock))
-          clearAttempts(email)
-          return { user: mock }
+          const isDemoAdmin = email === "teste@teste.com" && password === "teste1234"
+          const isDemoVendedor = email === "vendedor@teste.com" && password === "vendedor1234"
+          if (isDemoAdmin || isDemoVendedor) {
+            const mock = isDemoVendedor ? MOCK_VENDEDOR_USER : MOCK_ADMIN_USER
+            localStorage.setItem("adega_demo_user", JSON.stringify(mock))
+            clearAttempts(email)
+            return { user: mock }
+          }
         }
         throw err
       }
 
       if (error) {
         // Se for erro de rede/fetch e for uma das credenciais de teste oficiais do sistema
-        const isDemoEmail = email === "teste@teste.com" || email === "vendedor@teste.com"
+        const isDemoAdmin = email === "teste@teste.com" && password === "teste1234"
+        const isDemoVendedor = email === "vendedor@teste.com" && password === "vendedor1234"
         const isNetworkOrPlaceholderError =
           error.message?.toLowerCase().includes("fetch") ||
           error.message?.toLowerCase().includes("failed") ||
           process.env.NEXT_PUBLIC_SUPABASE_URL?.includes("placeholder")
 
-        if (typeof window !== "undefined" && isDemoEmail && isNetworkOrPlaceholderError) {
-          const mock = email === "vendedor@teste.com" ? MOCK_VENDEDOR_USER : MOCK_ADMIN_USER
+        if (typeof window !== "undefined" && (isDemoAdmin || isDemoVendedor) && isNetworkOrPlaceholderError) {
+          const mock = isDemoVendedor ? MOCK_VENDEDOR_USER : MOCK_ADMIN_USER
           localStorage.setItem("adega_demo_user", JSON.stringify(mock))
           clearAttempts(email)
           return { user: mock }

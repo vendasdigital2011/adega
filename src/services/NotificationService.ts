@@ -20,11 +20,15 @@ export class NotificationService extends BaseService {
   }
 
   public async generate(): Promise<void> {
-    const { error } = await this.supabase.rpc("generate_notifications")
-    if (error) throw error
+    if (this.isOfflineOrDemoMode()) return
+    try {
+      const { error } = await this.supabase.rpc("generate_notifications")
+      if (error) throw error
+    } catch (e) {}
   }
 
   public async list(limit = 15): Promise<Notification[]> {
+    if (this.isOfflineOrDemoMode()) return []
     try {
       const { data, error } = await this.supabase
         .from("notifications")
@@ -35,11 +39,13 @@ export class NotificationService extends BaseService {
       if (error) throw error
       return (data as Notification[]) || []
     } catch (error) {
+      if (this.isOfflineOrDemoMode(error)) return []
       this.handleError(error)
     }
   }
 
   public async unreadCount(): Promise<number> {
+    if (this.isOfflineOrDemoMode()) return 0
     try {
       const { count, error } = await this.supabase
         .from("notifications")
@@ -49,6 +55,7 @@ export class NotificationService extends BaseService {
       if (error) throw error
       return count || 0
     } catch (error) {
+      if (this.isOfflineOrDemoMode(error)) return 0
       this.handleError(error)
     }
   }

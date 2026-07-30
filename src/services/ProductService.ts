@@ -54,6 +54,79 @@ export class ProductService extends BaseService {
   }
 
   public async list(options: ListProductsOptions): Promise<ListProductsResult> {
+    const initialMock: Product[] = [
+      {
+        id: "prod-1",
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        name: "Vinho Tinto Cabernet Sauvignon 750ml",
+        sku: "VIN-CAB-001",
+        category_id: "cat-1",
+        brand_id: "brand-1",
+        supplier_id: "sup-1",
+        barcode: "7891234567890",
+        description: "Vinho tinto seco de mesa",
+        unit: "UN",
+        purchase_price: 25.0,
+        sale_price: 49.9,
+        wholesale_price: null,
+        promotion_price: null,
+        minimum_stock: 10,
+        current_stock: 45,
+        image_url: null,
+        batch_number: "L-2026-A",
+        expiry_date: "2027-12-31",
+        active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        category: { name: "Vinhos Tintos" },
+        brand: { name: "Concha y Toro" },
+      },
+      {
+        id: "prod-2",
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        name: "Cerveja IPA Artesanal 500ml",
+        sku: "CER-IPA-002",
+        category_id: "cat-2",
+        brand_id: "brand-2",
+        supplier_id: "sup-1",
+        barcode: "7891234567891",
+        description: "Cerveja IPA com amargor pronunciado",
+        unit: "UN",
+        purchase_price: 8.5,
+        sale_price: 18.9,
+        wholesale_price: null,
+        promotion_price: null,
+        minimum_stock: 20,
+        current_stock: 120,
+        image_url: null,
+        batch_number: "L-2026-B",
+        expiry_date: "2026-10-15",
+        active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        category: { name: "Cervejas Especiais" },
+        brand: { name: "Colorado" },
+      },
+    ]
+
+    if (this.isOfflineOrDemoMode()) {
+      let list = this.getLocalMockStore("products", initialMock)
+      if (options.search) {
+        const s = options.search.toLowerCase()
+        list = list.filter((p) => p.name.toLowerCase().includes(s) || p.sku.toLowerCase().includes(s) || (p.barcode || "").includes(s))
+      }
+      if (typeof options.active === "boolean") {
+        list = list.filter((p) => p.active === options.active)
+      }
+      if (options.categoryId) {
+        list = list.filter((p) => p.category_id === options.categoryId)
+      }
+      const total = list.length
+      const from = (options.page - 1) * options.limit
+      const pagedData = list.slice(from, from + options.limit)
+      return { data: pagedData, total }
+    }
+
     try {
       const companyId = (await this.getCurrentUserCompanyId()) || "default"
       const cacheKey = `${CacheKeys.productsList(companyId)}:${options.page}:${options.limit}:${options.search || ""}:${options.active ?? "all"}:${options.categoryId || ""}`
