@@ -44,6 +44,48 @@ export class SaleService extends BaseService {
   }
 
   public async list(options: ListSalesOptions): Promise<ListSalesResult> {
+    const initialMock: Sale[] = [
+      {
+        id: "sale-101",
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        customer_id: "cust-1",
+        created_by: "u1",
+        sale_date: new Date().toISOString(),
+        subtotal: 99.80,
+        discount: 0,
+        total: 99.80,
+        payment_method: "Cartão de Crédito",
+        status: "finalizada",
+        created_at: new Date().toISOString(),
+        customer: { name: "João Silva" },
+      },
+      {
+        id: "sale-102",
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        customer_id: "cust-2",
+        created_by: "u1",
+        sale_date: new Date().toISOString(),
+        subtotal: 45.00,
+        discount: 0,
+        total: 45.00,
+        payment_method: "PIX",
+        status: "finalizada",
+        created_at: new Date(Date.now() - 3600000).toISOString(),
+        customer: { name: "Maria Oliveira" },
+      },
+    ]
+
+    if (this.isOfflineOrDemoMode()) {
+      let list = this.getLocalMockStore("sales", initialMock)
+      if (options.status) {
+        list = list.filter((s) => s.status === options.status)
+      }
+      const total = list.length
+      const from = (options.page - 1) * options.limit
+      const pagedData = list.slice(from, from + options.limit)
+      return { data: pagedData, total }
+    }
+
     try {
       const from = (options.page - 1) * options.limit
       const to = from + options.limit - 1

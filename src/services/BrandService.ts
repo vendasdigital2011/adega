@@ -40,6 +40,27 @@ export class BrandService extends BaseService {
   }
 
   public async list(options: ListBrandsOptions): Promise<ListBrandsResult> {
+    const initialMock: Brand[] = [
+      { id: "brand-1", company_id: "c1111111-1111-1111-1111-111111111111", name: "Adega Premium", active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+      { id: "brand-2", company_id: "c1111111-1111-1111-1111-111111111111", name: "Cervejaria Artesanal", active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+      { id: "brand-3", company_id: "c1111111-1111-1111-1111-111111111111", name: "Vinícola Aurora", active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+    ]
+
+    if (this.isOfflineOrDemoMode()) {
+      let list = this.getLocalMockStore("brands", initialMock)
+      if (options.search) {
+        const s = options.search.toLowerCase()
+        list = list.filter((b) => b.name.toLowerCase().includes(s))
+      }
+      if (typeof options.active === "boolean") {
+        list = list.filter((b) => b.active === options.active)
+      }
+      const total = list.length
+      const from = (options.page - 1) * options.limit
+      const pagedData = list.slice(from, from + options.limit)
+      return { data: pagedData, total }
+    }
+
     try {
       const companyId = (await this.getCurrentUserCompanyId()) || "default"
       const cacheKey = `${CacheKeys.brands(companyId)}:${options.page}:${options.limit}:${options.search || ""}:${options.active ?? "all"}`

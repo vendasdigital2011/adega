@@ -44,6 +44,60 @@ export class CustomerService extends BaseService {
   }
 
   public async list(options: ListCustomersOptions): Promise<ListCustomersResult> {
+    const initialMock: Customer[] = [
+      {
+        id: "cust-1",
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        name: "João Silva",
+        document: "123.456.789-00",
+        email: "joao.silva@email.com",
+        phone: "(11) 98765-4321",
+        whatsapp: "(11) 98765-4321",
+        birthday: "1985-05-15",
+        notes: null,
+        address: "Rua Exemplo, 123",
+        city: "São Paulo",
+        state: "SP",
+        credit_limit: 500,
+        active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },
+      {
+        id: "cust-2",
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        name: "Maria Oliveira",
+        document: "987.654.321-99",
+        email: "maria.oliveira@email.com",
+        phone: "(11) 91234-5678",
+        whatsapp: "(11) 91234-5678",
+        birthday: "1990-10-20",
+        notes: null,
+        address: "Av. Paulista, 1000",
+        city: "São Paulo",
+        state: "SP",
+        credit_limit: 1000,
+        active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },
+    ]
+
+    if (this.isOfflineOrDemoMode()) {
+      let list = this.getLocalMockStore("customers", initialMock)
+      if (options.search) {
+        const s = options.search.toLowerCase()
+        list = list.filter((c) => c.name.toLowerCase().includes(s) || (c.document || "").includes(s))
+      }
+      if (typeof options.active === "boolean") {
+        list = list.filter((c) => c.active === options.active)
+      }
+      const total = list.length
+      const from = (options.page - 1) * options.limit
+      const pagedData = list.slice(from, from + options.limit)
+      return { data: pagedData, total }
+    }
+
     try {
       const from = (options.page - 1) * options.limit
       const to = from + options.limit - 1

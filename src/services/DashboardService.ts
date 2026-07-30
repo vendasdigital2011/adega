@@ -44,6 +44,26 @@ export class DashboardService extends BaseService {
   }
 
   public async getSummary(): Promise<DashboardSummary> {
+    const mockSummary: DashboardSummary = {
+      todayTotal: 1450.50,
+      yesterdayTotal: 980.00,
+      todayOrders: 12,
+      yesterdayOrders: 8,
+      newCustomersToday: 3,
+      newCustomersYesterday: 1,
+      totalCustomers: 154,
+      lowStockCount: 2,
+      recentSales: [
+        { id: "s1", customerName: "Cliente Balcão", total: 120.00, status: "finalizada", createdAt: new Date().toISOString() },
+        { id: "s2", customerName: "Maria Santos", total: 85.50, status: "finalizada", createdAt: new Date(Date.now() - 3600000).toISOString() },
+        { id: "s3", customerName: "Carlos Pereira", total: 320.00, status: "finalizada", createdAt: new Date(Date.now() - 7200000).toISOString() },
+      ],
+    }
+
+    if (this.isOfflineOrDemoMode()) {
+      return mockSummary
+    }
+
     try {
       const companyId = (await this.getCurrentUserCompanyId()) || "default"
       const cacheKey = CacheKeys.dashboard(companyId)
