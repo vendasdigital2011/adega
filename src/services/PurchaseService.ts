@@ -42,6 +42,31 @@ export class PurchaseService extends BaseService {
   }
 
   public async list(options: ListPurchasesOptions): Promise<ListPurchasesResult> {
+    const initialMock: Purchase[] = [
+      {
+        id: "pur-1",
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        supplier_id: "sup-1",
+        created_by: "u1",
+        purchase_date: new Date().toISOString(),
+        freight: 50.00,
+        discount: 0,
+        total: 1550.00,
+        notes: "Compra de reposição mensal de vinhos",
+        status: "recebida",
+        created_at: new Date().toISOString(),
+        supplier: { name: "Vinícola Aurora Ltda" },
+      },
+    ]
+
+    if (this.isOfflineOrDemoMode()) {
+      let items = this.getLocalMockStore("purchases", initialMock)
+      if (options.status) {
+        items = items.filter((p) => p.status === options.status)
+      }
+      return { data: items, total: items.length }
+    }
+
     try {
       const from = (options.page - 1) * options.limit
       const to = from + options.limit - 1
@@ -61,22 +86,6 @@ export class PurchaseService extends BaseService {
       return { data: (data as unknown as Purchase[]) || [], total: count || 0 }
     } catch (error) {
       if (this.isOfflineOrDemoMode(error)) {
-        const initialMock: Purchase[] = [
-          {
-            id: "pur-1",
-            company_id: "c1111111-1111-1111-1111-111111111111",
-            supplier_id: "sup-1",
-            created_by: "u1",
-            purchase_date: new Date().toISOString(),
-            freight: 50.00,
-            discount: 0,
-            total: 1550.00,
-            notes: "Compra de reposição mensal de vinhos",
-            status: "recebida",
-            created_at: new Date().toISOString(),
-            supplier: { name: "Vinícola Aurora Ltda" },
-          },
-        ]
         let items = this.getLocalMockStore("purchases", initialMock)
         if (options.status) {
           items = items.filter((p) => p.status === options.status)

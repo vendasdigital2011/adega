@@ -28,8 +28,33 @@ export class AIService extends BaseService {
    * Retorna o resumo completo do Dashboard de Inteligência Artificial.
    */
   public async getDashboardSummary(): Promise<AIDashboardSummary> {
+    const demoCompanyId = "c1111111-1111-1111-1111-111111111111"
+
+    if (this.isOfflineOrDemoMode()) {
+      const insights = await this.generateDynamicInsights(demoCompanyId)
+      const salesForecast = await this.generateSalesForecast(demoCompanyId)
+      const purchasingSuggestions = await this.generatePurchasingSuggestions(demoCompanyId)
+      const stockSummary = await this.generateStockAnalysis(demoCompanyId)
+      const financialSummary = await this.generateFinancialAnalysis(demoCompanyId)
+
+      return {
+        insights,
+        sales_forecast: salesForecast,
+        purchasing_suggestions: purchasingSuggestions,
+        stock_summary: stockSummary,
+        financial_summary: financialSummary,
+        quick_prompts: [
+          "Quanto vendi hoje?",
+          "Qual meu lucro este mês?",
+          "Quais produtos preciso comprar com urgência?",
+          "Quais contas a pagar vencem esta semana?",
+          "Quais produtos estão sem giro de estoque?",
+        ],
+      }
+    }
+
     try {
-      const companyId = await this.getCurrentUserCompanyId()
+      const companyId = (await this.getCurrentUserCompanyId()) || demoCompanyId
 
       const [insights, salesForecast, purchasingSuggestions, stockSummary, financialSummary] = await Promise.all([
         this.getInsights(),
@@ -56,6 +81,27 @@ export class AIService extends BaseService {
         quick_prompts: quickPrompts,
       }
     } catch (error) {
+      if (this.isOfflineOrDemoMode(error)) {
+        const insights = await this.generateDynamicInsights(demoCompanyId)
+        const salesForecast = await this.generateSalesForecast(demoCompanyId)
+        const purchasingSuggestions = await this.generatePurchasingSuggestions(demoCompanyId)
+        const stockSummary = await this.generateStockAnalysis(demoCompanyId)
+        const financialSummary = await this.generateFinancialAnalysis(demoCompanyId)
+        return {
+          insights,
+          sales_forecast: salesForecast,
+          purchasing_suggestions: purchasingSuggestions,
+          stock_summary: stockSummary,
+          financial_summary: financialSummary,
+          quick_prompts: [
+            "Quanto vendi hoje?",
+            "Qual meu lucro este mês?",
+            "Quais produtos preciso comprar com urgência?",
+            "Quais contas a pagar vencem esta semana?",
+            "Quais produtos estão sem giro de estoque?",
+          ],
+        }
+      }
       this.handleError(error, "ai.getDashboardSummary")
     }
   }
@@ -64,8 +110,14 @@ export class AIService extends BaseService {
    * Busca lista de insights pendentes ou em destaque da empresa.
    */
   public async getInsights(): Promise<AIInsight[]> {
+    const demoCompanyId = "c1111111-1111-1111-1111-111111111111"
+
+    if (this.isOfflineOrDemoMode()) {
+      return this.generateDynamicInsights(demoCompanyId)
+    }
+
     try {
-      const companyId = await this.getCurrentUserCompanyId()
+      const companyId = (await this.getCurrentUserCompanyId()) || demoCompanyId
 
       const { data, error } = await this.supabase
         .from("ai_insights")
@@ -75,23 +127,13 @@ export class AIService extends BaseService {
         .order("created_at", { ascending: false })
         .limit(10)
 
-      if (error) {
-        // Se a tabela ainda não tiver dados estáticos, gera insights dinâmicos em tempo real
-        return this.generateDynamicInsights(companyId)
-      }
-
-      if (!data || data.length === 0) {
+      if (error || !data || data.length === 0) {
         return this.generateDynamicInsights(companyId)
       }
 
       return data as AIInsight[]
     } catch (error) {
-      // Fallback gracioso com dados dinâmicos em caso de erro na consulta
-      const companyId = await this.getCurrentUserCompanyId().catch(() => "")
-      if (companyId) {
-        return this.generateDynamicInsights(companyId)
-      }
-      return []
+      return this.generateDynamicInsights(demoCompanyId)
     }
   }
 

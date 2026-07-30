@@ -41,6 +41,52 @@ export class InventoryService extends BaseService {
   }
 
   public async listMovements(options: ListMovementsOptions): Promise<ListMovementsResult> {
+    const mockMovements: InventoryMovement[] = [
+      {
+        id: "mov-1",
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        product_id: "prod-1",
+        movement_type: "Entrada",
+        quantity: 50,
+        previous_quantity: 0,
+        current_quantity: 50,
+        reference: "NF-1002",
+        observation: "Entrada de compra de estoque",
+        user_id: "u1",
+        created_at: new Date().toISOString(),
+        product: { name: "Vinho Tinto Cabernet Sauvignon 750ml", sku: "VIN-CAB-001" },
+      },
+      {
+        id: "mov-2",
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        product_id: "prod-2",
+        movement_type: "Saída",
+        quantity: 2,
+        previous_quantity: 122,
+        current_quantity: 120,
+        reference: "VEN-001",
+        observation: "Venda PDV #1001",
+        user_id: "u1",
+        created_at: new Date().toISOString(),
+        product: { name: "Cerveja IPA Artesanal 500ml", sku: "CER-IPA-002" },
+      },
+    ]
+
+    if (this.isOfflineOrDemoMode()) {
+      let list = this.getLocalMockStore("inventory_movements", mockMovements)
+      if (options.movementType) {
+        list = list.filter((m) => m.movement_type === options.movementType)
+      }
+      if (options.search) {
+        const s = options.search.toLowerCase()
+        list = list.filter((m) => (m.product?.name || "").toLowerCase().includes(s) || (m.product?.sku || "").toLowerCase().includes(s))
+      }
+      const total = list.length
+      const from = (options.page - 1) * options.limit
+      const pagedData = list.slice(from, from + options.limit)
+      return { data: pagedData, total }
+    }
+
     try {
       const from = (options.page - 1) * options.limit
       const to = from + options.limit - 1
@@ -68,37 +114,18 @@ export class InventoryService extends BaseService {
       return { data: (data as unknown as InventoryMovement[]) || [], total: count || 0 }
     } catch (error) {
       if (this.isOfflineOrDemoMode(error)) {
-        const mockMovements: InventoryMovement[] = [
-          {
-            id: "mov-1",
-            company_id: "c1111111-1111-1111-1111-111111111111",
-            product_id: "prod-1",
-            movement_type: "Entrada",
-            quantity: 50,
-            previous_quantity: 0,
-            current_quantity: 50,
-            reference: "NF-1002",
-            observation: "Entrada inicial de estoque",
-            user_id: "u1",
-            created_at: new Date().toISOString(),
-            product: { name: "Vinho Tinto Cabernet Sauvignon 750ml", sku: "VIN-CAB-001" },
-          },
-          {
-            id: "mov-2",
-            company_id: "c1111111-1111-1111-1111-111111111111",
-            product_id: "prod-1",
-            movement_type: "Saída",
-            quantity: 5,
-            previous_quantity: 50,
-            current_quantity: 45,
-            reference: "Venda #101",
-            observation: "Baixa por venda no balcão",
-            user_id: "u1",
-            created_at: new Date(Date.now() - 3600000).toISOString(),
-            product: { name: "Vinho Tinto Cabernet Sauvignon 750ml", sku: "VIN-CAB-001" },
-          },
-        ]
-        return { data: mockMovements, total: mockMovements.length }
+        let list = this.getLocalMockStore("inventory_movements", mockMovements)
+        if (options.movementType) {
+          list = list.filter((m) => m.movement_type === options.movementType)
+        }
+        if (options.search) {
+          const s = options.search.toLowerCase()
+          list = list.filter((m) => (m.product?.name || "").toLowerCase().includes(s) || (m.product?.sku || "").toLowerCase().includes(s))
+        }
+        const total = list.length
+        const from = (options.page - 1) * options.limit
+        const pagedData = list.slice(from, from + options.limit)
+        return { data: pagedData, total }
       }
       this.handleError(error, "inventory.list_movements")
     }
