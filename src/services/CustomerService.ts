@@ -87,7 +87,7 @@ export class CustomerService extends BaseService {
       let list = this.getLocalMockStore("customers", initialMock)
       if (options.search) {
         const s = options.search.toLowerCase()
-        list = list.filter((c) => c.name.toLowerCase().includes(s) || (c.document || "").includes(s))
+        list = list.filter((c) => c.name.toLowerCase().includes(s) || (c.document || "").includes(s) || (c.phone || "").includes(s) || (c.whatsapp || "").includes(s))
       }
       if (typeof options.active === "boolean") {
         list = list.filter((c) => c.active === options.active)

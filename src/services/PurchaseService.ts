@@ -1,5 +1,5 @@
 import { BaseService } from "./BaseService"
-import { Purchase, PurchaseItem, PurchaseStatus } from "@/types"
+import { Purchase, PurchaseItem, PurchaseStatus, Product } from "@/types"
 
 export interface PurchaseItemInput {
   product_id: string
@@ -154,6 +154,13 @@ export class PurchaseService extends BaseService {
             supplier: { name: "Vinícola Aurora Ltda" },
           },
         ]
+
+        const suppliers = this.getLocalMockStore("suppliers", [
+          { id: "sup-1", name: "Vinícola Aurora Ltda" },
+          { id: "sup-2", name: "Ambev S.A." },
+        ])
+        const foundSup = suppliers.find((s: { id: string; name: string }) => s.id === input.supplier_id)
+
         const list = this.getLocalMockStore("purchases", initialMock)
         const totalItems = input.items.reduce((acc, item) => acc + item.quantity * item.unit_price, 0)
         const newPurchase: Purchase = {
@@ -168,9 +175,23 @@ export class PurchaseService extends BaseService {
           notes: input.notes || null,
           status: "pendente",
           created_at: new Date().toISOString(),
+          supplier: { name: foundSup ? foundSup.name : `Fornecedor #${input.supplier_id}` },
         }
         list.unshift(newPurchase)
         this.saveLocalMockStore("purchases", list)
+
+        // Salva os itens da compra para recuperar ao receber
+        const purchaseItems: PurchaseItem[] = input.items.map((item, idx) => ({
+          id: `pi-${id}-${idx}`,
+          purchase_id: id,
+          product_id: item.product_id,
+          quantity: item.quantity,
+          unit_price: item.unit_price,
+          total: item.quantity * item.unit_price,
+          product: { name: "Produto Selecionado", sku: "SKU" },
+        }))
+        this.saveLocalMockStore(`purchase_items_${id}`, purchaseItems)
+
         return id
       }
       this.handleError(error, "purchases.create")
@@ -190,6 +211,20 @@ export class PurchaseService extends BaseService {
         if (idx !== -1) {
           list[idx].status = "recebida"
           this.saveLocalMockStore("purchases", list)
+
+          // Atualizar estoque dos produtos comprados
+          const items: PurchaseItem[] = this.getLocalMockStore(`purchase_items_${purchaseId}`, [])
+          if (items.length > 0) {
+            const products: Product[] = this.getLocalMockStore("products", [])
+            for (const item of items) {
+              const pIdx = products.findIndex((p: { id: string }) => p.id === item.product_id)
+              if (pIdx !== -1) {
+                products[pIdx].current_stock += item.quantity
+                products[pIdx].updated_at = new Date().toISOString()
+              }
+            }
+            this.saveLocalMockStore("products", products)
+          }
         }
         return
       }

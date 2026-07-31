@@ -21,6 +21,7 @@ export function useCreateCustomer() {
     mutationFn: (input: CreateCustomerInput) => customerService.create(input),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["customers"] })
+      queryClient.invalidateQueries({ queryKey: ["sale-options"] })
     },
   })
 }
@@ -32,6 +33,7 @@ export function useUpdateCustomer() {
       customerService.update(id, input),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["customers"] })
+      queryClient.invalidateQueries({ queryKey: ["sale-options"] })
     },
   })
 }
@@ -43,6 +45,7 @@ export function useSetCustomerActive() {
       customerService.setActive(id, active),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["customers"] })
+      queryClient.invalidateQueries({ queryKey: ["sale-options"] })
     },
   })
 }

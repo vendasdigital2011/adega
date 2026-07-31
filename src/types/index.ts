@@ -117,6 +117,8 @@ export type MovementType =
   | "Inventário"
   | "Perda"
   | "Quebra"
+  | "Devolução de Cliente"
+  | "Devolução ao Fornecedor"
 
 export interface InventoryMovement {
   id: string

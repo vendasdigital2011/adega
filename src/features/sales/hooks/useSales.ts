@@ -31,6 +31,9 @@ function invalidateAll(queryClient: ReturnType<typeof useQueryClient>) {
   queryClient.invalidateQueries({ queryKey: ["cash-open-register"] })
   queryClient.invalidateQueries({ queryKey: ["accounts-receivable"] })
   queryClient.invalidateQueries({ queryKey: ["cash-flow"] })
+  queryClient.invalidateQueries({ queryKey: ["dashboard"] })
+  queryClient.invalidateQueries({ queryKey: ["dashboard-summary"] })
+  queryClient.invalidateQueries({ queryKey: ["audit"] })
 }
 
 export function useCreateSale() {

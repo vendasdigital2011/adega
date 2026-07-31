@@ -132,6 +132,94 @@ export class InventoryService extends BaseService {
   }
 
   public async registerMovement(input: RegisterMovementInput): Promise<InventoryMovement> {
+    const applyMovement = (product: Product | undefined): { prevQty: number; currQty: number } => {
+      const prevQty = product ? product.current_stock : 10
+      let currQty = prevQty
+
+      switch (input.movement_type) {
+        case "Entrada":
+        case "Compra":
+        case "Devolução de Cliente":
+          currQty = prevQty + input.quantity
+          break
+        case "Saída":
+        case "Venda":
+        case "Perda":
+        case "Quebra":
+        case "Devolução ao Fornecedor":
+          currQty = Math.max(0, prevQty - input.quantity)
+          break
+        case "Inventário":
+        case "Ajuste":
+          currQty = input.quantity
+          break
+        default:
+          currQty = prevQty + input.quantity
+      }
+      return { prevQty, currQty }
+    }
+
+    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+      const initialProducts: Product[] = [
+        {
+          id: "prod-1",
+          company_id: "c1111111-1111-1111-1111-111111111111",
+          name: "Vinho Tinto Cabernet Sauvignon 750ml",
+          sku: "VIN-CAB-001",
+          category_id: "cat-1",
+          brand_id: null,
+          supplier_id: null,
+          barcode: "7891234567890",
+          description: null,
+          unit: "UN",
+          purchase_price: 25.0,
+          sale_price: 45.0,
+          wholesale_price: null,
+          promotion_price: null,
+          minimum_stock: 10,
+          current_stock: 45,
+          image_url: null,
+          batch_number: null,
+          expiry_date: null,
+          active: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+      ]
+      const products = this.getLocalMockStore("products", initialProducts)
+      const pIdx = products.findIndex((p) => p.id === input.product_id)
+      const targetProd = pIdx !== -1 ? products[pIdx] : undefined
+      const { prevQty, currQty } = applyMovement(targetProd)
+
+      if (pIdx !== -1) {
+        products[pIdx].current_stock = currQty
+        products[pIdx].updated_at = new Date().toISOString()
+        this.saveLocalMockStore("products", products)
+      }
+
+      const mockMov: InventoryMovement = {
+        id: `mov-${Date.now()}`,
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        product_id: input.product_id,
+        movement_type: input.movement_type,
+        quantity: input.quantity,
+        previous_quantity: prevQty,
+        current_quantity: currQty,
+        reference: input.reference || null,
+        observation: input.observation || null,
+        user_id: "u1",
+        created_at: new Date().toISOString(),
+        product: targetProd ? { name: targetProd.name, sku: targetProd.sku } : null,
+      }
+
+      const initialMovements: InventoryMovement[] = []
+      const movements = this.getLocalMockStore("inventory_movements", initialMovements)
+      movements.unshift(mockMov)
+      this.saveLocalMockStore("inventory_movements", movements)
+
+      return mockMov
+    }
+
     try {
       const { data, error } = await this.supabase.rpc("register_inventory_movement", {
         p_product_id: input.product_id,
@@ -145,20 +233,36 @@ export class InventoryService extends BaseService {
       return data as InventoryMovement
     } catch (error) {
       if (this.isOfflineOrDemoMode(error)) {
-        const isEntrada = input.movement_type === "Entrada"
+        const initialProducts: Product[] = []
+        const products = this.getLocalMockStore("products", initialProducts)
+        const pIdx = products.findIndex((p) => p.id === input.product_id)
+        const targetProd = pIdx !== -1 ? products[pIdx] : undefined
+        const { prevQty, currQty } = applyMovement(targetProd)
+
+        if (pIdx !== -1) {
+          products[pIdx].current_stock = currQty
+          products[pIdx].updated_at = new Date().toISOString()
+          this.saveLocalMockStore("products", products)
+        }
+
         const mockMov: InventoryMovement = {
           id: `mov-${Date.now()}`,
           company_id: "c1111111-1111-1111-1111-111111111111",
           product_id: input.product_id,
           movement_type: input.movement_type,
           quantity: input.quantity,
-          previous_quantity: 10,
-          current_quantity: isEntrada ? 10 + input.quantity : 10 - input.quantity,
+          previous_quantity: prevQty,
+          current_quantity: currQty,
           reference: input.reference || null,
           observation: input.observation || null,
           user_id: "u1",
           created_at: new Date().toISOString(),
+          product: targetProd ? { name: targetProd.name, sku: targetProd.sku } : null,
         }
+
+        const movements: InventoryMovement[] = this.getLocalMockStore("inventory_movements", [])
+        movements.unshift(mockMov)
+        this.saveLocalMockStore("inventory_movements", movements)
         return mockMov
       }
       this.handleError(error, "inventory.register_movement")

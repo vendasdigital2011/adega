@@ -103,7 +103,10 @@ export function SaleForm({ onSubmit, onCancel, isLoading }: SaleFormProps) {
 
   const customerOptions = [
     { value: "", label: "— Sem cliente (balcão) —" },
-    ...customers.map((c) => ({ value: c.id, label: c.name })),
+    ...customers.map((c) => ({
+      value: c.id,
+      label: `${c.name}${c.document ? ` · CPF: ${c.document}` : ""}${c.phone ? ` · Tel: ${c.phone}` : ""}`,
+    })),
   ]
   const productOptions = [
     { value: "", label: "Selecione..." },
@@ -126,8 +129,19 @@ export function SaleForm({ onSubmit, onCancel, isLoading }: SaleFormProps) {
   )
   const total = Math.max(0, subtotal - watchedDiscount)
 
+  const handleFormSubmit = (data: SaleFormInputs) => {
+    for (const item of data.items) {
+      const prod = products.find((p) => p.id === item.product_id)
+      if (prod && prod.current_stock < Number(item.quantity)) {
+        toast.error("Estoque insuficiente para concluir esta venda.")
+        return
+      }
+    }
+    return onSubmit(data)
+  }
+
   return (
-    <form ref={formRef} onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form ref={formRef} onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Select
           label="Cliente (opcional)"

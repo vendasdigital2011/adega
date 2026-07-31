@@ -1,0 +1,13 @@
+Movimentação de estoque não funcinou coloquei a a movimetão de entrada e o mesmo não foi lançado ja faça isso pra todos tipo de movimentação
+
+em compra não esta lançando o fornecedor
+
+lancei um cliente e fui tentar fazer um venda pra ele o mesmo não aparece na aba cliente
+
+esta vendendo sem saldo ou seja lancei 50 undade e tentei vender 500 o mesmo vendeu 500 isso não pode acontecer o mesmo so precisa de vender o que de fato tem em estoque quando passar disso emitir um alerta que não tem saldo
+
+a venda também não ta sendo registrada visulamente no daschoboard
+
+a venda também so ta registrando um valor fixo de 100,00 
+
+em congiguraçõs é preciso liberar e bloquear todas as funções do sistema o mesmo não ta aparecendo

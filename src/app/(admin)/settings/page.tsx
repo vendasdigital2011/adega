@@ -10,6 +10,7 @@ import { ChangePasswordForm } from "@/features/auth/components/ChangePasswordFor
 import { CompanyForm } from "@/features/settings/components/CompanyForm"
 import { PreferencesForm } from "@/features/settings/components/PreferencesForm"
 import { KeyboardShortcutsManager } from "@/features/settings/components/KeyboardShortcutsManager"
+import { PermissionsManager } from "@/features/settings/components/PermissionsManager"
 import {
   useCompany,
   useSettings,
@@ -30,12 +31,13 @@ export default function SettingsPage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Configurações</h1>
         <p className="text-muted-foreground">
-          Dados da empresa, preferências, backup, integrações, atalhos e segurança.
+          Dados da empresa, controle de permissões, preferências, backup, atalhos e segurança.
         </p>
       </div>
 
       <div className="grid grid-cols-1 gap-6">
         {canView && <CompanySection canEdit={canEdit} />}
+        {canEdit && <PermissionsManager />}
         {canView && <PreferencesSection canEdit={canEdit} />}
         {canView && <BackupSection />}
         {canView && <IntegrationsSection />}
