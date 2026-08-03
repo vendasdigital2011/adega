@@ -193,18 +193,68 @@ function KeyboardShortcutsSection() {
 }
 
 // ============================================================
-// Reset de Dados de Teste
+// Reset de Dados de Teste (Zerar Sistema do Zero)
 // ============================================================
 function ResetDataSection() {
-  const handleReset = () => {
-    if (confirm("Tem certeza que deseja zerar todos os lançamentos e dados de teste armazenados no seu navegador? O sistema será recarregado do zero.")) {
-      Object.keys(localStorage)
-        .filter((key) => key.startsWith("adega_mock_"))
-        .forEach((key) => localStorage.removeItem(key))
-      toast.success("Dados de teste resetados com sucesso!")
+  const handleResetAll = () => {
+    if (
+      confirm(
+        "Tem certeza que deseja ZERAR TUDO do zero?\n\nEsta ação apagará Categorias, Marcas, Produtos, Fornecedores, Clientes, Compras, Vendas, Caixa e Financeiro do seu navegador para você cadastrar tudo a partir do zero."
+      )
+    ) {
+      const keysToClear = [
+        "categories",
+        "brands",
+        "products",
+        "suppliers",
+        "customers",
+        "purchases",
+        "purchase_items",
+        "sales",
+        "sale_items",
+        "cash_registers",
+        "cash_movements",
+        "accounts_payable",
+        "accounts_receivable",
+        "inventory_movements",
+        "cost_centers",
+        "audit_logs",
+        "notifications",
+      ]
+      keysToClear.forEach((key) => {
+        localStorage.setItem(`adega_mock_${key}`, JSON.stringify([]))
+      })
+      toast.success("Sistema zerado com sucesso! Todos os cadastros e lançamentos foram limpos.")
       setTimeout(() => {
         window.location.href = "/dashboard"
-      }, 500)
+      }, 600)
+    }
+  }
+
+  const handleResetTransactionsOnly = () => {
+    if (
+      confirm(
+        "Deseja zerar apenas as Vendas, Compras, Caixa e Financeiro (mantendo as Categorias, Marcas, Produtos e Clientes já cadastrados)?"
+      )
+    ) {
+      const keysToClear = [
+        "purchases",
+        "purchase_items",
+        "sales",
+        "sale_items",
+        "cash_registers",
+        "cash_movements",
+        "accounts_payable",
+        "accounts_receivable",
+        "inventory_movements",
+      ]
+      keysToClear.forEach((key) => {
+        localStorage.setItem(`adega_mock_${key}`, JSON.stringify([]))
+      })
+      toast.success("Lançamentos de Vendas, Compras, Caixa e Financeiro zerados!")
+      setTimeout(() => {
+        window.location.href = "/dashboard"
+      }, 600)
     }
   }
 
@@ -212,15 +262,18 @@ function ResetDataSection() {
     <Card className="bg-card/30 border-destructive/30">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-destructive">
-          <Trash2 className="h-5 w-5" /> Zerar Lançamentos e Dados de Teste
+          <Trash2 className="h-5 w-5" /> Limpeza e Reset do Sistema
         </CardTitle>
         <CardDescription>
-          Remove todas as vendas, compras, movimentações de caixa, contas e dados criados durante os testes no navegador para você iniciar um teste do zero.
+          Escolha como deseja zerar os dados para realizar os seus testes manuais do início ao fim.
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <Button variant="danger" onClick={handleReset}>
-          Zerar todos os dados locais e recomeçar do zero
+      <CardContent className="flex flex-wrap gap-4">
+        <Button variant="danger" onClick={handleResetAll}>
+          Zerar TUDO (Categorias, Marcas, Produtos, Fornecedores, Vendas, Caixa, Financeiro)
+        </Button>
+        <Button variant="outline" onClick={handleResetTransactionsOnly}>
+          Zerar Apenas Lançamentos (Vendas, Compras, Caixa e Financeiro)
         </Button>
       </CardContent>
     </Card>
