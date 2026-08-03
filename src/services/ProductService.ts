@@ -293,7 +293,7 @@ export class ProductService extends BaseService {
           wholesale_price: input.wholesale_price || null,
           promotion_price: input.promotion_price || null,
           minimum_stock: input.minimum_stock,
-          current_stock: 0,
+          current_stock: (input as any).current_stock ?? 0,
           image_url: null,
           batch_number: input.batch_number || null,
           expiry_date: input.expiry_date || null,
@@ -393,6 +393,32 @@ export class ProductService extends BaseService {
 
   public async setActive(id: string, active: boolean): Promise<Product> {
     return this.update(id, { active })
+  }
+
+  public async getById(id: string): Promise<Product> {
+    if (this.isOfflineOrDemoMode()) {
+      const list = this.getLocalMockStore<Product>("products", [])
+      const found = list.find((p) => p.id === id)
+      if (found) return found
+      throw new Error("Produto não encontrado.")
+    }
+
+    try {
+      const { data, error } = await this.supabase
+        .from("products")
+        .select(SELECT_WITH_RELATIONS)
+        .eq("id", id)
+        .single()
+      if (error) throw error
+      return data as unknown as Product
+    } catch (error) {
+      if (this.isOfflineOrDemoMode(error)) {
+        const list = this.getLocalMockStore<Product>("products", [])
+        const found = list.find((p) => p.id === id)
+        if (found) return found
+      }
+      this.handleError(error, "products.get_by_id")
+    }
   }
 
   // Campos opcionais vazios viram null (FKs de marca/fornecedor, preços, etc.).

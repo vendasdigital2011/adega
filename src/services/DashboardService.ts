@@ -61,6 +61,31 @@ export class DashboardService extends BaseService {
     }
 
     if (this.isOfflineOrDemoMode()) {
+      const sales = this.getLocalMockStore<any>("sales", [])
+      const customers = this.getLocalMockStore<any>("customers", [])
+      const products = this.getLocalMockStore<any>("products", [])
+
+      if (sales.length > 0 || customers.length > 0 || products.length > 0) {
+        const todaySales = sales.filter((s: any) => s.status === "finalizada")
+        const todayTotal = todaySales.reduce((acc: number, s: any) => acc + Number(s.total || 0), 0)
+        return {
+          todayTotal,
+          yesterdayTotal: 0,
+          todayOrders: todaySales.length,
+          yesterdayOrders: 0,
+          newCustomersToday: customers.length,
+          newCustomersYesterday: 0,
+          totalCustomers: customers.length,
+          lowStockCount: products.filter((p: any) => p.current_stock <= p.minimum_stock).length,
+          recentSales: todaySales.slice(0, 5).map((s: any) => ({
+            id: s.id,
+            customerName: s.customer?.name || "Cliente",
+            total: Number(s.total),
+            status: s.status,
+            createdAt: s.created_at,
+          })),
+        }
+      }
       return mockSummary
     }
 

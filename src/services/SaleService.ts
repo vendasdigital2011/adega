@@ -5,15 +5,16 @@ import { CacheKeys } from "./cache/CacheKeys"
 
 // unit_price não é enviado: o servidor resolve o preço a partir do catálogo
 // (ver migration 0021 — nunca confia em preço vindo do cliente).
+// (ver migration 0021 — nunca confia e preço vindo do cliente).
 export interface SaleItemInput {
   product_id: string
   quantity: number
 }
 
 export interface CreateSaleInput {
-  customer_id: string | null
-  sale_date: string
-  discount: number
+  customer_id?: string | null
+  sale_date?: string
+  discount?: number
   payment_method: PaymentMethod
   items: SaleItemInput[]
 }
@@ -158,7 +159,7 @@ export class SaleService extends BaseService {
   }
 
   public async create(input: CreateSaleInput): Promise<string> {
-    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
+    if (this.isOfflineOrDemoMode()) {
       const companyId = "c1111111-1111-1111-1111-111111111111"
       const initialProducts = [
         {
@@ -252,7 +253,7 @@ export class SaleService extends BaseService {
       const newSale: Sale = {
         id,
         company_id: companyId,
-        customer_id: input.customer_id,
+        customer_id: input.customer_id || null,
         created_by: "u1",
         sale_date: input.sale_date || new Date().toISOString(),
         subtotal,
@@ -271,6 +272,25 @@ export class SaleService extends BaseService {
         si.sale_id = id
       }
       this.saveLocalMockStore(`sale_items_${id}`, saleItems)
+
+      // Registra entrada no caixa aberto se o pagamento for em Dinheiro
+      if (String(input.payment_method).toLowerCase() === "dinheiro") {
+        const cashList = this.getLocalMockStore<any>("cash_registers", [])
+        const openCash = cashList.find((c) => c.status === "aberto" || c.status === "ABERTO")
+        if (openCash) {
+          const movements = this.getLocalMockStore<any>(`cash_movements_${openCash.id}`, [])
+          movements.unshift({
+            id: `cm-${Date.now()}`,
+            cash_register_id: openCash.id,
+            movement_type: "Entrada",
+            value: total,
+            description: `Venda #${id}`,
+            user_id: "u1",
+            created_at: new Date().toISOString(),
+          })
+          this.saveLocalMockStore(`cash_movements_${openCash.id}`, movements)
+        }
+      }
 
       await cacheService.invalidate(CacheKeys.dashboard(companyId))
       return id
@@ -319,7 +339,7 @@ export class SaleService extends BaseService {
         const newSale: Sale = {
           id,
           company_id: companyId,
-          customer_id: input.customer_id,
+          customer_id: input.customer_id || null,
           created_by: "u1",
           sale_date: input.sale_date || new Date().toISOString(),
           subtotal,

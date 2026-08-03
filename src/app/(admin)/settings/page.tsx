@@ -2,7 +2,7 @@
 
 import React from "react"
 import toast from "react-hot-toast"
-import { Building2, Palette, DatabaseBackup, Plug, Keyboard } from "lucide-react"
+import { Building2, Palette, DatabaseBackup, Plug, Keyboard, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card"
 import { Loading } from "@/components/ui/Loading"
@@ -40,6 +40,7 @@ export default function SettingsPage() {
         {canEdit && <PermissionsManager />}
         {canView && <PreferencesSection canEdit={canEdit} />}
         {canView && <BackupSection />}
+        <ResetDataSection />
         {canView && <IntegrationsSection />}
         {canEdit && <KeyboardShortcutsSection />}
 
@@ -186,6 +187,41 @@ function KeyboardShortcutsSection() {
       </CardHeader>
       <CardContent>
         <KeyboardShortcutsManager />
+      </CardContent>
+    </Card>
+  )
+}
+
+// ============================================================
+// Reset de Dados de Teste
+// ============================================================
+function ResetDataSection() {
+  const handleReset = () => {
+    if (confirm("Tem certeza que deseja zerar todos os lançamentos e dados de teste armazenados no seu navegador? O sistema será recarregado do zero.")) {
+      Object.keys(localStorage)
+        .filter((key) => key.startsWith("adega_mock_"))
+        .forEach((key) => localStorage.removeItem(key))
+      toast.success("Dados de teste resetados com sucesso!")
+      setTimeout(() => {
+        window.location.href = "/dashboard"
+      }, 500)
+    }
+  }
+
+  return (
+    <Card className="bg-card/30 border-destructive/30">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-destructive">
+          <Trash2 className="h-5 w-5" /> Zerar Lançamentos e Dados de Teste
+        </CardTitle>
+        <CardDescription>
+          Remove todas as vendas, compras, movimentações de caixa, contas e dados criados durante os testes no navegador para você iniciar um teste do zero.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Button variant="danger" onClick={handleReset}>
+          Zerar todos os dados locais e recomeçar do zero
+        </Button>
       </CardContent>
     </Card>
   )

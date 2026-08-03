@@ -19,7 +19,13 @@ export abstract class BaseService {
   }
 
   protected getLocalMockStore<T>(key: string, initialData: T[]): T[] {
-    if (typeof window === "undefined") return initialData
+    if (typeof window === "undefined") {
+      const g = ((globalThis as any).__ADEGA_MOCK_STORE__ = (globalThis as any).__ADEGA_MOCK_STORE__ || {})
+      if (!g[key]) {
+        g[key] = initialData
+      }
+      return g[key] as T[]
+    }
     const stored = localStorage.getItem(`adega_mock_${key}`)
     if (!stored) {
       localStorage.setItem(`adega_mock_${key}`, JSON.stringify(initialData))
@@ -36,6 +42,8 @@ export abstract class BaseService {
     if (typeof window !== "undefined") {
       localStorage.setItem(`adega_mock_${key}`, JSON.stringify(data))
     }
+    const g = ((globalThis as any).__ADEGA_MOCK_STORE__ = (globalThis as any).__ADEGA_MOCK_STORE__ || {})
+    g[key] = data
   }
 
   protected handleError(error: unknown, action: string = "service.error"): never {
