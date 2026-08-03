@@ -8,7 +8,7 @@ const securityHeaders = [
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   {
     key: "Permissions-Policy",
-    value: "camera=(), microphone=(), geolocation=(), payment=(), usb=(), unload=(self \"*\")",
+    value: "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
   },
   { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
 ]
@@ -27,7 +27,7 @@ const productionOnlyHeaders =
             "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://*.vercel.live https://*.vercel.com",
             "style-src 'self' 'unsafe-inline' https://vercel.live https://fonts.googleapis.com",
             "img-src 'self' data: blob: https:",
-            "font-src 'self' data: https://fonts.gstatic.com",
+            "font-src 'self' data: https://fonts.gstatic.com https://vercel.live https://*.vercel.live https://*.vercel.com",
             "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.upstash.io wss://*.upstash.io https://api.openai.com https://generativelanguage.googleapis.com https://vercel.live https://*.vercel.live https://*.vercel.com",
             "frame-src 'self' https://vercel.live https://*.vercel.live https://*.vercel.com",
             "frame-ancestors 'self' https://vercel.live https://*.vercel.live https://*.vercel.com",
