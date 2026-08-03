@@ -1,0 +1,956 @@
+{
+  "src/middleware.ts": [
+    "src/lib/logger"
+  ],
+  "src/app/error.tsx": [
+    "src/components/ui/Button",
+    "src/lib/logger"
+  ],
+  "src/app/global-error.tsx": [
+    "src/lib/logger"
+  ],
+  "src/app/layout.tsx": [
+    "src/providers/ThemeProvider",
+    "src/providers/QueryProvider",
+    "src/providers/AuthProvider"
+  ],
+  "src/app/page.tsx": [
+    "src/hooks/useAuth",
+    "src/components/ui/Loading"
+  ],
+  "src/app/(admin)/layout.tsx": [
+    "src/components/layout/Sidebar",
+    "src/components/layout/Header",
+    "src/components/layout/Footer",
+    "src/hooks/useAuth",
+    "src/components/ui/Loading"
+  ],
+  "src/app/(admin)/access-denied/page.tsx": [],
+  "src/app/(admin)/ai/page.tsx": [
+    "src/features/ai/components/AIDashboard",
+    "src/features/ai/components/AIChat",
+    "src/features/ai/components/AISalesForecastView",
+    "src/features/ai/components/AIPurchasingSuggestionsView",
+    "src/components/ui/Button",
+    "src/components/ui/Badge"
+  ],
+  "src/app/(admin)/audit/page.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/Card",
+    "src/components/ui/Select",
+    "src/components/ui/Input",
+    "src/components/ui/Loading",
+    "src/components/ui/Badge",
+    "src/components/ui/EmptyState",
+    "src/components/ui/Modal",
+    "src/components/ui/Pagination",
+    "src/components/ui/Table",
+    "src/hooks/usePermission",
+    "src/hooks/usePagination",
+    "src/utils/format",
+    "src/utils/export",
+    "src/features/audit/hooks/useAudit",
+    "src/features/audit/utils",
+    "src/types"
+  ],
+  "src/app/(admin)/brands/page.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/Modal",
+    "src/components/ui/ConfirmDialog",
+    "src/components/ui/SearchInput",
+    "src/components/ui/Select",
+    "src/components/ui/Pagination",
+    "src/components/ui/Loading",
+    "src/features/brands/components/BrandTable",
+    "src/features/brands/components/BrandForm",
+    "src/features/brands/schemas/brand.schema",
+    "src/hooks/useDebounce",
+    "src/hooks/usePagination",
+    "src/hooks/usePermission",
+    "src/lib/utils",
+    "src/types"
+  ],
+  "src/app/(admin)/cash/page.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/Modal",
+    "src/components/ui/Card",
+    "src/components/ui/Badge",
+    "src/components/ui/Loading",
+    "src/components/ui/Pagination",
+    "src/components/ui/ShortcutsHelpModal",
+    "src/features/cash/components/OpenCashForm",
+    "src/features/cash/components/CloseCashForm",
+    "src/features/cash/components/CashMovementForm",
+    "src/features/cash/components/CashMovementTable",
+    "src/features/cash/components/CashRegisterTable",
+    "src/features/cash/schemas/cash.schema",
+    "src/hooks/usePagination",
+    "src/hooks/usePermission",
+    "src/hooks/useKeyboardShortcuts",
+    "src/lib/utils",
+    "src/utils/format",
+    "src/types"
+  ],
+  "src/app/(admin)/categories/page.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/Modal",
+    "src/components/ui/ConfirmDialog",
+    "src/components/ui/SearchInput",
+    "src/components/ui/Select",
+    "src/components/ui/Pagination",
+    "src/components/ui/Loading",
+    "src/features/categories/components/CategoryTable",
+    "src/features/categories/components/CategoryForm",
+    "src/features/categories/schemas/category.schema",
+    "src/hooks/useDebounce",
+    "src/hooks/usePagination",
+    "src/hooks/usePermission",
+    "src/lib/utils",
+    "src/types"
+  ],
+  "src/app/(admin)/customers/page.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/Modal",
+    "src/components/ui/ConfirmDialog",
+    "src/components/ui/SearchInput",
+    "src/components/ui/Select",
+    "src/components/ui/Pagination",
+    "src/components/ui/Loading",
+    "src/features/customers/components/CustomerTable",
+    "src/features/customers/components/CustomerForm",
+    "src/features/customers/schemas/customer.schema",
+    "src/hooks/useDebounce",
+    "src/hooks/usePagination",
+    "src/hooks/usePermission",
+    "src/lib/utils",
+    "src/types"
+  ],
+  "src/app/(admin)/dashboard/page.tsx": [
+    "src/hooks/useAuth",
+    "src/features/dashboard/hooks/useDashboardSummary",
+    "src/components/ui/Card",
+    "src/components/ui/Badge",
+    "src/components/ui/Loading",
+    "src/components/ui/EmptyState",
+    "src/utils/format"
+  ],
+  "src/app/(admin)/financial/page.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/Modal",
+    "src/components/ui/Card",
+    "src/components/ui/Select",
+    "src/components/ui/Input",
+    "src/components/ui/Loading",
+    "src/components/ui/Pagination",
+    "src/components/ui/ConfirmDialog",
+    "src/lib/utils",
+    "src/features/financial/components/ReceivableForm",
+    "src/features/financial/components/PayableForm",
+    "src/features/financial/components/SettleForm",
+    "src/features/financial/components/CostCenterForm",
+    "src/features/financial/components/ReceivableTable",
+    "src/features/financial/components/PayableTable",
+    "src/features/financial/components/CostCenterTable",
+    "src/features/financial/components/CashFlowTable",
+    "src/hooks/usePagination",
+    "src/hooks/usePermission",
+    "src/lib/utils",
+    "src/types"
+  ],
+  "src/app/(admin)/inventory/page.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/Modal",
+    "src/components/ui/SearchInput",
+    "src/components/ui/Select",
+    "src/components/ui/Pagination",
+    "src/components/ui/Loading",
+    "src/components/ui/ShortcutsHelpModal",
+    "src/features/inventory/components/MovementTable",
+    "src/features/inventory/components/MovementForm",
+    "src/features/inventory/hooks/useInventory",
+    "src/features/inventory/schemas/movement.schema",
+    "src/hooks/useDebounce",
+    "src/hooks/usePagination",
+    "src/hooks/usePermission",
+    "src/hooks/useKeyboardShortcuts",
+    "src/lib/utils",
+    "src/types"
+  ],
+  "src/app/(admin)/products/page.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/Modal",
+    "src/components/ui/ConfirmDialog",
+    "src/components/ui/SearchInput",
+    "src/components/ui/Select",
+    "src/components/ui/Pagination",
+    "src/components/ui/Loading",
+    "src/components/ui/ShortcutsHelpModal",
+    "src/features/products/components/ProductTable",
+    "src/features/products/components/ProductForm",
+    "src/features/products/schemas/product.schema",
+    "src/hooks/useDebounce",
+    "src/hooks/usePagination",
+    "src/hooks/usePermission",
+    "src/hooks/useKeyboardShortcuts",
+    "src/lib/utils",
+    "src/types"
+  ],
+  "src/app/(admin)/purchases/page.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/Modal",
+    "src/components/ui/ConfirmDialog",
+    "src/components/ui/Select",
+    "src/components/ui/Pagination",
+    "src/components/ui/Loading",
+    "src/features/purchases/components/PurchaseTable",
+    "src/features/purchases/components/PurchaseForm",
+    "src/features/purchases/schemas/purchase.schema",
+    "src/hooks/usePagination",
+    "src/hooks/usePermission",
+    "src/lib/utils",
+    "src/utils/format",
+    "src/types"
+  ],
+  "src/app/(admin)/reports/page.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/Card",
+    "src/components/ui/Select",
+    "src/components/ui/Input",
+    "src/components/ui/Loading",
+    "src/components/ui/Badge",
+    "src/components/ui/EmptyState",
+    "src/components/ui/Table",
+    "src/features/purchases/components/PurchaseStatusBadge",
+    "src/lib/utils",
+    "src/hooks/usePermission",
+    "src/utils/format",
+    "src/utils/export",
+    "src/services/ReportService"
+  ],
+  "src/app/(admin)/sales/page.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/Modal",
+    "src/components/ui/ConfirmDialog",
+    "src/components/ui/Select",
+    "src/components/ui/Pagination",
+    "src/components/ui/Loading",
+    "src/components/ui/ShortcutsHelpModal",
+    "src/features/sales/components/SaleTable",
+    "src/features/sales/components/SaleForm",
+    "src/features/sales/hooks/useSales",
+    "src/features/sales/schemas/sale.schema",
+    "src/hooks/usePagination",
+    "src/hooks/usePermission",
+    "src/hooks/useKeyboardShortcuts",
+    "src/lib/utils",
+    "src/utils/format",
+    "src/types"
+  ],
+  "src/app/(admin)/settings/page.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/Card",
+    "src/components/ui/Loading",
+    "src/features/auth/components/ChangePasswordForm",
+    "src/features/settings/components/CompanyForm",
+    "src/features/settings/components/PreferencesForm",
+    "src/features/settings/components/KeyboardShortcutsManager",
+    "src/features/settings/components/PermissionsManager",
+    "src/hooks/usePermission",
+    "src/hooks/useTheme",
+    "src/lib/utils"
+  ],
+  "src/app/(admin)/suppliers/page.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/Modal",
+    "src/components/ui/ConfirmDialog",
+    "src/components/ui/SearchInput",
+    "src/components/ui/Select",
+    "src/components/ui/Pagination",
+    "src/components/ui/Loading",
+    "src/features/suppliers/components/SupplierTable",
+    "src/features/suppliers/components/SupplierForm",
+    "src/features/suppliers/schemas/supplier.schema",
+    "src/hooks/useDebounce",
+    "src/hooks/usePagination",
+    "src/hooks/usePermission",
+    "src/lib/utils",
+    "src/types"
+  ],
+  "src/app/(admin)/users/page.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/Modal",
+    "src/components/ui/ConfirmDialog",
+    "src/components/ui/SearchInput",
+    "src/components/ui/Pagination",
+    "src/components/ui/Loading",
+    "src/features/users/components/UserTable",
+    "src/features/users/components/UserForm",
+    "src/features/users/hooks/useUsers",
+    "src/hooks/useDebounce",
+    "src/hooks/usePagination",
+    "src/hooks/usePermission",
+    "src/lib/utils",
+    "src/types"
+  ],
+  "src/app/(admin)/users/roles/page.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/Modal",
+    "src/components/ui/Card",
+    "src/components/ui/Loading",
+    "src/features/users/components/RoleForm",
+    "src/features/users/components/PermissionMatrix",
+    "src/features/users/hooks/useRoles",
+    "src/lib/utils",
+    "src/types"
+  ],
+  "src/app/api/users/route.ts": [
+    "src/lib/supabase-admin",
+    "src/features/users/schemas/user.schema",
+    "src/lib/logger"
+  ],
+  "src/app/forgot-password/page.tsx": [
+    "src/features/auth/components/ForgotPasswordForm"
+  ],
+  "src/app/login/page.tsx": [
+    "src/features/auth/components/LoginForm"
+  ],
+  "src/app/reset-password/page.tsx": [
+    "src/features/auth/components/ResetPasswordForm"
+  ],
+  "src/components/layout/Breadcrumb.tsx": [],
+  "src/components/layout/Footer.tsx": [],
+  "src/components/layout/Header.tsx": [
+    "src/hooks/useAuth",
+    "src/hooks/useTheme",
+    "src/components/layout/Breadcrumb",
+    "src/components/ui/Avatar",
+    "src/components/ui/Button",
+    "src/features/notifications/hooks/useNotifications",
+    "src/utils/format",
+    "src/types"
+  ],
+  "src/components/layout/Sidebar.tsx": [
+    "src/lib/utils",
+    "src/hooks/usePermission"
+  ],
+  "src/components/ui/Avatar.tsx": [
+    "src/lib/utils"
+  ],
+  "src/components/ui/Badge.tsx": [
+    "src/lib/utils"
+  ],
+  "src/components/ui/Button.tsx": [
+    "src/lib/utils"
+  ],
+  "src/components/ui/Card.tsx": [
+    "src/lib/utils"
+  ],
+  "src/components/ui/ConfirmDialog.tsx": [
+    "src/components/ui/Modal",
+    "src/components/ui/Button"
+  ],
+  "src/components/ui/Dialog.tsx": [
+    "src/components/ui/Modal"
+  ],
+  "src/components/ui/Drawer.tsx": [
+    "src/components/ui/Button",
+    "src/lib/utils"
+  ],
+  "src/components/ui/EmptyState.tsx": [
+    "src/components/ui/Button",
+    "src/lib/utils"
+  ],
+  "src/components/ui/FilterPanel.tsx": [
+    "src/components/ui/Button",
+    "src/lib/utils"
+  ],
+  "src/components/ui/Input.tsx": [
+    "src/lib/utils"
+  ],
+  "src/components/ui/Loading.tsx": [
+    "src/lib/utils"
+  ],
+  "src/components/ui/Modal.tsx": [
+    "src/components/ui/Button",
+    "src/lib/utils"
+  ],
+  "src/components/ui/Pagination.tsx": [
+    "src/components/ui/Button"
+  ],
+  "src/components/ui/SearchInput.tsx": [
+    "src/lib/utils"
+  ],
+  "src/components/ui/Select.tsx": [
+    "src/lib/utils"
+  ],
+  "src/components/ui/ShortcutsHelpModal.tsx": [
+    "src/components/ui/Modal"
+  ],
+  "src/components/ui/Skeleton.tsx": [
+    "src/lib/utils"
+  ],
+  "src/components/ui/Table.tsx": [
+    "src/lib/utils"
+  ],
+  "src/components/ui/Textarea.tsx": [
+    "src/lib/utils"
+  ],
+  "src/features/ai/components/AIChat.tsx": [
+    "src/hooks/useAI",
+    "src/components/ui/Card",
+    "src/components/ui/Button",
+    "src/components/ui/Input",
+    "src/components/ui/Badge"
+  ],
+  "src/features/ai/components/AIDashboard.tsx": [
+    "src/hooks/useAI",
+    "src/components/ui/Card",
+    "src/components/ui/Badge",
+    "src/components/ui/Button",
+    "src/components/ui/Loading",
+    "src/components/ui/EmptyState"
+  ],
+  "src/features/ai/components/AIPurchasingSuggestionsView.tsx": [
+    "src/hooks/useAI",
+    "src/components/ui/Card",
+    "src/components/ui/Badge",
+    "src/components/ui/Button",
+    "src/components/ui/Table",
+    "src/components/ui/EmptyState"
+  ],
+  "src/features/ai/components/AISalesForecastView.tsx": [
+    "src/hooks/useAI",
+    "src/components/ui/Card",
+    "src/components/ui/Badge",
+    "src/components/ui/Table"
+  ],
+  "src/features/audit/utils.ts": [],
+  "src/features/audit/hooks/useAudit.ts": [
+    "src/services/AuditService"
+  ],
+  "src/features/auth/components/ChangePasswordForm.tsx": [
+    "src/hooks/useAuth",
+    "src/components/ui/Button",
+    "src/components/ui/Input",
+    "src/components/ui/Card",
+    "src/lib/utils",
+    "src/lib/logger"
+  ],
+  "src/features/auth/components/ForgotPasswordForm.tsx": [
+    "src/hooks/useAuth",
+    "src/components/ui/Button",
+    "src/components/ui/Input",
+    "src/components/ui/Card",
+    "src/lib/utils",
+    "src/lib/logger"
+  ],
+  "src/features/auth/components/LoginForm.tsx": [
+    "src/hooks/useAuth",
+    "src/components/ui/Button",
+    "src/components/ui/Input",
+    "src/components/ui/Card",
+    "src/lib/utils",
+    "src/lib/logger"
+  ],
+  "src/features/auth/components/ResetPasswordForm.tsx": [
+    "src/hooks/useAuth",
+    "src/components/ui/Button",
+    "src/components/ui/Input",
+    "src/components/ui/Card",
+    "src/lib/utils",
+    "src/lib/logger"
+  ],
+  "src/features/brands/components/BrandForm.tsx": [
+    "src/components/ui/Input",
+    "src/components/ui/Button",
+    "src/features/brands/schemas/brand.schema",
+    "src/types"
+  ],
+  "src/features/brands/components/BrandTable.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/Badge",
+    "src/components/ui/EmptyState",
+    "src/utils/format",
+    "src/types"
+  ],
+  "src/features/brands/hooks/useBrands.ts": [],
+  "src/features/brands/schemas/brand.schema.ts": [],
+  "src/features/cash/components/CashMovementForm.tsx": [
+    "src/components/ui/Input",
+    "src/components/ui/Select",
+    "src/components/ui/Button",
+    "src/features/cash/schemas/cash.schema"
+  ],
+  "src/features/cash/components/CashMovementTable.tsx": [
+    "src/components/ui/Badge",
+    "src/components/ui/EmptyState",
+    "src/utils/format",
+    "src/types"
+  ],
+  "src/features/cash/components/CashRegisterTable.tsx": [
+    "src/components/ui/Badge",
+    "src/components/ui/EmptyState",
+    "src/utils/format",
+    "src/types"
+  ],
+  "src/features/cash/components/CloseCashForm.tsx": [
+    "src/components/ui/Input",
+    "src/components/ui/Button",
+    "src/utils/format",
+    "src/features/cash/schemas/cash.schema"
+  ],
+  "src/features/cash/components/OpenCashForm.tsx": [
+    "src/components/ui/Input",
+    "src/components/ui/Button",
+    "src/features/cash/schemas/cash.schema"
+  ],
+  "src/features/cash/hooks/useCash.ts": [
+    "src/services/CashService",
+    "src/types"
+  ],
+  "src/features/cash/schemas/cash.schema.ts": [],
+  "src/features/categories/components/CategoryForm.tsx": [
+    "src/components/ui/Input",
+    "src/components/ui/Textarea",
+    "src/components/ui/Button",
+    "src/features/categories/schemas/category.schema",
+    "src/types"
+  ],
+  "src/features/categories/components/CategoryTable.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/Badge",
+    "src/components/ui/EmptyState",
+    "src/utils/format",
+    "src/types"
+  ],
+  "src/features/categories/hooks/useCategories.ts": [],
+  "src/features/categories/schemas/category.schema.ts": [],
+  "src/features/customers/components/CustomerForm.tsx": [
+    "src/components/ui/Input",
+    "src/components/ui/Textarea",
+    "src/components/ui/Button",
+    "src/features/customers/schemas/customer.schema",
+    "src/types"
+  ],
+  "src/features/customers/components/CustomerTable.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/Badge",
+    "src/components/ui/EmptyState",
+    "src/types",
+    "src/utils/format"
+  ],
+  "src/features/customers/hooks/useCustomers.ts": [],
+  "src/features/customers/schemas/customer.schema.ts": [],
+  "src/features/dashboard/hooks/useDashboardSummary.ts": [
+    "src/services/DashboardService"
+  ],
+  "src/features/financial/utils.ts": [
+    "src/types"
+  ],
+  "src/features/financial/components/CashFlowTable.tsx": [
+    "src/components/ui/Badge",
+    "src/components/ui/EmptyState",
+    "src/utils/format",
+    "src/services/FinancialService"
+  ],
+  "src/features/financial/components/CostCenterForm.tsx": [
+    "src/components/ui/Input",
+    "src/components/ui/Button",
+    "src/features/financial/schemas/financial.schema"
+  ],
+  "src/features/financial/components/CostCenterTable.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/Badge",
+    "src/components/ui/EmptyState",
+    "src/types"
+  ],
+  "src/features/financial/components/PayableForm.tsx": [
+    "src/components/ui/Input",
+    "src/components/ui/Select",
+    "src/components/ui/Button",
+    "src/features/financial/schemas/financial.schema",
+    "src/features/financial/hooks/useFinancialOptions"
+  ],
+  "src/features/financial/components/PayableTable.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/Badge",
+    "src/components/ui/EmptyState",
+    "src/utils/format",
+    "src/types",
+    "src/features/financial/utils"
+  ],
+  "src/features/financial/components/ReceivableForm.tsx": [
+    "src/components/ui/Input",
+    "src/components/ui/Select",
+    "src/components/ui/Button",
+    "src/features/financial/schemas/financial.schema",
+    "src/features/financial/hooks/useFinancialOptions"
+  ],
+  "src/features/financial/components/ReceivableTable.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/Badge",
+    "src/components/ui/EmptyState",
+    "src/utils/format",
+    "src/types",
+    "src/features/financial/utils"
+  ],
+  "src/features/financial/components/SettleForm.tsx": [
+    "src/components/ui/Input",
+    "src/components/ui/Button",
+    "src/utils/format",
+    "src/features/financial/schemas/financial.schema"
+  ],
+  "src/features/financial/hooks/useFinancial.ts": [
+    "src/services/CostCenterService",
+    "src/services/AccountsPayableService",
+    "src/services/FinancialService"
+  ],
+  "src/features/financial/hooks/useFinancialOptions.ts": [
+    "src/services/CustomerService",
+    "src/services/SupplierService",
+    "src/features/financial/hooks/useFinancial"
+  ],
+  "src/features/financial/schemas/financial.schema.ts": [],
+  "src/features/inventory/components/MovementForm.tsx": [
+    "src/components/ui/Input",
+    "src/components/ui/Select",
+    "src/components/ui/Textarea",
+    "src/components/ui/Button",
+    "src/features/inventory/schemas/movement.schema",
+    "src/features/inventory/hooks/useActiveProducts"
+  ],
+  "src/features/inventory/components/MovementTable.tsx": [
+    "src/components/ui/Badge",
+    "src/components/ui/EmptyState",
+    "src/utils/format",
+    "src/types"
+  ],
+  "src/features/inventory/hooks/useActiveProducts.ts": [
+    "src/services/ProductService"
+  ],
+  "src/features/inventory/hooks/useInventory.ts": [],
+  "src/features/inventory/schemas/movement.schema.ts": [],
+  "src/features/notifications/hooks/useNotifications.ts": [
+    "src/services/NotificationService"
+  ],
+  "src/features/products/components/ProductForm.tsx": [
+    "src/components/ui/Input",
+    "src/components/ui/Select",
+    "src/components/ui/Textarea",
+    "src/components/ui/Button",
+    "src/features/products/schemas/product.schema",
+    "src/features/products/hooks/useProductOptions",
+    "src/types"
+  ],
+  "src/features/products/components/ProductTable.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/Badge",
+    "src/components/ui/EmptyState",
+    "src/utils/format",
+    "src/types"
+  ],
+  "src/features/products/hooks/useProductOptions.ts": [
+    "src/services/CategoryService",
+    "src/services/BrandService",
+    "src/services/SupplierService"
+  ],
+  "src/features/products/hooks/useProducts.ts": [],
+  "src/features/products/schemas/product.schema.ts": [],
+  "src/features/purchases/components/PurchaseForm.tsx": [
+    "src/components/ui/Input",
+    "src/components/ui/Select",
+    "src/components/ui/Textarea",
+    "src/components/ui/Button",
+    "src/utils/format",
+    "src/features/purchases/schemas/purchase.schema",
+    "src/features/products/hooks/useProductOptions",
+    "src/features/inventory/hooks/useActiveProducts"
+  ],
+  "src/features/purchases/components/PurchaseStatusBadge.tsx": [
+    "src/components/ui/Badge",
+    "src/types"
+  ],
+  "src/features/purchases/components/PurchaseTable.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/EmptyState",
+    "src/features/purchases/components/PurchaseStatusBadge",
+    "src/utils/format",
+    "src/types"
+  ],
+  "src/features/purchases/hooks/usePurchases.ts": [],
+  "src/features/purchases/schemas/purchase.schema.ts": [],
+  "src/features/reports/hooks/useReports.ts": [],
+  "src/features/sales/components/SaleForm.tsx": [
+    "src/components/ui/Input",
+    "src/components/ui/Select",
+    "src/components/ui/Button",
+    "src/utils/format",
+    "src/features/sales/schemas/sale.schema",
+    "src/features/sales/hooks/useSaleOptions",
+    "src/hooks/useKeyboardShortcuts"
+  ],
+  "src/features/sales/components/SaleTable.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/Badge",
+    "src/components/ui/EmptyState",
+    "src/utils/format",
+    "src/types"
+  ],
+  "src/features/sales/hooks/useSaleOptions.ts": [
+    "src/services/CustomerService",
+    "src/features/inventory/hooks/useActiveProducts"
+  ],
+  "src/features/sales/hooks/useSales.ts": [
+    "src/services/SaleService"
+  ],
+  "src/features/sales/schemas/sale.schema.ts": [],
+  "src/features/settings/components/CompanyForm.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/Input",
+    "src/features/settings/schemas/settings.schema",
+    "src/types"
+  ],
+  "src/features/settings/components/KeyboardShortcutsManager.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/Modal",
+    "src/components/ui/Input",
+    "src/components/ui/Select",
+    "src/components/ui/Card",
+    "src/components/ui/Badge",
+    "src/components/ui/Table",
+    "src/components/ui/Loading",
+    "src/services/KeyboardShortcutService",
+    "src/services/KeyboardShortcutService"
+  ],
+  "src/features/settings/components/PermissionsManager.tsx": [
+    "src/components/ui/Card",
+    "src/components/ui/Select",
+    "src/components/ui/Loading",
+    "src/features/users/hooks/useRoles",
+    "src/features/users/hooks/usePermissions",
+    "src/types"
+  ],
+  "src/features/settings/components/PreferencesForm.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/Select",
+    "src/features/settings/schemas/settings.schema",
+    "src/types"
+  ],
+  "src/features/settings/hooks/useSettings.ts": [
+    "src/services/SettingsService"
+  ],
+  "src/features/settings/schemas/settings.schema.ts": [],
+  "src/features/suppliers/components/SupplierForm.tsx": [
+    "src/components/ui/Input",
+    "src/components/ui/Textarea",
+    "src/components/ui/Button",
+    "src/features/suppliers/schemas/supplier.schema",
+    "src/types"
+  ],
+  "src/features/suppliers/components/SupplierTable.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/Badge",
+    "src/components/ui/EmptyState",
+    "src/types"
+  ],
+  "src/features/suppliers/hooks/useSuppliers.ts": [],
+  "src/features/suppliers/schemas/supplier.schema.ts": [],
+  "src/features/users/components/PermissionMatrix.tsx": [
+    "src/components/ui/Skeleton",
+    "src/features/users/hooks/usePermissions",
+    "src/types"
+  ],
+  "src/features/users/components/RoleForm.tsx": [
+    "src/components/ui/Input",
+    "src/components/ui/Textarea",
+    "src/components/ui/Button",
+    "src/features/users/schemas/role.schema",
+    "src/types"
+  ],
+  "src/features/users/components/RoleSelector.tsx": [
+    "src/components/ui/Select",
+    "src/features/users/hooks/useRoles"
+  ],
+  "src/features/users/components/UserForm.tsx": [
+    "src/components/ui/Input",
+    "src/components/ui/Button",
+    "src/features/users/components/RoleSelector",
+    "src/types"
+  ],
+  "src/features/users/components/UserStatusBadge.tsx": [
+    "src/components/ui/Badge",
+    "src/types"
+  ],
+  "src/features/users/components/UserTable.tsx": [
+    "src/components/ui/Button",
+    "src/components/ui/EmptyState",
+    "src/features/users/components/UserStatusBadge",
+    "src/utils/format",
+    "src/types"
+  ],
+  "src/features/users/hooks/usePermissions.ts": [
+    "src/services/PermissionService"
+  ],
+  "src/features/users/hooks/useRoles.ts": [
+    "src/services/RoleService"
+  ],
+  "src/features/users/hooks/useUsers.ts": [],
+  "src/features/users/schemas/role.schema.ts": [],
+  "src/features/users/schemas/user.schema.ts": [],
+  "src/hooks/useAI.ts": [
+    "src/services/AIService"
+  ],
+  "src/hooks/useAuth.ts": [
+    "src/providers/AuthProvider"
+  ],
+  "src/hooks/useDebounce.ts": [],
+  "src/hooks/useFilters.ts": [],
+  "src/hooks/useKeyboardShortcuts.ts": [],
+  "src/hooks/usePagination.ts": [],
+  "src/hooks/usePermission.ts": [
+    "src/hooks/useAuth"
+  ],
+  "src/hooks/useTheme.ts": [],
+  "src/lib/logger.ts": [],
+  "src/lib/redis.ts": [],
+  "src/lib/supabase-admin.ts": [],
+  "src/lib/supabase.ts": [],
+  "src/lib/utils.ts": [],
+  "src/providers/AuthProvider.tsx": [
+    "src/services/AuthService",
+    "src/types",
+    "src/lib/supabase",
+    "src/lib/logger"
+  ],
+  "src/providers/QueryProvider.tsx": [],
+  "src/providers/ThemeProvider.tsx": [],
+  "src/schemas/ai.schemas.ts": [],
+  "src/services/AccountsPayableService.ts": [
+    "src/services/BaseService",
+    "src/types"
+  ],
+  "src/services/AccountsReceivableService.ts": [
+    "src/services/BaseService",
+    "src/types"
+  ],
+  "src/services/AIService.ts": [
+    "src/services/BaseService"
+  ],
+  "src/services/AuditService.ts": [
+    "src/services/BaseService",
+    "src/types"
+  ],
+  "src/services/AuthService.ts": [
+    "src/services/BaseService",
+    "src/types",
+    "src/lib/logger"
+  ],
+  "src/services/BaseService.ts": [
+    "src/lib/supabase",
+    "src/lib/logger"
+  ],
+  "src/services/BrandService.ts": [
+    "src/services/BaseService",
+    "src/types",
+    "src/services/cache/CacheService",
+    "src/services/cache/CacheKeys",
+    "src/services/cache/CacheTTL"
+  ],
+  "src/services/CashService.ts": [
+    "src/services/BaseService",
+    "src/types"
+  ],
+  "src/services/CategoryService.ts": [
+    "src/services/BaseService",
+    "src/types",
+    "src/utils/sanitize",
+    "src/services/cache/CacheService",
+    "src/services/cache/CacheKeys",
+    "src/services/cache/CacheTTL"
+  ],
+  "src/services/CostCenterService.ts": [
+    "src/services/BaseService",
+    "src/types"
+  ],
+  "src/services/CustomerService.ts": [
+    "src/services/BaseService",
+    "src/types"
+  ],
+  "src/services/DashboardService.ts": [
+    "src/services/BaseService",
+    "src/types",
+    "src/services/cache/CacheService",
+    "src/services/cache/CacheKeys",
+    "src/services/cache/CacheTTL"
+  ],
+  "src/services/FinancialService.ts": [
+    "src/services/BaseService"
+  ],
+  "src/services/InventoryService.ts": [
+    "src/services/BaseService",
+    "src/types",
+    "src/utils/sanitize"
+  ],
+  "src/services/KeyboardShortcutService.ts": [
+    "src/services/BaseService"
+  ],
+  "src/services/NotificationService.ts": [
+    "src/services/BaseService",
+    "src/types"
+  ],
+  "src/services/PermissionService.ts": [
+    "src/services/BaseService",
+    "src/types"
+  ],
+  "src/services/ProductService.ts": [
+    "src/services/BaseService",
+    "src/types",
+    "src/services/cache/CacheService",
+    "src/services/cache/CacheKeys",
+    "src/services/cache/CacheTTL"
+  ],
+  "src/services/PurchaseService.ts": [
+    "src/services/BaseService",
+    "src/types"
+  ],
+  "src/services/ReportService.ts": [
+    "src/services/BaseService"
+  ],
+  "src/services/RoleService.ts": [
+    "src/services/BaseService",
+    "src/types"
+  ],
+  "src/services/SaleService.ts": [
+    "src/services/BaseService",
+    "src/types",
+    "src/services/cache/CacheService",
+    "src/services/cache/CacheKeys"
+  ],
+  "src/services/SettingsService.ts": [
+    "src/services/BaseService",
+    "src/types"
+  ],
+  "src/services/SupplierService.ts": [
+    "src/services/BaseService",
+    "src/types"
+  ],
+  "src/services/UserService.ts": [
+    "src/services/BaseService",
+    "src/types",
+    "src/utils/sanitize"
+  ],
+  "src/services/cache/CacheKeys.ts": [],
+  "src/services/cache/CacheService.ts": [
+    "src/services/BaseService",
+    "src/lib/redis",
+    "src/lib/logger"
+  ],
+  "src/services/cache/CacheTTL.ts": [],
+  "src/types/ai.ts": [],
+  "src/types/index.ts": [
+    "src/types/ai"
+  ],
+  "src/utils/export.ts": [],
+  "src/utils/format.ts": [],
+  "src/utils/sanitize.ts": []
+}

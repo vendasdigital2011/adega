@@ -1,0 +1,190 @@
+{
+  "id": "8210bba5-a359-404b-8002-e02e5afce2a1",
+  "title": "Missing Transactional Locking on Concurrent POS Sale Stock Deduction",
+  "description": "In `SaleService.create`, stock availability is checked (`p.current_stock >= item.quantity`) and decremented client-side in LocalStorage/IndexedDB mock stores without concurrency locks or atomic state guards. Concurrent sale submissions for low-stock items could result in race conditions.",
+  "impact": "Business Logic Flaw resulting in negative stock balances during simultaneous POS checkout operations.",
+  "severity": "MEDIUM",
+  "privileges_required": "LOW",
+  "attacker_position": "INTERNAL_NETWORK",
+  "user_interaction": "NONE",
+  "status": "VALID",
+  "code_paths": [
+    "src/services/SaleService.ts:188",
+    "src/services/SaleService.ts:206"
+  ],
+  "discovery_commit": "live-tree",
+  "cwe": "CWE-840",
+  "signature": "eee964830652304d",
+  "lineage_id": "d4699c7b-ec96-4cfc-9cd1-cd149534a6a4",
+  "mitigation": "Wrap stock deduction in Supabase RPC database-level row locks (e.g. SELECT FOR UPDATE) or atomic decrements.",
+  "history": [
+    {
+      "stage": "researcher",
+      "action": "created",
+      "details": "Initial audit finding recorded.",
+      "pass_number": 1,
+      "timestamp": "2026-08-03T14:04:04.005594+00:00"
+    },
+    {
+      "stage": "reviewer",
+      "action": "reviewed",
+      "details": "Determined status as VALID because Verified: SaleService.create checks current_stock and decrements it client-side without row locks or...",
+      "pass_number": 1,
+      "snapshot": "live-tree",
+      "timestamp": "2026-08-03T17:04:02.448083+00:00"
+    },
+    {
+      "stage": "critic",
+      "action": "evaluated",
+      "details": "Determined production viability as VIABLE because Targeted flaw is fully triggerable in standard production POS checkout operations during high-concur...",
+      "pass_number": 1,
+      "snapshot": "live-tree",
+      "timestamp": "2026-08-03T17:05:09.775494+00:00"
+    },
+    {
+      "stage": "calibrate",
+      "action": "calibrated",
+      "details": "Calculated risk score as 6.0 and priority as HIGH.",
+      "pass_number": 1,
+      "snapshot": "live-tree",
+      "timestamp": "2026-08-03T17:06:50.274699+00:00"
+    }
+  ],
+  "reasoning": "Verified: SaleService.create checks current_stock and decrements it client-side without row locks or database-level serializable transactions in mock mode.",
+  "repro_hints": "Simulate 2 concurrent calls to SaleService.create for the last item in stock. Observe both succeed leading to negative stock or unhandled race condition.",
+  "triage_checklist": {
+    "ignore_hypothetical_misuse": {
+      "outcome": "PASS"
+    },
+    "ignore_missing_hygiene": {
+      "outcome": "PASS"
+    },
+    "require_strict_reproducibility": {
+      "outcome": "PASS"
+    },
+    "avoid_pedantic_linting": {
+      "outcome": "PASS"
+    },
+    "no_security_flaw_stretching": {
+      "outcome": "PASS"
+    },
+    "evaluate_questionable_file_paths": {
+      "outcome": "PASS"
+    },
+    "ignore_resource_exhaustion_dos": {
+      "outcome": "PASS"
+    },
+    "intrinsic_security_flaws": {
+      "outcome": "PASS"
+    },
+    "verify_mitigations_pragmatically": {
+      "outcome": "PASS"
+    },
+    "refine_code_paths_strictly": {
+      "outcome": "PASS"
+    },
+    "ignore_simd_vector_padding": {
+      "outcome": "PASS"
+    },
+    "ensure_source_code_coherence": {
+      "outcome": "PASS"
+    },
+    "verify_attacker_control_of_source": {
+      "outcome": "PASS"
+    }
+  },
+  "production_viability": "VIABLE",
+  "critic_reasoning": "Targeted flaw is fully triggerable in standard production POS checkout operations during high-concurrency periods.",
+  "impact_score": 3,
+  "likelihood_score": 3,
+  "availability_tier": "CRITICAL",
+  "inferred_exposure": "EXPOSED",
+  "mantis_risk_score": 6.0,
+  "priority": "HIGH",
+  "sanity_triage_applied": "Direct POS Transaction Exposure",
+  "calibration_checklist": {
+    "repro_failure": {
+      "outcome": "DOES_NOT_APPLY"
+    },
+    "unreachable_inputs": {
+      "outcome": "DOES_NOT_APPLY"
+    },
+    "third_party_reachability": {
+      "outcome": "DOES_NOT_APPLY"
+    },
+    "minor_config_hygiene": {
+      "outcome": "DOES_NOT_APPLY"
+    },
+    "non_security_critical": {
+      "outcome": "DOES_NOT_APPLY"
+    },
+    "vague_code_paths": {
+      "outcome": "DOES_NOT_APPLY"
+    },
+    "unreliable_triggers": {
+      "outcome": "DOES_NOT_APPLY"
+    },
+    "prerequisite_shell": {
+      "outcome": "DOES_NOT_APPLY"
+    },
+    "physical_long_term": {
+      "outcome": "DOES_NOT_APPLY"
+    },
+    "trusted_controller_zero_delta": {
+      "outcome": "DOES_NOT_APPLY"
+    },
+    "standard_host_attacks": {
+      "outcome": "DOES_NOT_APPLY"
+    },
+    "static_confirmation": {
+      "outcome": "DOES_NOT_APPLY"
+    },
+    "strict_xss": {
+      "outcome": "DOES_NOT_APPLY"
+    },
+    "internal_nested": {
+      "outcome": "DOES_NOT_APPLY"
+    },
+    "probabilistic_llm": {
+      "outcome": "DOES_NOT_APPLY"
+    },
+    "supply_chain_prerequisites": {
+      "outcome": "DOES_NOT_APPLY"
+    },
+    "non_default_config": {
+      "outcome": "DOES_NOT_APPLY"
+    },
+    "confidential_computing_host": {
+      "outcome": "DOES_NOT_APPLY"
+    },
+    "trusted_controller_critical_bypass": {
+      "outcome": "DOES_NOT_APPLY"
+    },
+    "local_attack_vector": {
+      "outcome": "DOES_NOT_APPLY"
+    },
+    "self_contained_blast": {
+      "outcome": "DOES_NOT_APPLY"
+    },
+    "rarely_exposed": {
+      "outcome": "DOES_NOT_APPLY"
+    },
+    "equivalent_primitives": {
+      "outcome": "DOES_NOT_APPLY"
+    },
+    "documented_insecure_config": {
+      "outcome": "DOES_NOT_APPLY"
+    },
+    "physical_temporary": {
+      "outcome": "DOES_NOT_APPLY"
+    },
+    "high_privilege_external": {
+      "outcome": "DOES_NOT_APPLY"
+    },
+    "trusted_controller_standard_bypass": {
+      "outcome": "DOES_NOT_APPLY"
+    }
+  },
+  "outrage_commentary": "High merchant outrage if negative inventory causes stock ledger mismatch during peak sales hours.",
+  "executive_summary": "Absence of row locks in POS sale creation allows concurrent checkouts to deplete inventory past zero."
+}

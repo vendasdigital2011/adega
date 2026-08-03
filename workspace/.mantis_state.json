@@ -1,0 +1,37 @@
+{
+  "current_stage": "mantis-report",
+  "completed_stages": [
+    "mantis-summarize",
+    "mantis-architecture",
+    "mantis-threat-model",
+    "mantis-plan",
+    "mantis-researcher",
+    "mantis-dedupe",
+    "mantis-review",
+    "mantis-critic",
+    "mantis-calibrate",
+    "mantis-report"
+  ],
+  "active_snapshot": {
+    "root": "d:/Claudcoude/projetos/adega",
+    "snapshot_id": "live-tree",
+    "snapshot_pinned": false
+  },
+  "pass_number": 1,
+  "total_findings": 2,
+  "last_updated": "2026-08-03T17:07:52.523713+00:00",
+  "changed_files": [
+    "src/services/InventoryService.ts",
+    "src/services/PurchaseService.ts",
+    "src/services/CustomerService.ts",
+    "src/features/customers/hooks/useCustomers.ts",
+    "src/features/sales/components/SaleForm.tsx",
+    "src/services/SaleService.ts",
+    "src/features/sales/hooks/useSales.ts",
+    "src/services/PermissionService.ts",
+    "src/features/settings/components/PermissionsManager.tsx",
+    "src/app/(admin)/settings/page.tsx"
+  ],
+  "changed_files_status": "COMPUTED",
+  "changed_files_pass": 1
+}

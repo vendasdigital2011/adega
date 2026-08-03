@@ -201,9 +201,12 @@ export class SaleService extends BaseService {
         const itemTotal = unitPrice * item.quantity
         subtotal += itemTotal
 
-        // Baixa do estoque
+        // Baixa do estoque atômica com trava de saldo não-negativo
         if (p) {
-          p.current_stock -= item.quantity
+          if (p.current_stock < item.quantity) {
+            throw new Error("Estoque insuficiente para concluir esta venda.")
+          }
+          p.current_stock = Math.max(0, p.current_stock - item.quantity)
           p.updated_at = new Date().toISOString()
         }
 

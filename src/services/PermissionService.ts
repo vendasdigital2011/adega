@@ -77,7 +77,10 @@ export class PermissionService extends BaseService {
   public async listForRole(roleId: string): Promise<string[]> {
     if (this.isOfflineOrDemoMode()) {
       const allPerms = await this.listAll()
-      const initialGranted = allPerms.map((p) => p.id)
+      const isNonAdminRole = roleId.toLowerCase().includes("vendedor") || roleId.toLowerCase().includes("user") || roleId.toLowerCase().includes("func")
+      const initialGranted = isNonAdminRole
+        ? allPerms.filter((p) => p.name.includes("sales") || p.name.includes("products.view") || p.name.includes("customers") || p.name.includes("cash.view")).map((p) => p.id)
+        : allPerms.map((p) => p.id)
       return this.getLocalMockStore(`role_permissions_${roleId}`, initialGranted)
     }
 

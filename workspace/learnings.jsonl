@@ -1,0 +1,2 @@
+{"title": "Missing Transactional Locking on Concurrent POS Sale Stock Deduction", "code_paths": ["src/services/SaleService.ts:188", "src/services/SaleService.ts:206"], "status": "VIABLE", "snapshot": "live-tree"}
+{"title": "Unrestricted Local Mock Store Permission Fallback in Demo Mode", "code_paths": ["src/services/PermissionService.ts:88"], "status": "CONDITIONAL_VIABLE", "snapshot": "live-tree"}
