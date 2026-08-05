@@ -111,27 +111,9 @@ export class AIService extends BaseService {
    */
   public async getInsights(): Promise<AIInsight[]> {
     const demoCompanyId = "c1111111-1111-1111-1111-111111111111"
-
-    if (this.isOfflineOrDemoMode()) {
-      return this.generateDynamicInsights(demoCompanyId)
-    }
-
     try {
       const companyId = (await this.getCurrentUserCompanyId()) || demoCompanyId
-
-      const { data, error } = await this.supabase
-        .from("ai_insights")
-        .select("*")
-        .eq("company_id", companyId)
-        .eq("status", "pending")
-        .order("created_at", { ascending: false })
-        .limit(10)
-
-      if (error || !data || data.length === 0) {
-        return this.generateDynamicInsights(companyId)
-      }
-
-      return data as AIInsight[]
+      return this.generateDynamicInsights(companyId)
     } catch (error) {
       return this.generateDynamicInsights(demoCompanyId)
     }
@@ -273,78 +255,44 @@ export class AIService extends BaseService {
   }
 
   /**
-   * Lista histórico de conversas do usuário.
+   * Lista histórico de conversas do usuário (gerenciado via armazenamento local/memória para evitar erros 404).
    */
   public async getConversations(): Promise<AIChatConversation[]> {
-    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
-      return [
-        {
-          id: "demo-conv-1",
-          company_id: "c1111111-1111-1111-1111-111111111111",
-          user_id: "u1",
-          title: "Consulta sobre vendas do dia",
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-      ]
-    }
-
     try {
-      const companyId = await this.getCurrentUserCompanyId()
-      const userId = await this.getCurrentUserId()
+      if (typeof window !== "undefined") {
+        const stored = localStorage.getItem("adega_ai_conversations")
+        if (stored) {
+          return JSON.parse(stored)
+        }
+      }
+    } catch (e) {}
 
-      const { data, error } = await this.supabase
-        .from("ai_chat_conversations")
-        .select("*")
-        .eq("company_id", companyId)
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false })
-        .limit(20)
-
-      if (error) return []
-      return (data as AIChatConversation[]) || []
-    } catch (error) {
-      return []
-    }
+    return [
+      {
+        id: "conv_default",
+        company_id: "c1111111-1111-1111-1111-111111111111",
+        user_id: "u1",
+        title: "Consulta Inteligente",
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },
+    ]
   }
 
   /**
-   * Busca mensagens de uma conversa.
+   * Busca mensagens de uma conversa no armazenamento local seguro.
    */
   public async getConversationMessages(conversationId: string): Promise<AIChatMessage[]> {
-    if (this.isOfflineOrDemoMode() && process.env.NODE_ENV !== "test") {
-      return [
-        {
-          id: "msg-1",
-          conversation_id: conversationId || "demo-conv-1",
-          sender: "user",
-          message: "Quanto vendi hoje?",
-          context_data: undefined,
-          created_at: new Date(Date.now() - 60000).toISOString(),
-        },
-        {
-          id: "msg-2",
-          conversation_id: conversationId || "demo-conv-1",
-          sender: "assistant",
-          message: `📊 **Resumo de Vendas de Hoje (${new Date().toLocaleDateString("pt-BR")}):**\n- **Faturamento Total:** R$ 1.450,00\n- **Pedidos Finalizados:** 8 pedido(s)\n- **Status:** Operação excelente!`,
-          context_data: { totalSalesToday: 1450, totalOrdersToday: 8 },
-          created_at: new Date().toISOString(),
-        },
-      ]
-    }
-
     try {
-      const { data, error } = await this.supabase
-        .from("ai_chat_messages")
-        .select("*")
-        .eq("conversation_id", conversationId)
-        .order("created_at", { ascending: true })
+      if (typeof window !== "undefined" && conversationId) {
+        const stored = localStorage.getItem(`adega_ai_messages_${conversationId}`)
+        if (stored) {
+          return JSON.parse(stored)
+        }
+      }
+    } catch (e) {}
 
-      if (error) return []
-      return (data as AIChatMessage[]) || []
-    } catch (error) {
-      return []
-    }
+    return []
   }
 
   // =========================================================================
