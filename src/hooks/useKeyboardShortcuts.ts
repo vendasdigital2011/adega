@@ -42,11 +42,19 @@ export function useKeyboardShortcuts(shortcuts: ShortcutDef[], active: boolean =
 
     function onKeyDown(e: KeyboardEvent) {
       const typing = isTypingTarget(e.target)
-      const isFKey = FUNCTION_KEY_RE.test(e.key)
+      const keyName = e.key || ""
+      const codeName = e.code || ""
+      const isFKey = FUNCTION_KEY_RE.test(keyName) || FUNCTION_KEY_RE.test(codeName)
 
       for (const s of shortcutsRef.current) {
         if (s.enabled === false) continue
-        if (s.key.toLowerCase() !== e.key.toLowerCase()) continue
+
+        const targetKey = s.key.toLowerCase()
+        const matchKey =
+          targetKey === keyName.toLowerCase() ||
+          targetKey === codeName.toLowerCase()
+
+        if (!matchKey) continue
         if (!!s.ctrl !== e.ctrlKey) continue
         if (!!s.shift !== e.shiftKey) continue
         if (!!s.alt !== e.altKey) continue
