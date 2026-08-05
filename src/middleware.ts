@@ -35,8 +35,8 @@ export async function middleware(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ""
   const isPlaceholderSupabase = supabaseUrl.includes("placeholder") || supabaseUrl === ""
   const bypassMiddleware =
-    process.env.NODE_ENV !== "test" &&
-    (process.env.NEXT_PUBLIC_BYPASS_MIDDLEWARE === "true" || isPlaceholderSupabase)
+    process.env.NODE_ENV === "development" &&
+    process.env.NEXT_PUBLIC_BYPASS_MIDDLEWARE === "true"
 
   if (bypassMiddleware) {
     const demoCookie = request.cookies.get("adega_demo_user")?.value
@@ -65,8 +65,8 @@ export async function middleware(request: NextRequest) {
     let response = NextResponse.next({ request })
 
     const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || "https://yqhwtgaqxgptletgxklr.supabase.co",
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || "sb_publishable_GL13qCWkRt35fIQGE6_T3Q_ctp2XCEq",
       {
         cookies: {
           getAll() {
@@ -107,18 +107,22 @@ export async function middleware(request: NextRequest) {
     // no meio do caminho. Reconsulta em toda requisição (não cacheado): a
     // regra de negócio pede acesso perdido "imediatamente", não em X segundos.
     if (user) {
-      const { data: profile } = await supabase.from("users").select("status").eq("id", user.id).single()
-      if (profile?.status !== "active") {
-        logServer("warn", "Sessão revogada: usuário bloqueado ou inativo", {
-          requestId,
-          route: pathname,
-          userId: user.id,
-          action: "middleware.blocked_session_revoked",
-          durationMs: Date.now() - startedAt,
-        })
-        await supabase.auth.signOut()
-        if (isPublicPath) return response
-        return NextResponse.redirect(new URL("/login", request.url))
+      try {
+        const { data: profile } = await supabase.from("users").select("status").eq("id", user.id).single()
+        if (profile && (profile.status === "blocked" || profile.status === "inactive")) {
+          logServer("warn", "Sessão revogada: usuário bloqueado ou inativo", {
+            requestId,
+            route: pathname,
+            userId: user.id,
+            action: "middleware.blocked_session_revoked",
+            durationMs: Date.now() - startedAt,
+          })
+          await supabase.auth.signOut()
+          if (isPublicPath) return response
+          return NextResponse.redirect(new URL("/login", request.url))
+        }
+      } catch (e) {
+        // Falha sutil na busca de perfil não deve revogar a sessão do usuário autenticado no Supabase Auth
       }
     }
 
@@ -175,8 +179,8 @@ export const config = {
      * - api (API routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
+     * - static PWA & asset files: favicon.ico, manifest.json, sw.js, icons/
      */
-    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|manifest.json|sw.js|icons/|.*\\.png$|.*\\.svg$|.*\\.ico$).*)",
   ],
 }

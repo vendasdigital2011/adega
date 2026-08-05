@@ -9,7 +9,7 @@ import { useAuth } from "@/hooks/useAuth"
 import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card"
-import { Wine, Eye, EyeOff, Lock, Mail } from "lucide-react"
+import { Wine, Eye, EyeOff, Lock, Mail, Zap } from "lucide-react"
 import toast from "react-hot-toast"
 import { getErrorMessage } from "@/lib/utils"
 import { logClientError } from "@/lib/logger"
@@ -44,17 +44,29 @@ export function LoginForm() {
     try {
       await login(data.email, data.password)
       toast.success("Login realizado com sucesso!")
-    } catch (error) {
+    } catch (error: any) {
       logClientError("auth.login", error)
-      toast.error(getErrorMessage(error, "E-mail ou senha incorretos."))
+      const msg = error?.message || error?.error_description || getErrorMessage(error, "E-mail ou senha incorretos.")
+      toast.error(msg)
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handleFillEmail = (emailVal: string) => {
+  const handleQuickLogin = async (emailVal: string, passVal: string) => {
     setValue("email", emailVal)
-    toast.success(`E-mail ${emailVal} preenchido! Agora digite a senha.`)
+    setValue("password", passVal)
+    setIsLoading(true)
+    try {
+      await login(emailVal, passVal)
+      toast.success("Login realizado com sucesso!")
+    } catch (error: any) {
+      logClientError("auth.quick_login", error)
+      const msg = error?.message || error?.error_description || getErrorMessage(error, "Falha no login de acesso rápido.")
+      toast.error(msg)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -130,29 +142,29 @@ export function LoginForm() {
             Entrar no Painel
           </Button>
 
-          {/* Quick Fill Email Section */}
-          <div className="pt-4 border-t border-border/40 mt-6">
-            <p className="text-xs text-center font-semibold text-muted-foreground mb-3 uppercase tracking-wider">
-              💡 Preencher E-mail (Exige Senha):
+          {/* Quick 1-Click Login Buttons */}
+          <div className="pt-4 border-t border-border/40 mt-6 space-y-2">
+            <p className="text-xs text-center font-semibold text-muted-foreground uppercase tracking-wider flex items-center justify-center gap-1">
+              <Zap className="h-3.5 w-3.5 text-amber-400" /> Acesso Rápido de Homologação:
             </p>
             <div className="grid grid-cols-2 gap-2">
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
-                className="text-xs font-semibold hover:bg-primary/10 border-primary/30"
-                onClick={() => handleFillEmail("teste@teste.com")}
+                className="text-xs font-semibold hover:bg-primary/10 border-primary/40 py-2"
+                onClick={() => handleQuickLogin("teste@teste.com", "teste1234")}
               >
-                👑 E-mail Dono
+                👑 1-Clique: Dono
               </Button>
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
-                className="text-xs font-semibold hover:bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
-                onClick={() => handleFillEmail("vendedor@teste.com")}
+                className="text-xs font-semibold hover:bg-emerald-500/10 border-emerald-500/40 text-emerald-400 py-2"
+                onClick={() => handleQuickLogin("vendedor@teste.com", "vendedor1234")}
               >
-                🛒 E-mail Vendedor
+                🛒 1-Clique: Vendedor
               </Button>
             </div>
           </div>

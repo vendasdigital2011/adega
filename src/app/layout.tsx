@@ -3,6 +3,7 @@ import { Inter } from "next/font/google"
 import { ThemeProvider } from "@/providers/ThemeProvider"
 import { QueryProvider } from "@/providers/QueryProvider"
 import { AuthProvider } from "@/providers/AuthProvider"
+import { RegisterSW } from "@/components/pwa/RegisterSW"
 import { Toaster } from "react-hot-toast"
 import { Toaster as SonnerToaster } from "sonner"
 import "./globals.css"
@@ -15,6 +16,12 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Adega Cloud - ERP de Bebidas",
   description: "Sistema completo de controle de estoque, vendas, compras e financeiro para adegas.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Adega Cloud",
+  },
 }
 
 export default function RootLayout({
@@ -33,6 +40,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <AuthProvider>
+              <RegisterSW />
               {children}
               <Toaster position="top-right" />
               <SonnerToaster position="top-right" richColors />

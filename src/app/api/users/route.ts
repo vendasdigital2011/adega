@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
-import { createServerClient } from "@supabase/ssr"
+import { createServerSupabaseClient } from "@/lib/supabase/server"
 import { supabaseAdmin } from "@/lib/supabase-admin"
 import { createUserSchema } from "@/features/users/schemas/user.schema"
 import { logServer, generateRequestId } from "@/lib/logger"
@@ -29,20 +29,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Client bound to the caller's own session (respects RLS) — used only to identify who is calling.
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder-project.supabase.co",
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder",
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
-        setAll() {
-          // No-op: a Route Handler response here doesn't need to refresh cookies.
-        },
-      },
-    }
-  )
+  const supabase = await createServerSupabaseClient()
 
   const {
     data: { user: caller },

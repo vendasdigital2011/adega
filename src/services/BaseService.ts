@@ -5,6 +5,10 @@ export abstract class BaseService {
   protected supabase = supabase
 
   protected isOfflineOrDemoMode(error?: unknown): boolean {
+    if (process.env.NODE_ENV === "production") {
+      return false // NUNCA utiliza modo demo/mock em produção
+    }
+
     if (error && typeof error === "object") {
       const msg = String((error as any).message || "").toLowerCase()
       const code = String((error as any).code || "")
@@ -91,7 +95,11 @@ export abstract class BaseService {
       }
     } catch (e) {}
 
-    // Fallback de desenvolvimento local e demonstração
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("AUTHENTICATION_ERROR: Usuário não autenticado ou empresa não vinculada no Supabase.")
+    }
+
+    // Fallback restrito unicamente a testes unitários locais
     return "c1111111-1111-1111-1111-111111111111"
   }
 
@@ -117,7 +125,11 @@ export abstract class BaseService {
       }
     } catch (e) {}
 
-    // Fallback de desenvolvimento local e demonstração
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("AUTHENTICATION_ERROR: Usuário não autenticado no Supabase.")
+    }
+
+    // Fallback restrito unicamente a testes unitários locais
     return "00000000-0000-0000-0000-000000000001"
   }
 

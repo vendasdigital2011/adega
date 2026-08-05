@@ -1,15 +1,8 @@
-import { createClient } from "@supabase/supabase-js"
+import { getSupabaseAdminClient } from "./supabase/admin"
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder-project.supabase.co"
-const serviceRoleKey =
-  process.env.SUPABASE_SERVICE_ROLE_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder-service-role"
+export { getSupabaseAdminClient }
 
-// Server-only client using the service role key.
-// NEVER import this file from a "use client" component — it must stay on the server
-// (Route Handlers / Server Actions only), otherwise the service role key would leak to the browser.
-export const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
-  auth: {
-    persistSession: false,
-    autoRefreshToken: false,
-  },
-})
+// Cliente admin de servidor usando a chave service role
+export const supabaseAdmin = typeof process !== "undefined" && process.env.SUPABASE_SERVICE_ROLE_KEY && !process.env.SUPABASE_SERVICE_ROLE_KEY.includes("placeholder")
+  ? getSupabaseAdminClient()
+  : (null as unknown as ReturnType<typeof getSupabaseAdminClient>)

@@ -71,12 +71,13 @@ export function AIChat({ initialPrompt = "", onClose }: AIChatProps) {
       }
 
       setMessages((prev) => [...prev, { sender: "assistant", text: result.response_message }])
-    } catch (err) {
+    } catch (err: any) {
+      const errorMsg = err?.message || "Desculpe, ocorreu um erro ao consultar os dados do sistema."
       setMessages((prev) => [
         ...prev,
         {
           sender: "assistant",
-          text: "Desculpe, ocorreu um erro ao consultar os dados do sistema. Por favor, tente novamente.",
+          text: `⚠️ **Aviso do Servidor de IA:**\n${errorMsg}`,
         },
       ])
     }

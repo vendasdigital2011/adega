@@ -19,5 +19,15 @@ export default function RootPage() {
     }
   }, [user, loading, router])
 
+  // Fallback de segurança para modo PWA standalone
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!user) {
+        router.replace("/login")
+      }
+    }, 1500)
+    return () => clearTimeout(timer)
+  }, [user, router])
+
   return <Loading fullScreen size="lg" />
 }

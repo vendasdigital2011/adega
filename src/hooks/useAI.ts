@@ -58,8 +58,21 @@ export function useSendAIChatPrompt() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ prompt, conversationId }: { prompt: string; conversationId?: string | null }) =>
-      aiService.processChatQuery(prompt, conversationId),
+    mutationFn: async ({ prompt, conversationId }: { prompt: string; conversationId?: string | null }) => {
+      const response = await fetch("/api/ai/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt, conversationId }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || data.error || "Falha na resposta do servidor de IA.")
+      }
+
+      return data as { conversation_id: string; response_message: string; context_data: Record<string, any> }
+    },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["ai-conversations"] })
       if (data.conversation_id) {
@@ -67,7 +80,7 @@ export function useSendAIChatPrompt() {
       }
     },
     onError: (error: any) => {
-      toast.error(error.message || "Erro ao enviar mensagem para a IA.")
+      toast.error(error.message || "Erro ao consultar a IA.")
     },
   })
 }

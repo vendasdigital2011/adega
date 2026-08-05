@@ -12,6 +12,9 @@ import { useNotifications, useMarkNotificationRead, useMarkAllNotificationsRead 
 import { formatRelativeTime } from "@/utils/format"
 import { NotificationType } from "@/types"
 
+import { InstallPWAButton } from "@/components/pwa/InstallPWAButton"
+import { KeyboardShortcutsModal } from "@/components/ui/KeyboardShortcutsModal"
+
 const NOTIFICATION_LINK: Record<NotificationType, string> = {
   estoque_baixo: "/inventory",
   financeiro_receber: "/financial",
@@ -57,8 +60,14 @@ export function Header({ onToggleMobileMenu }: HeaderProps) {
         </div>
       </div>
 
-      {/* Right side: Global Actions & User Profile */}
-      <div className="flex items-center gap-4">
+      {/* Right side: Global Actions, PWA Install, Shortcuts & User Profile */}
+      <div className="flex items-center gap-2 sm:gap-3">
+        {/* PWA App Install Button */}
+        <InstallPWAButton />
+
+        {/* Keyboard Shortcuts Modal (F1) */}
+        <KeyboardShortcutsModal />
+
         {/* Search */}
         <div className="relative hidden md:flex items-center text-muted-foreground">
           <Search className="absolute left-3 h-4 w-4 pointer-events-none" />
